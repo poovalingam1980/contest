@@ -1112,6 +1112,108 @@
     box-shadow: 0 2px 10px rgba(250, 204, 21, 0.4);
   }
 
+
+  /* ==========================================================================
+     DEDICATED MODULE BOXES (SISF 2026 & SISDC SCIENCE DRAMA 2026)
+     ========================================================================== */
+  .dedicated-modules-two-box-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+    gap: 16px;
+    margin-bottom: 20px;
+  }
+  .dedicated-module-box {
+    background: #ffffff;
+    border: 2.5px solid #cbd5e1;
+    border-radius: 14px;
+    padding: 16px 18px;
+    cursor: pointer;
+    transition: all 0.22s ease;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 12px;
+    box-shadow: 0 4px 14px rgba(15, 23, 42, 0.06);
+  }
+  .dedicated-module-box:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 24px rgba(2, 132, 199, 0.15);
+  }
+  .dedicated-module-box.sisf-box.active {
+    border-color: #0284c7;
+    background: linear-gradient(135deg, #f0f9ff 0%, #ffffff 65%, #ecfdf5 100%);
+    box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.22), 0 10px 25px rgba(2, 132, 199, 0.14);
+  }
+  .dedicated-module-box.sisdc-box.active {
+    border-color: #7c3aed;
+    background: linear-gradient(135deg, #f5f3ff 0%, #ffffff 65%, #fdf4ff 100%);
+    box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.22), 0 10px 25px rgba(124, 58, 237, 0.14);
+  }
+  .module-workspace-frame {
+    border: 2.5px solid #0284c7;
+    border-radius: 16px;
+    padding: 18px;
+    background: #ffffff;
+    box-shadow: 0 8px 24px rgba(15, 23, 42, 0.06);
+    margin-bottom: 20px;
+  }
+  .module-workspace-frame.sisdc-frame {
+    border-color: #7c3aed;
+    background: linear-gradient(180deg, #faf5ff 0%, #ffffff 180px);
+  }
+  .sisdc-subtheme-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 10px;
+  }
+  .sisdc-subtheme-card {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 11px 14px;
+    border: 2px solid #cbd5e1;
+    border-radius: 10px;
+    background: #ffffff;
+    cursor: pointer;
+    transition: all 0.18s ease;
+    font-size: 0.88rem;
+    font-weight: 700;
+    color: #1e293b;
+  }
+  .sisdc-subtheme-card:hover {
+    border-color: #7c3aed;
+    background: #f5f3ff;
+  }
+  .sisdc-subtheme-card input[type="radio"] {
+    margin-top: 3px;
+    width: 18px;
+    height: 18px;
+    accent-color: #7c3aed;
+    flex-shrink: 0;
+  }
+  .sisdc-members-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.86rem;
+  }
+  .sisdc-members-table th {
+    background: #1e3a5f;
+    color: #ffffff;
+    padding: 10px 8px;
+    font-weight: 800;
+    border: 1px solid #1e3a5f;
+    text-align: center;
+  }
+  .sisdc-members-table td {
+    padding: 7px 8px;
+    border: 1px solid #cbd5e1;
+    vertical-align: middle;
+  }
+  .sisdc-members-table tr:nth-child(even) td {
+    background: #f8fafc;
+  }
+
 </style>
 </head>
 <body>
@@ -1501,98 +1603,370 @@
       <div id="schoolNotificationsList"></div>
     </div>
 
-    <!-- SCHOOL UNIFIED MULTI-COMPETITION PARTICIPATION SUMMARY STRIP -->
-    <div class="school-unified-modules-strip" id="schoolUnifiedModulesSummaryCard">
-      <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px; margin-bottom:10px;">
+    <!-- HIDDEN LEGACY CONTAINER FOR COMPATIBILITY -->
+    <div id="schoolUnifiedModulesSummaryCard" style="display:none;"><button type="button" onclick="openUnifiedModulesModal()">📊 போட்டித் தொகுதிகள் ஒப்பீடு</button><div id="schoolModulesProgressGrid"></div></div>
+
+    <!-- ========================================================================= -->
+    <!-- SCHOOL DASHBOARD: DEDICATED MODULE BOXES (தனிப்பெட்டிகள்: SISF & SISDC)   -->
+    <!-- ========================================================================= -->
+    <div style="margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
+      <div style="font-size: 1.05rem; font-weight: 900; color: #0f172a;">
+        🎯 மாவட்ட அளவிலான போட்டித் தொகுதிகள் (போட்டிப் பெட்டியைத் தேர்ந்தெடுக்கவும் / Select Competition Module Box):
+      </div>
+      <span style="font-size: 0.8rem; font-weight: 700; color: #0369a1; background: #e0f2fe; padding: 4px 12px; border-radius: 999px;">
+        👇 கீழேயுள்ள தனிப்பெட்டிகளில் (Module Boxes) கிளிக் செய்து விண்ணப்பிக்கலாம்
+      </span>
+    </div>
+
+    <div class="dedicated-modules-two-box-grid" id="schoolDedicatedModulesGrid">
+      <!-- DEDICATED BOX 1: SISF 2026 (SCIENCE FAIR MODULE) -->
+      <div class="dedicated-module-box sisf-box active" id="schoolBoxSisf" onclick="switchSchoolModuleBox('SISF')">
         <div>
-          <div style="font-size:0.95rem; font-weight:900; color:#1e3a8a;">
-            🌐 அனைத்து மாவட்ட போட்டிகளில் உங்கள் பள்ளியின் பங்கேற்பு நிலை (Single Login – Multi-Competition Status)
+          <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:8px; margin-bottom:8px;">
+            <span style="background:#0284c7; color:#ffffff; font-weight:900; font-size:0.75rem; padding:4px 12px; border-radius:999px; letter-spacing:0.5px;">
+              🔬 MODULE 1: SISF - 2026 (தனிப்பெட்டி 1)
+            </span>
+            <span id="schoolBoxSisfStatusBadge" style="background:#dcfce7; color:#166534; border:1px solid #86efac; font-weight:800; font-size:0.76rem; padding:3px 10px; border-radius:999px;">
+              0 / 3 பிரிவுகள் பதிவு
+            </span>
           </div>
-          <div style="font-size:0.78rem; color:#475569; font-weight:600;">
-            ஒரே பள்ளி உள்நுழைவு (U.NO / UDISE) மூலம் கீழ்க்கண்ட அனைத்து மாவட்ட அளவிலான போட்டிகளுக்கும் விண்ணப்பிக்கலாம் & சான்றிதழ்களைப் பெறலாம்:
+          <div style="font-size:1.14rem; font-weight:900; color:#0f172a; line-height:1.35;">
+            மாவட்ட அளவிலான தென்னிந்திய அறிவியல் கண்காட்சி (SISF 2026)
+          </div>
+          <div style="font-size:0.8rem; font-weight:800; color:#0369a1; margin-top:2px;">
+            SOUTHERN INDIA SCIENCE FAIR 2026 – DISTRICT LEVEL
+          </div>
+          <div style="margin-top:8px; padding:8px 10px; background:#f8fafc; border:1px solid #cbd5e1; border-radius:8px; font-size:0.8rem; color:#334155; line-height:1.5;">
+            <div>📍 <strong>இடம்:</strong> மன்னர் மேல்நிலைப் பள்ளி, சிவகங்கை</div>
+            <div>📅 <strong>நாள்:</strong> 03.11.2026 (முற்பகல் 10.00 மணி)</div>
+            <div>📂 <strong>பிரிவுகள்:</strong> 1) தனிநபர் வகை &nbsp;|&nbsp; 2) குழு வகை &nbsp;|&nbsp; 3) ஆசிரியர் வகை</div>
           </div>
         </div>
-        <button type="button" class="btn-sm" style="background:#0284c7; color:#fff; font-size:0.76rem; font-weight:800; padding:5px 11px;" onclick="openUnifiedModulesModal()">
-          📊 போட்டித் தொகுதிகள் ஒப்பீடு
+        <div style="display:flex; gap:8px; align-items:center; justify-content:space-between; padding-top:6px; border-top:1px dashed #cbd5e1;">
+          <span id="schoolBoxSisfSubInfo" style="font-size:0.78rem; font-weight:800; color:#047857;">✓ தற்போது திறக்கப்பட்டுள்ளது</span>
+          <button type="button" class="btn-sm" style="background:#0284c7; color:#ffffff; padding:8px 14px; font-weight:800; font-size:0.82rem;" onclick="event.stopPropagation(); switchSchoolModuleBox('SISF')">
+            🔬 SISF கண்காட்சிப் பகுதி (Open Module 1)
+          </button>
+        </div>
+      </div>
+
+      <!-- DEDICATED BOX 2: SISDC 2026 (SCIENCE DRAMA CONTEST MODULE) -->
+      <div class="dedicated-module-box sisdc-box" id="schoolBoxSisdc" onclick="switchSchoolModuleBox('SISDC')">
+        <div>
+          <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:8px; margin-bottom:8px;">
+            <span style="background:#7c3aed; color:#ffffff; font-weight:900; font-size:0.75rem; padding:4px 12px; border-radius:999px; letter-spacing:0.5px;">
+              🎭 MODULE 2: SISDC - 2026 (தனிப்பெட்டி 2)
+            </span>
+            <span id="schoolBoxSisdcStatusBadge" style="background:#f1f5f9; color:#475569; border:1px solid #cbd5e1; font-weight:800; font-size:0.76rem; padding:3px 10px; border-radius:999px;">
+              பதிவு செய்யப்படவில்லை
+            </span>
+          </div>
+          <div style="font-size:1.14rem; font-weight:900; color:#4c1d95; line-height:1.35;">
+            தென்னிந்திய அறிவியல் நாடக விழா 2026 (SISDC)
+          </div>
+          <div style="font-size:0.8rem; font-weight:800; color:#6d28d9; margin-top:2px;">
+            SOUTHERN INDIA SCIENCE DRAMA CONTEST – OFFICIAL TEAM REGISTRATION
+          </div>
+          <div style="margin-top:8px; padding:8px 10px; background:#faf5ff; border:1px solid #d8b4fe; border-radius:8px; font-size:0.8rem; color:#334155; line-height:1.5;">
+            <div>📍 <strong>இடம்:</strong> மன்னர் மேல்நிலைப் பள்ளி, சிவகங்கை</div>
+            <div>📅 <strong>நாள்:</strong> 04.11.2026 &nbsp;|&nbsp; ⏱️ <strong>கால அளவு:</strong> அதிகபட்சம் 30 நிமிடம்</div>
+            <div>👥 <strong>குழு விவரம்:</strong> அதிகபட்சம் 10 உறுப்பினர்கள் (8 நடிகர்கள் + இயக்குனர் + திரைக்கதை எழுத்தாளர்)</div>
+          </div>
+        </div>
+        <div style="display:flex; gap:8px; align-items:center; justify-content:space-between; padding-top:6px; border-top:1px dashed #d8b4fe;">
+          <span id="schoolBoxSisdcSubInfo" style="font-size:0.78rem; font-weight:800; color:#6d28d9;">குழு பதிவுப் படிவம் & PDF</span>
+          <button type="button" class="btn-sm" style="background:#7c3aed; color:#ffffff; padding:8px 14px; font-weight:800; font-size:0.82rem;" onclick="event.stopPropagation(); switchSchoolModuleBox('SISDC')">
+            🎭 அறிவியல் நாடகப் போட்டி (Open Module 2)
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========================================================================= -->
+    <!-- MODULE 1 WORKSPACE: SISF 2026 (தென்னிந்திய அறிவியல் கண்காட்சி தனிப்பெட்டி) -->
+    <!-- ========================================================================= -->
+    <div class="module-workspace-frame" id="schoolSisfDedicatedWorkspace">
+      <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom:14px; padding-bottom:10px; border-bottom:2px solid #bae6fd;">
+        <div>
+          <span style="background:#0284c7; color:#fff; font-weight:900; font-size:0.75rem; padding:3px 10px; border-radius:6px;">MODULE 1 – SISF 2026</span>
+          <span style="font-size:1.15rem; font-weight:900; color:#0f172a; margin-left:8px;">🔬 மாவட்ட அளவிலான தென்னிந்திய அறிவியல் கண்காட்சி (SISF 2026) – பள்ளி விண்ணப்பப் பெட்டி</span>
+        </div>
+        <button type="button" class="btn-sm" style="background:#7c3aed; color:#fff; font-weight:800; font-size:0.8rem;" onclick="switchSchoolModuleBox('SISDC')">
+          🎭 அறிவியல் நாடக விழா (SISDC) பெட்டிக்கு மாறுக ➔
         </button>
       </div>
-      <div id="schoolModulesProgressGrid" style="display:grid; grid-template-columns:repeat(auto-fit, minmax(180px, 1fr)); gap:8px;"></div>
+
+      <!-- District Level Science Fair Venue & Time Banner on School Dashboard (பள்ளிகளின் முகப்பு) -->
+      <div class="venue-notice-card" id="dashExhibitionVenueCard">
+        <div class="venue-notice-title">
+          <span>🏛️ மாவட்ட அளவிலான அறிவியல் கண்காட்சி நடைபெறும் இடம் மற்றும் நேரம் (District Level Exhibition Venue & Schedule):</span>
+        </div>
+        <div class="venue-notice-main">
+          📣 மாவட்ட அளவிலான கண்காட்சி <strong style="color: #047857;">சிவகங்கை மன்னர் மேல்நிலைப்பள்ளியில்</strong> <strong style="color: #b91c1c;">03.11.2026 முற்பகல் 10.00 மணிக்கு</strong> நடைபெறும்.
+        </div>
+        <div class="venue-notice-pills">
+          <span class="venue-meta-pill">📍 <strong>இடம் (Venue):</strong> சிவகங்கை மன்னர் மேல்நிலைப்பள்ளி (Mannar Hr. Sec. School, Sivagangai)</span>
+          <span class="venue-meta-pill">📅 <strong>நாள் (Date):</strong> 03.11.2026</span>
+          <span class="venue-meta-pill">🕙 <strong>நேரம் (Time):</strong> முற்பகல் 10.00 மணி (10.00 AM)</span>
+          <span class="venue-meta-pill" style="background:#fff1f2; border-color:#fda4af; color:#9f1239;">⏰ <strong>பதிவு கடைசி தேதி (Last Date):</strong> <strong id="dashDeadlineDateText">30.11.2026</strong></span>
+        </div>
+      </div>
+
+      <div class="rule-notice">
+        <div class="rule-notice-title">📌 மாவட்ட அளவிலான அறிவியல் கண்காட்சி விதிமுறை (Submission Rule):</div>
+        <div class="rule-notice-desc">
+          ஒரு பள்ளியிலிருந்து <strong>அதிகபட்சமாக 3 விண்ணப்பங்கள்</strong> மட்டுமே சமர்ப்பிக்க முடியும். அதாவது ஒவ்வொரு போட்டிப் பிரிவிலும் <strong>தலா ஒரு விண்ணப்பம் மட்டுமே</strong> அனுமதிக்கப்படும். எப்போது வேண்டுமானாலும் உங்கள் கடவுச்சொல் கொண்டு உள்நுழைந்து சமர்ப்பிக்கப்பட்ட விண்ணப்பங்களைத் திருத்திக் கொள்ளலாம்.
+        </div>
+      </div>
+
+      <!-- 3 Application Slots Cards Grid -->
+      <div class="categories-grid">
+
+        <!-- SLOT 1: Individual -->
+        <div class="cat-card" id="cardIndividual">
+          <div class="cat-card-header">
+            <div class="cat-slot-badge">பிரிவு 1 (SLOT 1)</div>
+            <div class="cat-title-ta">தனிநபர் வகை</div>
+            <div class="cat-title-en">Individual: 1 மாணவர் + 1 ஆசிரியர்</div>
+          </div>
+          <div id="badgeIndividual" class="cat-status-badge status-empty">பதிவு செய்யப்படவில்லை</div>
+          <div class="cat-details-box" id="detailsIndividual">
+            <p style="color: #718096; font-style: italic;">இந்த பிரிவில் இன்னும் விண்ணப்பம் சமர்ப்பிக்கப்படவில்லை.</p>
+          </div>
+          <div class="cat-actions" id="actionsIndividual">
+            <button type="button" class="btn-apply" onclick="openApplicationForm('Individual')">📝 விண்ணப்பிக்க / Apply</button>
+          </div>
+        </div>
+
+        <!-- SLOT 2: Group -->
+        <div class="cat-card" id="cardGroup">
+          <div class="cat-card-header">
+            <div class="cat-slot-badge">பிரிவு 2 (SLOT 2)</div>
+            <div class="cat-title-ta">குழு வகை</div>
+            <div class="cat-title-en">Group: 2 மாணவர்கள் + 1 ஆசிரியர்</div>
+          </div>
+          <div id="badgeGroup" class="cat-status-badge status-empty">பதிவு செய்யப்படவில்லை</div>
+          <div class="cat-details-box" id="detailsGroup">
+            <p style="color: #718096; font-style: italic;">இந்த பிரிவில் இன்னும் விண்ணப்பம் சமர்ப்பிக்கப்படவில்லை.</p>
+          </div>
+          <div class="cat-actions" id="actionsGroup">
+            <button type="button" class="btn-apply" onclick="openApplicationForm('Group')">📝 விண்ணப்பிக்க / Apply</button>
+          </div>
+        </div>
+
+        <!-- SLOT 3: Teacher -->
+        <div class="cat-card" id="cardTeacher">
+          <div class="cat-card-header">
+            <div class="cat-slot-badge">பிரிவு 3 (SLOT 3)</div>
+            <div class="cat-title-ta">ஆசிரியர் வகை</div>
+            <div class="cat-title-en">Teacher: 1 ஆசிரியர் மட்டும்</div>
+          </div>
+          <div id="badgeTeacher" class="cat-status-badge status-empty">பதிவு செய்யப்படவில்லை</div>
+          <div class="cat-details-box" id="detailsTeacher">
+            <p style="color: #718096; font-style: italic;">இந்த பிரிவில் இன்னும் விண்ணப்பம் சமர்ப்பிக்கப்படவில்லை.</p>
+          </div>
+          <div class="cat-actions" id="actionsTeacher">
+            <button type="button" class="btn-apply" onclick="openApplicationForm('Teacher')">📝 விண்ணப்பிக்க / Apply</button>
+          </div>
+        </div>
+
+      </div>
     </div>
 
-    <!-- District Level Science Fair Venue & Time Banner on School Dashboard (பள்ளிகளின் முகப்பு) -->
-    <div class="venue-notice-card" id="dashExhibitionVenueCard">
-      <div class="venue-notice-title">
-        <span>🏛️ மாவட்ட அளவிலான அறிவியல் கண்காட்சி நடைபெறும் இடம் மற்றும் நேரம் (District Level Exhibition Venue & Schedule):</span>
-      </div>
-      <div class="venue-notice-main">
-        📣 மாவட்ட அளவிலான கண்காட்சி <strong style="color: #047857;">சிவகங்கை மன்னர் மேல்நிலைப்பள்ளியில்</strong> <strong style="color: #b91c1c;">03.11.2026 முற்பகல் 10.00 மணிக்கு</strong> நடைபெறும்.
-      </div>
-      <div class="venue-notice-pills">
-        <span class="venue-meta-pill">📍 <strong>இடம் (Venue):</strong> சிவகங்கை மன்னர் மேல்நிலைப்பள்ளி (Mannar Hr. Sec. School, Sivagangai)</span>
-        <span class="venue-meta-pill">📅 <strong>நாள் (Date):</strong> 03.11.2026</span>
-        <span class="venue-meta-pill">🕙 <strong>நேரம் (Time):</strong> முற்பகல் 10.00 மணி (10.00 AM)</span>
-        <span class="venue-meta-pill" style="background:#fff1f2; border-color:#fda4af; color:#9f1239;">⏰ <strong>பதிவு கடைசி தேதி (Last Date):</strong> <strong id="dashDeadlineDateText">30.11.2026</strong></span>
-      </div>
-    </div>
-
-    <div class="rule-notice">
-      <div class="rule-notice-title">📌 மாவட்ட அளவிலான அறிவியல் கண்காட்சி விதிமுறை (Submission Rule):</div>
-      <div class="rule-notice-desc">
-        ஒரு பள்ளியிலிருந்து <strong>அதிகபட்சமாக 3 விண்ணப்பங்கள்</strong> மட்டுமே சமர்ப்பிக்க முடியும். அதாவது ஒவ்வொரு போட்டிப் பிரிவிலும் <strong>தலா ஒரு விண்ணப்பம் மட்டுமே</strong> அனுமதிக்கப்படும். எப்போது வேண்டுமானாலும் உங்கள் கடவுச்சொல் கொண்டு உள்நுழைந்து சமர்ப்பிக்கப்பட்ட விண்ணப்பங்களைத் திருத்திக் கொள்ளலாம்.
-      </div>
-    </div>
-
-    <!-- 3 Application Slots Cards Grid -->
-    <div class="categories-grid">
-
-      <!-- SLOT 1: Individual -->
-      <div class="cat-card" id="cardIndividual">
-        <div class="cat-card-header">
-          <div class="cat-slot-badge">பிரிவு 1 (SLOT 1)</div>
-          <div class="cat-title-ta">தனிநபர் வகை</div>
-          <div class="cat-title-en">Individual: 1 மாணவர் + 1 ஆசிரியர்</div>
+    <!-- ========================================================================= -->
+    <!-- MODULE 2 WORKSPACE: SISDC 2026 (தென்னிந்திய அறிவியல் நாடக விழா 2026)        -->
+    <!-- ========================================================================= -->
+    <div class="module-workspace-frame sisdc-frame" id="schoolSisdcDedicatedWorkspace" style="display: none;">
+      <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom:14px; padding-bottom:10px; border-bottom:2px solid #d8b4fe;">
+        <div>
+          <span style="background:#7c3aed; color:#fff; font-weight:900; font-size:0.75rem; padding:3px 10px; border-radius:6px;">MODULE 2 – SISDC 2026</span>
+          <span style="font-size:1.15rem; font-weight:900; color:#4c1d95; margin-left:8px;">🎭 தென்னிந்திய அறிவியல் நாடக விழா 2026 – மாவட்ட அளவிலான போட்டி (Official Team Registration)</span>
         </div>
-        <div id="badgeIndividual" class="cat-status-badge status-empty">பதிவு செய்யப்படவில்லை</div>
-        <div class="cat-details-box" id="detailsIndividual">
-          <p style="color: #718096; font-style: italic;">இந்த பிரிவில் இன்னும் விண்ணப்பம் சமர்ப்பிக்கப்படவில்லை.</p>
+        <button type="button" class="btn-sm" style="background:#0284c7; color:#fff; font-weight:800; font-size:0.8rem;" onclick="switchSchoolModuleBox('SISF')">
+          ⬅️ SISF அறிவியல் கண்காட்சிப் பெட்டிக்குத் திரும்பு
+        </button>
+      </div>
+
+      <!-- SISDC Venue & Schedule Notice Card -->
+      <div style="background:linear-gradient(135deg, #f5f3ff 0%, #fdf4ff 100%); border:2px solid #a855f7; border-left:6px solid #6d28d9; border-radius:12px; padding:14px 18px; margin-bottom:16px;">
+        <div style="font-size:1.05rem; font-weight:900; color:#4c1d95; margin-bottom:6px;">
+          🏛️ தென்னிந்திய அறிவியல் நாடக விழா 2026 – மாவட்ட அளவிலான போட்டி (Official Team Registration Form)
         </div>
-        <div class="cat-actions" id="actionsIndividual">
-          <button type="button" class="btn-apply" onclick="openApplicationForm('Individual')">📝 விண்ணப்பிக்க / Apply</button>
+        <div style="display:flex; gap:10px; flex-wrap:wrap; font-size:0.86rem; font-weight:800; color:#1e293b;">
+          <span style="background:#ffffff; border:1px solid #d8b4fe; padding:5px 12px; border-radius:999px;">📍 <strong>இடம்:</strong> மன்னர் மேல்நிலைப் பள்ளி, சிவகங்கை</span>
+          <span style="background:#ffffff; border:1px solid #d8b4fe; padding:5px 12px; border-radius:999px; color:#b91c1c;">📅 <strong>நாள்:</strong> 04.11.2026</span>
+          <span style="background:#ffffff; border:1px solid #d8b4fe; padding:5px 12px; border-radius:999px; color:#047857;">⏱️ <strong>கால அளவு:</strong> அதிகபட்சம் 30 நிமிடம் (Max 30 Mins)</span>
+          <span style="background:#ffffff; border:1px solid #d8b4fe; padding:5px 12px; border-radius:999px; color:#1e3a8a;">👥 <strong>குழு உறுப்பினர்கள்:</strong> அதிகபட்சம் 10 நபர்கள் (8 நடிகர்கள் + 1 இயக்குனர் + 1 திரைக்கதை எழுத்தாளர்)</span>
         </div>
       </div>
 
-      <!-- SLOT 2: Group -->
-      <div class="cat-card" id="cardGroup">
-        <div class="cat-card-header">
-          <div class="cat-slot-badge">பிரிவு 2 (SLOT 2)</div>
-          <div class="cat-title-ta">குழு வகை</div>
-          <div class="cat-title-en">Group: 2 மாணவர்கள் + 1 ஆசிரியர்</div>
+      <!-- Submitted SISDC Team Summary Card (Visible when already submitted) -->
+      <div id="sisdcSubmittedSummaryBox" style="display:none; background:#f0fdf4; border:2px solid #16a34a; border-radius:12px; padding:16px; margin-bottom:18px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom:10px; border-bottom:1px dashed #86efac; padding-bottom:10px;">
+          <div>
+            <span style="background:#16a34a; color:#ffffff; padding:4px 12px; border-radius:999px; font-size:0.8rem; font-weight:900;">✅ நாடகக் குழு பதிவு சமர்ப்பிக்கப்பட்டது</span>
+            <strong id="sisdcSummaryTeamNo" style="font-size:1.05rem; color:#1e3a8a; margin-left:8px;">Team No: -</strong>
+          </div>
+          <div style="display:flex; gap:8px; flex-wrap:wrap;">
+            <button type="button" class="btn-sm" style="background:#1e3a8a; color:#ffffff; padding:9px 16px; font-weight:900; font-size:0.88rem; box-shadow:0 4px 12px rgba(30,58,138,0.28);" onclick="downloadCurrentSchoolSisdcPdf()">
+              📥 குழு பதிவுப் படிவம் PDF பதிவிறக்கம் (Official SISDC Form PDF)
+            </button>
+            <button type="button" class="btn-sm" style="background:#d97706; color:#ffffff; padding:9px 14px; font-weight:800; font-size:0.85rem;" onclick="scrollToSisdcForm()">
+              ✏️ விவரங்களைத் திருத்து (Edit Team Form)
+            </button>
+          </div>
         </div>
-        <div id="badgeGroup" class="cat-status-badge status-empty">பதிவு செய்யப்படவில்லை</div>
-        <div class="cat-details-box" id="detailsGroup">
-          <p style="color: #718096; font-style: italic;">இந்த பிரிவில் இன்னும் விண்ணப்பம் சமர்ப்பிக்கப்படவில்லை.</p>
-        </div>
-        <div class="cat-actions" id="actionsGroup">
-          <button type="button" class="btn-apply" onclick="openApplicationForm('Group')">📝 விண்ணப்பிக்க / Apply</button>
-        </div>
+        <div id="sisdcSubmittedSummaryDetails" style="font-size:0.9rem; color:#1e293b; line-height:1.6;"></div>
       </div>
 
-      <!-- SLOT 3: Teacher -->
-      <div class="cat-card" id="cardTeacher">
-        <div class="cat-card-header">
-          <div class="cat-slot-badge">பிரிவு 3 (SLOT 3)</div>
-          <div class="cat-title-ta">ஆசிரியர் வகை</div>
-          <div class="cat-title-en">Teacher: 1 ஆசிரியர் மட்டும்</div>
+      <!-- OFFICIAL SISDC REGISTRATION FORM (Exact Fields from SISDC Registration Format.pdf) -->
+      <form id="sisdcTeamRegistrationForm" onsubmit="handleSisdcFormSubmit(event)" style="background:#ffffff; border:2px solid #cbd5e1; border-radius:12px; padding:18px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; border-bottom:2px solid #e2e8f0; padding-bottom:12px; margin-bottom:16px;">
+          <div>
+            <div style="font-size:1.2rem; font-weight:900; color:#0f2942;">தென்னிந்திய அறிவியல் நாடக விழா 2026</div>
+            <div style="font-size:0.95rem; font-weight:800; color:#1e293b;">மாவட்ட அளவிலான போட்டி – குழு பதிவுப் படிவம் (Official Team Registration Form)</div>
+            <div style="font-size:0.82rem; color:#475569; font-weight:700;">மன்னர் மேல்நிலைப் பள்ளி, சிவகங்கை | நாள்: 04.11.2026</div>
+          </div>
+          <div style="border:2.5px solid #1e3a8a; border-radius:8px; width:120px; padding:6px 10px; text-align:center; background:#f8fafc;">
+            <div style="font-size:0.75rem; font-weight:900; color:#1e3a8a; text-transform:uppercase;">Team No</div>
+            <div id="sisdcFormTeamNoDisp" style="font-size:1.05rem; font-weight:900; color:#b91c1c; margin-top:4px;">Auto</div>
+          </div>
         </div>
-        <div id="badgeTeacher" class="cat-status-badge status-empty">பதிவு செய்யப்படவில்லை</div>
-        <div class="cat-details-box" id="detailsTeacher">
-          <p style="color: #718096; font-style: italic;">இந்த பிரிவில் இன்னும் விண்ணப்பம் சமர்ப்பிக்கப்படவில்லை.</p>
-        </div>
-        <div class="cat-actions" id="actionsTeacher">
-          <button type="button" class="btn-apply" onclick="openApplicationForm('Teacher')">📝 விண்ணப்பிக்க / Apply</button>
-        </div>
-      </div>
 
+        <!-- SECTION 1: 1. பள்ளி மற்றும் நாடக விவரங்கள் (SCHOOL & DRAMA DETAILS) -->
+        <div class="section-card" style="margin-bottom:18px; border-left:5px solid #1d4ed8;">
+          <h3 class="section-title" style="color:#0f2942;"><span class="section-num" style="background:#1d4ed8;">1</span> பள்ளி மற்றும் நாடக விவரங்கள் (SCHOOL & DRAMA DETAILS)</h3>
+
+          <div class="grid-2">
+            <div class="form-group">
+              <label class="form-label">பள்ளியின் பெயர் (தமிழில்) / School Name in Tamil <span class="required">*</span></label>
+              <input type="text" id="sisdcSchoolNameTa" class="form-control tanglish-enabled" required placeholder="பள்ளியின் பெயர்">
+            </div>
+            <div class="form-group">
+              <label class="form-label">School Name (in English) <span class="required">*</span></label>
+              <input type="text" id="sisdcSchoolNameEn" class="form-control" required placeholder="School Name in English">
+            </div>
+          </div>
+
+          <div class="grid-3" style="display:grid; grid-template-columns:repeat(auto-fit, minmax(220px, 1fr)); gap:12px;">
+            <div class="form-group">
+              <label class="form-label">வழிகாட்டி ஆசிரியர் பெயர் (தமிழில்) <span class="required">*</span> <span class="phonetic-badge">⌨️ தங்லீஷ் + AI</span></label>
+              <input type="text" id="sisdcTeacherNameTa" class="form-control tanglish-enabled" data-sync-fn="handleSisdcTeacherTaInput" oninput="handleSisdcTeacherTaInput()" placeholder="எ.கா. பூவலிங்கம் கூ" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Guide Teacher Name (in English) <span class="required">*</span></label>
+              <input type="text" id="sisdcTeacherNameEn" class="form-control" oninput="handleSisdcTeacherEnInput()" placeholder="e.g. Poovalingam K" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label">கைபேசி எண் (Mobile Number) <span class="required">*</span></label>
+              <input type="tel" id="sisdcTeacherMobile" class="form-control" maxlength="10" pattern="[0-9]{10}" placeholder="10 இலக்க கைபேசி எண்" required>
+            </div>
+          </div>
+
+          <div class="grid-2">
+            <div class="form-group">
+              <label class="form-label">நாடகத்தின் தலைப்பு (தமிழில்) / Drama Title in Tamil <span class="required">*</span> <span class="phonetic-badge">⌨️ தங்லீஷ் + AI</span></label>
+              <input type="text" id="sisdcDramaTitleTa" class="form-control tanglish-enabled" data-sync-fn="handleSisdcTitleTaInput" oninput="handleSisdcTitleTaInput()" placeholder="நாடகத்தின் தலைப்பு தமிழில்" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label">நாடகத்தின் தலைப்பு (ஆங்கிலத்தில்) / Drama Title in English <span class="required">*</span></label>
+              <input type="text" id="sisdcDramaTitleEn" class="form-control" oninput="handleSisdcTitleEnInput()" placeholder="Drama Title in English" required>
+            </div>
+          </div>
+
+          <div class="grid-2">
+            <div class="form-group">
+              <label class="form-label">நாடகத்தின் மொழி (Language) <span class="required">*</span></label>
+              <div style="display:flex; gap:18px; align-items:center; padding:8px 12px; background:#f8fafc; border:1.5px solid #cbd5e1; border-radius:8px;">
+                <label style="display:flex; align-items:center; gap:8px; font-weight:800; cursor:pointer; font-size:0.95rem;">
+                  <input type="radio" name="sisdcLanguage" value="தமிழ்" checked required style="width:18px; height:18px; accent-color:#1d4ed8;"> [ ✓ ] தமிழ் (Tamil)
+                </label>
+                <label style="display:flex; align-items:center; gap:8px; font-weight:800; cursor:pointer; font-size:0.95rem;">
+                  <input type="radio" name="sisdcLanguage" value="English" style="width:18px; height:18px; accent-color:#1d4ed8;"> [ &nbsp; ] English
+                </label>
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="form-label">கால அளவு (Duration - நிமிடம், Max 30) <span class="required">*</span></label>
+              <div style="display:flex; align-items:center; gap:10px;">
+                <input type="number" id="sisdcDurationMins" class="form-control" min="5" max="30" value="30" required style="width:120px; font-weight:900; font-size:1.05rem; text-align:center;">
+                <span style="font-weight:800; color:#334155;">நிமிடம் (Max 30 நிமிடங்கள்)</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- SECTION 2: 2. அதிகாரப்பூர்வ துணைக்கருப்பொருள் (OFFICIAL SUB-THEME CHOSEN) -->
+        <div class="section-card" style="margin-bottom:18px; border-left:5px solid #7c3aed;">
+          <h3 class="section-title" style="color:#0f2942;"><span class="section-num" style="background:#7c3aed;">2</span> அதிகாரப்பூர்வ துணைக்கருப்பொருள் (OFFICIAL SUB-THEME CHOSEN) <span class="required">*</span></h3>
+          <div class="sisdc-subtheme-grid">
+            <label class="sisdc-subtheme-card">
+              <input type="radio" name="sisdcSubTheme" value="துணைத்தலைப்பு 1: Artificial Intelligence: Friend, Tool or Threat?" required checked>
+              <div>
+                <div style="color:#4c1d95; font-weight:900;">துணைத்தலைப்பு 1: Artificial Intelligence: Friend, Tool or Threat?</div>
+                <div style="font-size:0.78rem; color:#64748b; margin-top:2px;">செயற்கை நுண்ணறிவு: நண்பனா, கருவியா அல்லது அச்சுறுத்தலா?</div>
+              </div>
+            </label>
+            <label class="sisdc-subtheme-card">
+              <input type="radio" name="sisdcSubTheme" value="துணைத்தலைப்பு 2: EV: Way Forward">
+              <div>
+                <div style="color:#4c1d95; font-weight:900;">துணைத்தலைப்பு 2: EV: Way Forward</div>
+                <div style="font-size:0.78rem; color:#64748b; margin-top:2px;">மின்சார வாகனங்கள்: எதிர்காலப் பாதை</div>
+              </div>
+            </label>
+            <label class="sisdc-subtheme-card">
+              <input type="radio" name="sisdcSubTheme" value="துணைத்தலைப்பு 3: Interstellar Habitats">
+              <div>
+                <div style="color:#4c1d95; font-weight:900;">துணைத்தலைப்பு 3: Interstellar Habitats</div>
+                <div style="font-size:0.78rem; color:#64748b; margin-top:2px;">விண்மீன்களுக்கு இடையேயான வாழ்விடங்கள்</div>
+              </div>
+            </label>
+            <label class="sisdc-subtheme-card">
+              <input type="radio" name="sisdcSubTheme" value="துணைத்தலைப்பு 4: Restoring Oceans - Preserving Generations">
+              <div>
+                <div style="color:#4c1d95; font-weight:900;">துணைத்தலைப்பு 4: Restoring Oceans - Preserving Generations</div>
+                <div style="font-size:0.78rem; color:#64748b; margin-top:2px;">பெருங்கடல்களை மீட்டெடுத்தல் - தலைமுறைகளைப் பாதுகாத்தல்</div>
+              </div>
+            </label>
+          </div>
+        </div>
+
+        <!-- SECTION 3: 3. குழு உறுப்பினர்கள் விவரம் (TEAM MEMBERS LIST – MAXIMUM 10 MEMBERS) -->
+        <div class="section-card" style="margin-bottom:18px; border-left:5px solid #047857;">
+          <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px; margin-bottom:10px;">
+            <h3 class="section-title" style="margin:0; color:#0f2942;"><span class="section-num" style="background:#047857;">3</span> குழு உறுப்பினர்கள் விவரம் (TEAM MEMBERS LIST – MAXIMUM 10 MEMBERS)</h3>
+            <span style="font-size:0.78rem; font-weight:800; color:#047857; background:#ecfdf5; border:1px solid #6ee7b7; padding:3px 10px; border-radius:999px;">
+              ⌨️ தமிழில் தட்டச்சு செய்தால் தானாக ஆங்கிலத்திலும், ஆங்கிலத்தில் தட்டச்சு செய்தால் தமிழிலும் நிரப்பப்படும்
+            </span>
+          </div>
+
+          <div style="overflow-x:auto;">
+            <table class="sisdc-members-table">
+              <thead>
+                <tr>
+                  <th style="width:55px;">வ.எண்</th>
+                  <th>மாணவர் பெயர் (தமிழில்) <span style="font-size:0.72rem; color:#fde047;">(தங்லீஷ்)</span></th>
+                  <th>Student Name (in English)</th>
+                  <th style="width:120px;">வகுப்பு (Class)</th>
+                  <th style="width:210px;">குழுவில் பங்கு (Role)</th>
+                </tr>
+              </thead>
+              <tbody id="sisdcMembersTableBody">
+                <!-- Populated dynamically for rows 1..10 -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div style="display:flex; justify-content:flex-end; gap:12px; flex-wrap:wrap; margin-top:16px;">
+          <button type="button" class="btn-sm" style="background:#0f766e; color:#ffffff; padding:12px 20px; font-size:0.95rem; font-weight:800;" onclick="downloadCurrentSchoolSisdcPdf()">
+            🖨️ படிவம் மாதிரி & PDF பதிவிறக்கம் (Download Official PDF)
+          </button>
+          <button type="submit" id="btnSubmitSisdcForm" class="btn-submit" style="background:linear-gradient(135deg, #6d28d9 0%, #4c1d95 100%); padding:12px 28px; font-size:1rem;">
+            💾 நாடகக் குழு விண்ணப்பத்தைச் சேமி & சமர்ப்பி (Save & Submit Drama Team)
+          </button>
+        </div>
+      </form>
     </div>
   </div>
 
@@ -1907,26 +2281,211 @@
       </div>
     </div>
 
-    <!-- ADMIN UNIFIED COMPETITION MODULE SWITCHER & OVERVIEW BAR -->
-    <div class="admin-module-control-bar" id="adminUnifiedModuleBar">
-      <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom:10px;">
+    <!-- HIDDEN LEGACY ADMIN MODULE BAR ELEMENTS FOR COMPATIBILITY -->
+    <div id="adminUnifiedModuleBar" style="display:none;"><span id="adminActiveModuleLabel"></span><div id="adminModuleFilterPills"></div></div>
+
+    <!-- ========================================================================= -->
+    <!-- ADMIN DASHBOARD: DEDICATED MODULE BOXES (நிர்வாகி முகப்பில் தனிப்பெட்டிகள்) -->
+    <!-- ========================================================================= -->
+    <div style="margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
+      <div style="font-size: 1.05rem; font-weight: 900; color: #0f172a;">
+        🛡️ மாவட்ட நிர்வாகி போட்டித் தொகுதிப் பெட்டிகள் (Select Competition Module Box to Manage):
+      </div>
+      <button type="button" class="btn-sm" style="background:#0f766e; color:#ffffff; font-weight:800; font-size:0.8rem; padding:6px 12px;" onclick="switchAdminDedicatedBox('SISF'); switchAdminSubTab('modules');">
+        🧩 அனைத்து போட்டித் தொகுதிகள் மேலாண்மை (Modules Settings)
+      </button>
+    </div>
+
+    <div class="dedicated-modules-two-box-grid" id="adminDedicatedModulesGrid">
+      <!-- ADMIN DEDICATED BOX 1: SISF 2026 -->
+      <div class="dedicated-module-box sisf-box active" id="admDedicatedBoxSisf" onclick="switchAdminDedicatedBox('SISF')">
         <div>
-          <div style="font-size:0.98rem; font-weight:900; color:#fde047; display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
-            <span>🧩 ஒருங்கிணைந்த மாவட்ட போட்டிகள் கட்டுப்பாட்டுத் தொகுதி (Active Competition Module Filter):</span>
-            <span id="adminActiveModuleLabel" style="background:#059669; color:#ffffff; padding:2px 10px; border-radius:999px; font-size:0.78rem;">🔬 தென்னிந்திய அறிவியல் கண்காட்சி (SISF 2026)</span>
+          <div style="display:flex; justify-content:space-between; align-items:center; gap:8px; margin-bottom:8px;">
+            <span style="background:#0284c7; color:#ffffff; font-weight:900; font-size:0.76rem; padding:4px 12px; border-radius:999px;">
+              🔬 MODULE 1: SISF - 2026 (நிர்வாகி தனிப்பெட்டி 1)
+            </span>
+            <span id="admBoxSisfCountBadge" style="background:#dbeafe; color:#1e40af; font-weight:900; font-size:0.78rem; padding:3px 10px; border-radius:999px;">
+              0 விண்ணப்பங்கள்
+            </span>
           </div>
-          <div style="font-size:0.78rem; color:#cbd5e1; margin-top:2px;">
-            கீழேயுள்ள போட்டித் தொகுதியைத் தேர்ந்தெடுத்து அந்தந்தப் போட்டியின் விண்ணப்பங்கள், வெற்றியாளர்கள், நடுவர்கள் மற்றும் சான்றிதழ்களை நிர்வகிக்கலாம்.
+          <div style="font-size:1.12rem; font-weight:900; color:#0f172a;">
+            மாவட்ட அளவிலான தென்னிந்திய அறிவியல் கண்காட்சி (SISF 2026)
+          </div>
+          <div style="font-size:0.78rem; font-weight:800; color:#0369a1; margin-top:2px;">
+            📍 மன்னர் மேல்நிலைப் பள்ளி, சிவகங்கை &nbsp;|&nbsp; 📅 03.11.2026 (10.00 AM)
+          </div>
+          <div style="display:grid; grid-template-columns:repeat(4, 1fr); gap:6px; margin-top:10px; text-align:center;">
+            <div style="background:#f8fafc; border:1px solid #cbd5e1; border-radius:8px; padding:6px 4px;">
+              <div id="admBoxSisfInd" style="font-size:1rem; font-weight:900; color:#2b6cb0;">0</div>
+              <div style="font-size:0.68rem; font-weight:800; color:#475569;">தனிநபர்</div>
+            </div>
+            <div style="background:#f8fafc; border:1px solid #cbd5e1; border-radius:8px; padding:6px 4px;">
+              <div id="admBoxSisfGrp" style="font-size:1rem; font-weight:900; color:#7c3aed;">0</div>
+              <div style="font-size:0.68rem; font-weight:800; color:#475569;">குழு</div>
+            </div>
+            <div style="background:#f8fafc; border:1px solid #cbd5e1; border-radius:8px; padding:6px 4px;">
+              <div id="admBoxSisfTch" style="font-size:1rem; font-weight:900; color:#0d9488;">0</div>
+              <div style="font-size:0.68rem; font-weight:800; color:#475569;">ஆசிரியர்</div>
+            </div>
+            <div style="background:#fffbeb; border:1px solid #fcd34d; border-radius:8px; padding:6px 4px;">
+              <div id="admBoxSisfWin" style="font-size:1rem; font-weight:900; color:#d97706;">0</div>
+              <div style="font-size:0.68rem; font-weight:800; color:#92400e;">வெற்றியாளர்</div>
+            </div>
           </div>
         </div>
-        <div style="display:flex; gap:8px; flex-wrap:wrap;">
-          <button type="button" class="btn-sm" style="background:#f59e0b; color:#0f172a; font-weight:900; font-size:0.8rem; padding:6px 12px;" onclick="switchAdminSubTab('modules')">
-            ➕ போட்டித் தொகுதிகள் மேலாண்மை (Manage Modules)
+        <div style="display:flex; justify-content:space-between; align-items:center; padding-top:8px; border-top:1px dashed #cbd5e1;">
+          <span style="font-size:0.76rem; font-weight:800; color:#047857;">விண்ணப்பங்கள், நடுவர், வருகை & சான்றிதழ்</span>
+          <button type="button" class="btn-sm" style="background:#0284c7; color:#ffffff; padding:7px 14px; font-weight:800; font-size:0.8rem;" onclick="event.stopPropagation(); switchAdminDedicatedBox('SISF')">
+            🔬 SISF நிர்வாகப் பலகை (Manage SISF)
           </button>
         </div>
       </div>
-      <div id="adminModuleFilterPills" style="display:flex; gap:8px; flex-wrap:wrap;"></div>
+
+      <!-- ADMIN DEDICATED BOX 2: SISDC SCIENCE DRAMA 2026 -->
+      <div class="dedicated-module-box sisdc-box" id="admDedicatedBoxSisdc" onclick="switchAdminDedicatedBox('SISDC')">
+        <div>
+          <div style="display:flex; justify-content:space-between; align-items:center; gap:8px; margin-bottom:8px;">
+            <span style="background:#7c3aed; color:#ffffff; font-weight:900; font-size:0.76rem; padding:4px 12px; border-radius:999px;">
+              🎭 MODULE 2: SISDC - 2026 (நிர்வாகி தனிப்பெட்டி 2)
+            </span>
+            <span id="admBoxSisdcCountBadge" style="background:#f3e8ff; color:#6b21a8; font-weight:900; font-size:0.78rem; padding:3px 10px; border-radius:999px;">
+              0 நாடகக் குழுக்கள்
+            </span>
+          </div>
+          <div style="font-size:1.12rem; font-weight:900; color:#4c1d95;">
+            தென்னிந்திய அறிவியல் நாடக விழா 2026 (SISDC)
+          </div>
+          <div style="font-size:0.78rem; font-weight:800; color:#6d28d9; margin-top:2px;">
+            📍 மன்னர் மேல்நிலைப் பள்ளி, சிவகங்கை &nbsp;|&nbsp; 📅 04.11.2026
+          </div>
+          <div style="display:grid; grid-template-columns:repeat(4, 1fr); gap:6px; margin-top:10px; text-align:center;">
+            <div style="background:#faf5ff; border:1px solid #d8b4fe; border-radius:8px; padding:6px 4px;">
+              <div id="admBoxSisdcTeams" style="font-size:1rem; font-weight:900; color:#6d28d9;">0</div>
+              <div style="font-size:0.68rem; font-weight:800; color:#475569;">குழுக்கள்</div>
+            </div>
+            <div style="background:#faf5ff; border:1px solid #d8b4fe; border-radius:8px; padding:6px 4px;">
+              <div id="admBoxSisdcMembers" style="font-size:1rem; font-weight:900; color:#1d4ed8;">0</div>
+              <div style="font-size:0.68rem; font-weight:800; color:#475569;">மாணவர்கள்</div>
+            </div>
+            <div style="background:#faf5ff; border:1px solid #d8b4fe; border-radius:8px; padding:6px 4px;">
+              <div id="admBoxSisdcTaEn" style="font-size:1rem; font-weight:900; color:#047857;">0 / 0</div>
+              <div style="font-size:0.68rem; font-weight:800; color:#475569;">தமிழ் / EN</div>
+            </div>
+            <div style="background:#fffbeb; border:1px solid #fcd34d; border-radius:8px; padding:6px 4px;">
+              <div id="admBoxSisdcWin" style="font-size:1rem; font-weight:900; color:#d97706;">0</div>
+              <div style="font-size:0.68rem; font-weight:800; color:#92400e;">வெற்றியாளர்</div>
+            </div>
+          </div>
+        </div>
+        <div style="display:flex; justify-content:space-between; align-items:center; padding-top:8px; border-top:1px dashed #d8b4fe;">
+          <span style="font-size:0.76rem; font-weight:800; color:#6d28d9;">குழு பதிவுப் படிவம் PDF, 10 உறுப்பினர்கள் & அறிக்கை</span>
+          <button type="button" class="btn-sm" style="background:#7c3aed; color:#ffffff; padding:7px 14px; font-weight:800; font-size:0.8rem;" onclick="event.stopPropagation(); switchAdminDedicatedBox('SISDC')">
+            🎭 நாடக விழா நிர்வாகப் பலகை (Manage SISDC)
+          </button>
+        </div>
+      </div>
     </div>
+
+    <!-- ========================================================================= -->
+    <!-- ADMIN MODULE 2 WORKSPACE: SISDC 2026 (தென்னிந்திய அறிவியல் நாடக விழா 2026) -->
+    <!-- ========================================================================= -->
+    <div class="module-workspace-frame sisdc-frame" id="adminSisdcWorkspace" style="display: none;">
+      <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom:14px; padding-bottom:10px; border-bottom:2px solid #d8b4fe;">
+        <div>
+          <span style="background:#7c3aed; color:#fff; font-weight:900; font-size:0.76rem; padding:4px 10px; border-radius:6px;">ADMIN MODULE 2 – SISDC 2026</span>
+          <span style="font-size:1.16rem; font-weight:900; color:#4c1d95; margin-left:8px;">🎭 தென்னிந்திய அறிவியல் நாடக விழா 2026 – மாவட்ட நிர்வாகி கட்டுப்பாட்டுப் பெட்டி</span>
+          <div style="font-size:0.82rem; color:#475569; font-weight:700; margin-top:3px;">
+            📍 மன்னர் மேல்நிலைப் பள்ளி, சிவகங்கை &nbsp;|&nbsp; 📅 நாள்: 04.11.2026 &nbsp;|&nbsp; பள்ளிகளிலிருந்து பெறப்பட்ட நாடகக் குழுக்களின் பதிவுகள், 10 உறுப்பினர்கள் பட்டியல் & அதிகாரப்பூர்வ படிவம் PDF
+          </div>
+        </div>
+        <div style="display:flex; gap:8px; flex-wrap:wrap;">
+          <button type="button" class="btn-sm" style="background:#15803d; color:#ffffff; padding:9px 14px; font-weight:800;" onclick="exportAdminSisdcTeamsCsv()">
+            📊 நாடகக் குழுக்கள் பட்டியல் Excel / CSV
+          </button>
+          <button type="button" class="btn-sm" style="background:#1e3a8a; color:#ffffff; padding:9px 14px; font-weight:800;" onclick="downloadAdminSisdcMasterReportPdf()">
+            🖨️ அனைத்து நாடகக் குழுக்கள் அறிக்கை PDF
+          </button>
+          <button type="button" class="btn-sm" style="background:#0284c7; color:#ffffff; padding:9px 14px; font-weight:800;" onclick="switchAdminDedicatedBox('SISF')">
+            ⬅️ SISF அறிவியல் கண்காட்சி நிர்வாகப் பெட்டிக்குச் செல்
+          </button>
+        </div>
+      </div>
+
+      <!-- Sub-theme Breakdown Stat Cards -->
+      <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(200px, 1fr)); gap:10px; margin-bottom:16px;">
+        <div style="background:#ffffff; border:1.5px solid #d8b4fe; border-top:4px solid #7c3aed; border-radius:10px; padding:10px 12px;">
+          <div style="font-size:1.35rem; font-weight:900; color:#6d28d9;" id="admSisdcStatSub1">0</div>
+          <div style="font-size:0.78rem; font-weight:800; color:#334155;">துணைத்தலைப்பு 1: AI: Friend, Tool or Threat?</div>
+        </div>
+        <div style="background:#ffffff; border:1.5px solid #d8b4fe; border-top:4px solid #0284c7; border-radius:10px; padding:10px 12px;">
+          <div style="font-size:1.35rem; font-weight:900; color:#0284c7;" id="admSisdcStatSub2">0</div>
+          <div style="font-size:0.78rem; font-weight:800; color:#334155;">துணைத்தலைப்பு 2: EV: Way Forward</div>
+        </div>
+        <div style="background:#ffffff; border:1.5px solid #d8b4fe; border-top:4px solid #0d9488; border-radius:10px; padding:10px 12px;">
+          <div style="font-size:1.35rem; font-weight:900; color:#0d9488;" id="admSisdcStatSub3">0</div>
+          <div style="font-size:0.78rem; font-weight:800; color:#334155;">துணைத்தலைப்பு 3: Interstellar Habitats</div>
+        </div>
+        <div style="background:#ffffff; border:1.5px solid #d8b4fe; border-top:4px solid #d97706; border-radius:10px; padding:10px 12px;">
+          <div style="font-size:1.35rem; font-weight:900; color:#d97706;" id="admSisdcStatSub4">0</div>
+          <div style="font-size:0.78rem; font-weight:800; color:#334155;">துணைத்தலைப்பு 4: Restoring Oceans</div>
+        </div>
+      </div>
+
+      <!-- Filter Bar for SISDC Admin Table -->
+      <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; background:#f8fafc; border:1.5px solid #cbd5e1; border-radius:10px; padding:10px 14px; margin-bottom:14px;">
+        <div style="display:flex; gap:10px; flex-wrap:wrap; align-items:center;">
+          <select id="admSisdcSubThemeFilter" class="form-control" style="padding:6px 10px; font-size:0.84rem; font-weight:700; width:270px;" onchange="renderAdminSisdcTeamsTable()">
+            <option value="ALL">அனைத்துத் துணைக்கருப்பொருள்கள் (All Sub-Themes)</option>
+            <option value="துணைத்தலைப்பு 1">துணைத்தலைப்பு 1: Artificial Intelligence</option>
+            <option value="துணைத்தலைப்பு 2">துணைத்தலைப்பு 2: EV: Way Forward</option>
+            <option value="துணைத்தலைப்பு 3">துணைத்தலைப்பு 3: Interstellar Habitats</option>
+            <option value="துணைத்தலைப்பு 4">துணைத்தலைப்பு 4: Restoring Oceans</option>
+          </select>
+          <select id="admSisdcLangFilter" class="form-control" style="padding:6px 10px; font-size:0.84rem; font-weight:700; width:160px;" onchange="renderAdminSisdcTeamsTable()">
+            <option value="ALL">அனைத்து மொழிகள்</option>
+            <option value="தமிழ்">தமிழ் (Tamil)</option>
+            <option value="English">English</option>
+          </select>
+          <input type="text" id="admSisdcSearchInp" class="form-control" placeholder="🔍 பள்ளி, U.NO, நாடகத் தலைப்பு, ஆசிரியர் தேடுக..." style="padding:6px 12px; font-size:0.84rem; width:260px;" oninput="renderAdminSisdcTeamsTable()">
+        </div>
+      </div>
+
+      <!-- SISDC Registered Drama Teams Table -->
+      <div class="admin-table-wrap">
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th style="width:45px;">வ.எண்</th>
+              <th style="width:110px;">Team No (குழு எண்)</th>
+              <th>U.NO & பள்ளியின் பெயர் (School Name)</th>
+              <th>நாடகத்தின் தலைப்பு, மொழி & கால அளவு</th>
+              <th>துணைக்கருப்பொருள் (Sub-Theme)</th>
+              <th>வழிகாட்டி ஆசிரியர் & கைபேசி</th>
+              <th>குழு உறுப்பினர்கள் (10 Members)</th>
+              <th style="width:190px;">பரிசு நிலை / தகுதி தேர்வு</th>
+              <th>செயல்கள் (Actions)</th>
+            </tr>
+          </thead>
+          <tbody id="admSisdcTeamsTableBody">
+            <tr><td colspan="9" style="text-align:center; padding:20px; color:#64748b;">இன்னும் அறிவியல் நாடகக் குழு விண்ணப்பங்கள் பதிவு செய்யப்படவில்லை.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ========================================================================= -->
+    <!-- ADMIN MODULE 1 WORKSPACE: SISF 2026 (தென்னிந்திய அறிவியல் கண்காட்சி 2026)  -->
+    <!-- ========================================================================= -->
+    <div class="module-workspace-frame" id="adminSisfWorkspace">
+      <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom:14px; padding-bottom:10px; border-bottom:2px solid #bae6fd;">
+        <div>
+          <span style="background:#0284c7; color:#fff; font-weight:900; font-size:0.76rem; padding:4px 10px; border-radius:6px;">ADMIN MODULE 1 – SISF 2026</span>
+          <span style="font-size:1.16rem; font-weight:900; color:#0f172a; margin-left:8px;">🔬 மாவட்ட அளவிலான தென்னிந்திய அறிவியல் கண்காட்சி (SISF 2026) – நிர்வாகி கட்டுப்பாட்டுப் பெட்டி</span>
+        </div>
+        <button type="button" class="btn-sm" style="background:#7c3aed; color:#ffffff; padding:8px 14px; font-weight:800;" onclick="switchAdminDedicatedBox('SISDC')">
+          🎭 அறிவியல் நாடக விழா (SISDC 2026) நிர்வாகப் பெட்டிக்கு மாறுக ➔
+        </button>
+      </div>
 
     <!-- ADMIN REGISTRATION DEADLINE CONTROL PANEL -->
     <div class="admin-panel-box" id="admDeadlineControlPanel" style="border: 2px solid #0284c7; background: linear-gradient(135deg, #f0f9ff 0%, #fffbeb 100%); margin-bottom: 16px; padding: 14px 18px;">
@@ -3054,6 +3613,8 @@
         </div>
       </div>
     </div>
+
+    </div><!-- End of #adminSisfWorkspace -->
 
     <!-- ADMIN 2-STEP DELETE CONFIRMATION MODAL -->
     <div id="adminConfirmDeleteModal" style="display: none; position: fixed; inset: 0; background: rgba(15, 23, 42, 0.72); z-index: 99999; align-items: center; justify-content: center; padding: 16px; backdrop-filter: blur(3px);">
@@ -4388,7 +4949,7 @@
         if (fVenue) fVenue.style.display = "none";
         try { if (typeof updatePortalBannersForActiveModule === "function") updatePortalBannersForActiveModule(); } catch (e) {}
       } else if (viewName === "dashboard") {
-        if (hubBar) hubBar.style.display = "block";
+        if (hubBar) hubBar.style.display = "none";
         if (topVenue) topVenue.style.display = "flex";
         if (fVenue) fVenue.style.display = "inline-flex";
         if (vD) vD.classList.add("active");
@@ -5448,7 +6009,7 @@ document.getElementById("regStep1").style.display = "none";
     renderCategoryCard("Group", schoolApplications.Group);
     renderCategoryCard("Teacher", schoolApplications.Teacher);
     try { renderSchoolNotificationsUI(); } catch (nErr) { console.warn("Notification render notice:", nErr); }
-    try { if (typeof renderSchoolUnifiedModulesStrip === "function") renderSchoolUnifiedModulesStrip(); } catch (mErr) {}
+    try { if (typeof renderSchoolUnifiedModulesStrip === "function") renderSchoolUnifiedModulesStrip(); if (typeof updateDedicatedModuleBoxBadges === "function") updateDedicatedModuleBoxBadges(); if (typeof populateSchoolSisdcFormAndSummary === "function") populateSchoolSisdcFormAndSummary(); } catch (mErr) {}
   }
 
   function renderCategoryCard(catKey, appData) {
@@ -9556,7 +10117,7 @@ ${n.message}
     renderAdminSchoolsTable();
     populateSubmittedAppsDropdownForWinner();
     try { if (typeof renderAdminModulesControlBar === "function") renderAdminModulesControlBar(); } catch (e) {}
-    try { if (typeof renderAdminModulesTable === "function") renderAdminModulesTable(); } catch (e) {}
+    try { if (typeof renderAdminModulesTable === "function") renderAdminModulesTable(); if (typeof updateDedicatedModuleBoxBadges === "function") updateDedicatedModuleBoxBadges(); if (typeof renderAdminSisdcTeamsTable === "function") renderAdminSisdcTeamsTable(); } catch (e) {}
   }
 
   function filterAdminAppsByCat(cat) {
@@ -14872,6 +15433,1051 @@ ${n.message}
     loadCompetitionModulesIntoMemory();
     renderUnifiedModulesHub();
     updatePortalBannersForActiveModule();
+  }
+
+
+  // =========================================================================
+  // DEDICATED MODULE BOX SWITCHER & SISDC SCIENCE DRAMA CONTEST 2026 ENGINE
+  // =========================================================================
+  const SISDC_ROLES = [
+    { sno: 1, roleTa: "மேடை நடிகர் 1", roleEn: "(Artist)", fullRole: "மேடை நடிகர் 1 (Artist)", hasClass: true },
+    { sno: 2, roleTa: "மேடை நடிகர் 2", roleEn: "(Artist)", fullRole: "மேடை நடிகர் 2 (Artist)", hasClass: true },
+    { sno: 3, roleTa: "மேடை நடிகர் 3", roleEn: "(Artist)", fullRole: "மேடை நடிகர் 3 (Artist)", hasClass: true },
+    { sno: 4, roleTa: "மேடை நடிகர் 4", roleEn: "(Artist)", fullRole: "மேடை நடிகர் 4 (Artist)", hasClass: true },
+    { sno: 5, roleTa: "மேடை நடிகர் 5", roleEn: "(Artist)", fullRole: "மேடை நடிகர் 5 (Artist)", hasClass: true },
+    { sno: 6, roleTa: "மேடை நடிகர் 6", roleEn: "(Artist)", fullRole: "மேடை நடிகர் 6 (Artist)", hasClass: true },
+    { sno: 7, roleTa: "மேடை நடிகர் 7", roleEn: "(Artist)", fullRole: "மேடை நடிகர் 7 (Artist)", hasClass: true },
+    { sno: 8, roleTa: "மேடை நடிகர் 8", roleEn: "(Artist)", fullRole: "மேடை நடிகர் 8 (Artist)", hasClass: true },
+    { sno: 9, roleTa: "இயக்குனர்", roleEn: "(Director)", fullRole: "இயக்குனர் (Director)", hasClass: false },
+    { sno: 10, roleTa: "திரைக்கதை எழுத்தாளர்", roleEn: "(Script Writer)", fullRole: "திரைக்கதை எழுத்தாளர் (Script Writer)", hasClass: false }
+  ];
+
+  let activeSchoolDedicatedBox = "SISF";
+  let activeAdminDedicatedBox = "SISF";
+
+  function initSisdcMembersTableRows() {
+    const tbody = document.getElementById("sisdcMembersTableBody");
+    if (!tbody) return;
+    tbody.innerHTML = SISDC_ROLES.map((r, idx) => {
+      const i = idx + 1;
+      const classCellHtml = r.hasClass
+        ? `<select id="sisdcMemClass_${i}" class="form-control" style="padding:5px 6px; font-weight:700; font-size:0.84rem; text-align:center;">
+             <option value="">- வகுப்பு -</option>
+             <option value="VI">VI (6)</option>
+             <option value="VII">VII (7)</option>
+             <option value="VIII">VIII (8)</option>
+             <option value="IX">IX (9)</option>
+             <option value="X">X (10)</option>
+           </select>`
+        : `<input type="text" id="sisdcMemClass_${i}" class="form-control" value="-" style="padding:5px 6px; font-weight:800; font-size:0.84rem; text-align:center; color:#475569;" title="வகுப்பு (மாணவர் எனில் வகுப்பு குறிப்பிடலாம், அல்லது '-' என விடலாம்)">`;
+
+      return `
+        <tr>
+          <td style="text-align:center; font-weight:900; color:#1e3a8a;">${i}</td>
+          <td>
+            <input type="text" id="sisdcMemNameTa_${i}" class="form-control tanglish-enabled" data-sync-fn="syncSisdcMemberTa_${i}" oninput="handleSisdcMemberTaInput(${i})" placeholder="பெயர் தமிழில் (வ.எண் ${i})" ${i === 1 ? "required" : ""} style="padding:6px 8px; font-size:0.86rem;">
+          </td>
+          <td>
+            <input type="text" id="sisdcMemNameEn_${i}" class="form-control" oninput="handleSisdcMemberEnInput(${i})" placeholder="Student / Member Name in English" ${i === 1 ? "required" : ""} style="padding:6px 8px; font-size:0.86rem;">
+          </td>
+          <td style="text-align:center;">${classCellHtml}</td>
+          <td style="font-weight:800; color:#0f2942; background:#f1f5f9;">
+            <div>${r.roleTa}</div>
+            <div style="font-size:0.76rem; color:#475569;">${r.roleEn}</div>
+          </td>
+        </tr>
+      `;
+    }).join("");
+
+    // Register dynamic sync callbacks for Tanglish engine
+    for (let i = 1; i <= 10; i++) {
+      window["syncSisdcMemberTa_" + i] = function() { handleSisdcMemberTaInput(i); };
+    }
+    try { attachTanglishHandlers(); } catch (e) {}
+  }
+
+  let sisdcTranslateTimers = {};
+  function handleSisdcTeacherTaInput() {
+    const taEl = document.getElementById("sisdcTeacherNameTa");
+    const enEl = document.getElementById("sisdcTeacherNameEn");
+    if (!taEl || !enEl) return;
+    clearTimeout(sisdcTranslateTimers.tTa);
+    sisdcTranslateTimers.tTa = setTimeout(async () => {
+      const v = taEl.value.trim();
+      if (!v) return;
+      const tr = await translateTextSmart(v, "ta", "en");
+      if (tr && !enEl.value.trim()) enEl.value = formatNameInitialLast(tr, false);
+    }, 600);
+  }
+  function handleSisdcTeacherEnInput() {
+    const taEl = document.getElementById("sisdcTeacherNameTa");
+    const enEl = document.getElementById("sisdcTeacherNameEn");
+    if (!taEl || !enEl) return;
+    clearTimeout(sisdcTranslateTimers.tEn);
+    sisdcTranslateTimers.tEn = setTimeout(async () => {
+      const v = enEl.value.trim();
+      if (!v) return;
+      const tr = await translateTextSmart(v, "en", "ta");
+      if (tr && !taEl.value.trim()) taEl.value = formatNameInitialLast(tr, true);
+    }, 600);
+  }
+  function handleSisdcTitleTaInput() {
+    const taEl = document.getElementById("sisdcDramaTitleTa");
+    const enEl = document.getElementById("sisdcDramaTitleEn");
+    if (!taEl || !enEl) return;
+    clearTimeout(sisdcTranslateTimers.titTa);
+    sisdcTranslateTimers.titTa = setTimeout(async () => {
+      const v = taEl.value.trim();
+      if (!v) return;
+      const tr = await translateTextSmart(v, "ta", "en");
+      if (tr) enEl.value = tr;
+    }, 600);
+  }
+  function handleSisdcTitleEnInput() {
+    const taEl = document.getElementById("sisdcDramaTitleTa");
+    const enEl = document.getElementById("sisdcDramaTitleEn");
+    if (!taEl || !enEl) return;
+    clearTimeout(sisdcTranslateTimers.titEn);
+    sisdcTranslateTimers.titEn = setTimeout(async () => {
+      const v = enEl.value.trim();
+      if (!v) return;
+      const tr = await translateTextSmart(v, "en", "ta");
+      if (tr) taEl.value = tr;
+    }, 600);
+  }
+  function handleSisdcMemberTaInput(idx) {
+    const taEl = document.getElementById("sisdcMemNameTa_" + idx);
+    const enEl = document.getElementById("sisdcMemNameEn_" + idx);
+    if (!taEl || !enEl) return;
+    clearTimeout(sisdcTranslateTimers["mTa_" + idx]);
+    sisdcTranslateTimers["mTa_" + idx] = setTimeout(async () => {
+      const v = taEl.value.trim();
+      if (!v) return;
+      const tr = await translateTextSmart(v, "ta", "en");
+      if (tr) enEl.value = formatNameInitialLast(tr, false);
+    }, 650);
+  }
+  function handleSisdcMemberEnInput(idx) {
+    const taEl = document.getElementById("sisdcMemNameTa_" + idx);
+    const enEl = document.getElementById("sisdcMemNameEn_" + idx);
+    if (!taEl || !enEl) return;
+    clearTimeout(sisdcTranslateTimers["mEn_" + idx]);
+    sisdcTranslateTimers["mEn_" + idx] = setTimeout(async () => {
+      const v = enEl.value.trim();
+      if (!v) return;
+      const tr = await translateTextSmart(v, "en", "ta");
+      if (tr) taEl.value = formatNameInitialLast(tr, true);
+    }, 650);
+  }
+
+  function getAllSisdcTeamsFromStorage() {
+    let list = [];
+    try {
+      const raw = localStorage.getItem("SISDC_ALL_TEAMS_2026");
+      if (raw) {
+        const parsed = JSON.parse(raw);
+        if (Array.isArray(parsed)) list = parsed;
+      }
+    } catch (e) {}
+    return list;
+  }
+
+  function saveAllSisdcTeamsToStorage(list) {
+    try {
+      localStorage.setItem("SISDC_ALL_TEAMS_2026", JSON.stringify(list || []));
+    } catch (e) {}
+  }
+
+  function getSchoolSisdcRecord(udise, uno) {
+    const cleanUno = String(uno || "").replace(/^0+/, "").trim();
+    const cleanUdise = String(udise || "").trim();
+    try {
+      const directRaw = (cleanUdise && localStorage.getItem("SISDC_SCHOOL_TEAM_" + cleanUdise)) ||
+                        (cleanUno && localStorage.getItem("SISDC_SCHOOL_TEAM_" + cleanUno));
+      if (directRaw) {
+        return JSON.parse(directRaw);
+      }
+    } catch (e) {}
+    const all = getAllSisdcTeamsFromStorage();
+    return all.find(t => (cleanUdise && String(t.udiseNo || "") === cleanUdise) || (cleanUno && String(t.uNo || "").replace(/^0+/, "") === cleanUno)) || null;
+  }
+
+  function saveSchoolSisdcRecord(record) {
+    if (!record) return;
+    const cleanUno = String(record.uNo || "").replace(/^0+/, "").trim();
+    const cleanUdise = String(record.udiseNo || "").trim();
+    try {
+      if (cleanUdise) localStorage.setItem("SISDC_SCHOOL_TEAM_" + cleanUdise, JSON.stringify(record));
+      if (cleanUno) localStorage.setItem("SISDC_SCHOOL_TEAM_" + cleanUno, JSON.stringify(record));
+    } catch (e) {}
+
+    const all = getAllSisdcTeamsFromStorage();
+    const idx = all.findIndex(t => (cleanUdise && String(t.udiseNo || "") === cleanUdise) || (cleanUno && String(t.uNo || "").replace(/^0+/, "") === cleanUno));
+    if (idx >= 0) all[idx] = record;
+    else all.push(record);
+    saveAllSisdcTeamsToStorage(all);
+  }
+
+  function switchSchoolModuleBox(boxType) {
+    activeSchoolDedicatedBox = (boxType === "SISDC") ? "SISDC" : "SISF";
+    const bSisf = document.getElementById("schoolBoxSisf");
+    const bSisdc = document.getElementById("schoolBoxSisdc");
+    const wSisf = document.getElementById("schoolSisfDedicatedWorkspace");
+    const wSisdc = document.getElementById("schoolSisdcDedicatedWorkspace");
+    const sisfInfo = document.getElementById("schoolBoxSisfSubInfo");
+    const sisdcInfo = document.getElementById("schoolBoxSisdcSubInfo");
+
+    if (bSisf) bSisf.classList.toggle("active", activeSchoolDedicatedBox === "SISF");
+    if (bSisdc) bSisdc.classList.toggle("active", activeSchoolDedicatedBox === "SISDC");
+    if (wSisf) wSisf.style.display = (activeSchoolDedicatedBox === "SISF") ? "block" : "none";
+    if (wSisdc) wSisdc.style.display = (activeSchoolDedicatedBox === "SISDC") ? "block" : "none";
+
+    if (sisfInfo) sisfInfo.innerText = (activeSchoolDedicatedBox === "SISF") ? "✓ தற்போது திறக்கப்பட்டுள்ளது" : "கிளிக் செய்து திறக்கவும்";
+    if (sisdcInfo) sisdcInfo.innerText = (activeSchoolDedicatedBox === "SISDC") ? "✓ தற்போது திறக்கப்பட்டுள்ளது" : "கிளிக் செய்து திறக்கவும்";
+
+    // Also update top header title to reflect active module when inside dashboard
+    const hTa = document.getElementById("headerTitleTa");
+    const hEn = document.getElementById("headerTitleEn");
+    const topMain = document.getElementById("topVenueMainPill");
+    const topSub = document.getElementById("topVenueSubtext");
+    if (activeSchoolDedicatedBox === "SISDC") {
+      if (hTa) hTa.innerText = "✨ தென்னிந்திய அறிவியல் நாடக விழா (SISDC - 2026) ✨";
+      if (hEn) hEn.innerText = "SOUTHERN INDIA SCIENCE DRAMA CONTEST (SISDC 2026) – DISTRICT LEVEL";
+      if (topMain) topMain.innerText = "🏛️ தென்னிந்திய அறிவியல் நாடக விழா 2026 மன்னர் மேல்நிலைப் பள்ளி, சிவகங்கையில் 04.11.2026 அன்று நடைபெறும்";
+      if (topSub) topSub.innerHTML = "📍 Venue: Mannar Higher Secondary School, Sivagangai &nbsp;|&nbsp; 📅 04.11.2026 &nbsp;|&nbsp; 🎭 குழு உறுப்பினர்கள்: அதிகபட்சம் 10 நபர்கள்";
+      populateSchoolSisdcFormAndSummary();
+    } else {
+      if (hTa) hTa.innerText = "✨ மாவட்ட அளவிலான தென்னிந்திய அறிவியல் கண்காட்சி (SISF - 2026) ✨";
+      if (hEn) hEn.innerText = "SOUTHERN INDIA SCIENCE FAIR (SISF 2026) – DISTRICT LEVEL";
+      if (topMain) topMain.innerText = "🏛️ மாவட்ட அளவிலான கண்காட்சி சிவகங்கை மன்னர் மேல்நிலைப்பள்ளியில் 03.11.2026 முற்பகல் 10.00 மணிக்கு நடைபெறும்";
+      if (topSub) topSub.innerHTML = `📍 Venue: Mannar Higher Secondary School, Sivagangai &nbsp;|&nbsp; 📅 03.11.2026 – 10.00 AM &nbsp;|&nbsp; <strong id="topLiveDeadlineText" style="color:#fde047; text-decoration:underline;">⏰ போட்டிகள் பதிவு கடைசி தேதி: ${getRegistrationDeadlineDisplay()}</strong>`;
+    }
+    updateDedicatedModuleBoxBadges();
+  }
+
+  function updateDedicatedModuleBoxBadges() {
+    if (loggedInSchool) {
+      const sisfCnt = ["Individual", "Group", "Teacher"].filter(k => Boolean(schoolApplications && schoolApplications[k])).length;
+      const b1 = document.getElementById("schoolBoxSisfStatusBadge");
+      if (b1) {
+        b1.innerText = `${sisfCnt} / 3 பிரிவுகள் பதிவு`;
+        b1.style.background = sisfCnt > 0 ? "#dcfce7" : "#f1f5f9";
+        b1.style.color = sisfCnt > 0 ? "#166534" : "#475569";
+      }
+
+      const sisdcRec = getSchoolSisdcRecord(loggedInSchool.udiseNo, loggedInSchool.uNo);
+      const b2 = document.getElementById("schoolBoxSisdcStatusBadge");
+      if (b2) {
+        if (sisdcRec) {
+          b2.innerText = `✅ சமர்ப்பிக்கப்பட்டது (${sisdcRec.teamNo || "SISDC"})`;
+          b2.style.background = "#dcfce7";
+          b2.style.color = "#166534";
+          b2.style.borderColor = "#86efac";
+        } else {
+          b2.innerText = "பதிவு செய்யப்படவில்லை";
+          b2.style.background = "#f1f5f9";
+          b2.style.color = "#475569";
+          b2.style.borderColor = "#cbd5e1";
+        }
+      }
+    }
+
+    // Update Admin Box Badges as well
+    const setTxt = (id, v) => { const el = document.getElementById(id); if (el) el.innerText = v; };
+    const indCount = (typeof adminAllApps !== "undefined" ? adminAllApps : []).filter(a => a.categoryOfEntry === "Individual").length;
+    const grpCount = (typeof adminAllApps !== "undefined" ? adminAllApps : []).filter(a => a.categoryOfEntry === "Group").length;
+    const tchCount = (typeof adminAllApps !== "undefined" ? adminAllApps : []).filter(a => a.categoryOfEntry === "Teacher").length;
+    const totSisf = indCount + grpCount + tchCount;
+    setTxt("admBoxSisfCountBadge", `${totSisf} விண்ணப்பங்கள்`);
+    setTxt("admBoxSisfInd", indCount);
+    setTxt("admBoxSisfGrp", grpCount);
+    setTxt("admBoxSisfTch", tchCount);
+    setTxt("admBoxSisfWin", (typeof adminWinnersList !== "undefined" ? adminWinnersList.length : 0));
+
+    const allSisdc = getAllSisdcTeamsFromStorage();
+    let totalMem = 0;
+    let taCnt = 0;
+    let enCnt = 0;
+    let winCnt = 0;
+    allSisdc.forEach(t => {
+      const mList = Array.isArray(t.members) ? t.members.filter(m => m && (m.nameTa || m.nameEn)) : [];
+      totalMem += mList.length;
+      if (t.language === "English") enCnt++;
+      else taCnt++;
+      if (t.prizeRank) winCnt++;
+    });
+    setTxt("admBoxSisdcCountBadge", `${allSisdc.length} நாடகக் குழுக்கள்`);
+    setTxt("admBoxSisdcTeams", allSisdc.length);
+    setTxt("admBoxSisdcMembers", totalMem);
+    setTxt("admBoxSisdcTaEn", `${taCnt} / ${enCnt}`);
+    setTxt("admBoxSisdcWin", winCnt);
+  }
+
+  function populateSchoolSisdcFormAndSummary() {
+    if (!loggedInSchool) return;
+    const tbody = document.getElementById("sisdcMembersTableBody");
+    if (tbody && tbody.children.length === 0) {
+      initSisdcMembersTableRows();
+    }
+
+    const sNameTa = document.getElementById("sisdcSchoolNameTa");
+    const sNameEn = document.getElementById("sisdcSchoolNameEn");
+    const rawTa = (loggedInSchool.nameTa || loggedInSchool.schoolAddress || "").replace(/\s*\([^)]*\)/g, "").trim();
+    if (sNameTa && !sNameTa.value) sNameTa.value = rawTa;
+    if (sNameEn && !sNameEn.value) sNameEn.value = loggedInSchool.nameEn || rawTa;
+
+    const rec = getSchoolSisdcRecord(loggedInSchool.udiseNo, loggedInSchool.uNo);
+    const sumBox = document.getElementById("sisdcSubmittedSummaryBox");
+    const sumDet = document.getElementById("sisdcSubmittedSummaryDetails");
+    const sumTno = document.getElementById("sisdcSummaryTeamNo");
+    const formTno = document.getElementById("sisdcFormTeamNoDisp");
+
+    if (rec) {
+      if (sumBox) sumBox.style.display = "block";
+      if (sumTno) sumTno.innerText = `Team No: ${rec.teamNo || "T-" + (rec.uNo || "01")}`;
+      if (formTno) formTno.innerText = rec.teamNo || ("T-" + (rec.uNo || "01"));
+      if (sNameTa) sNameTa.value = rec.schoolNameTa || rawTa;
+      if (sNameEn) sNameEn.value = rec.schoolNameEn || loggedInSchool.nameEn || "";
+      const tTa = document.getElementById("sisdcTeacherNameTa"); if (tTa) tTa.value = rec.guideTeacherNameTa || "";
+      const tEn = document.getElementById("sisdcTeacherNameEn"); if (tEn) tEn.value = rec.guideTeacherNameEn || "";
+      const tMob = document.getElementById("sisdcTeacherMobile"); if (tMob) tMob.value = rec.guideTeacherMobile || "";
+      const dTa = document.getElementById("sisdcDramaTitleTa"); if (dTa) dTa.value = rec.dramaTitleTa || "";
+      const dEn = document.getElementById("sisdcDramaTitleEn"); if (dEn) dEn.value = rec.dramaTitleEn || "";
+      const dur = document.getElementById("sisdcDurationMins"); if (dur) dur.value = rec.durationMins || 30;
+
+      document.querySelectorAll('input[name="sisdcLanguage"]').forEach(r => {
+        r.checked = (r.value === (rec.language || "தமிழ்"));
+      });
+      document.querySelectorAll('input[name="sisdcSubTheme"]').forEach(r => {
+        if (rec.subTheme && r.value.includes(rec.subTheme.slice(0, 16))) r.checked = true;
+      });
+
+      if (Array.isArray(rec.members)) {
+        rec.members.forEach((m, idx) => {
+          const i = idx + 1;
+          const mTa = document.getElementById("sisdcMemNameTa_" + i);
+          const mEn = document.getElementById("sisdcMemNameEn_" + i);
+          const mCl = document.getElementById("sisdcMemClass_" + i);
+          if (mTa) mTa.value = m.nameTa || "";
+          if (mEn) mEn.value = m.nameEn || "";
+          if (mCl && m.studentClass) mCl.value = m.studentClass;
+        });
+      }
+
+      const filledMembers = (rec.members || []).filter(m => m && (m.nameTa || m.nameEn));
+      if (sumDet) {
+        sumDet.innerHTML = `
+          <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(240px, 1fr)); gap:8px;">
+            <div><strong>🎭 நாடகத்தின் தலைப்பு:</strong> ${rec.dramaTitleTa || "-"} ${rec.dramaTitleEn ? " / " + rec.dramaTitleEn : ""}</div>
+            <div><strong>🗣️ மொழி & கால அளவு:</strong> ${rec.language || "தமிழ்"} (${rec.durationMins || 30} நிமிடம்)</div>
+            <div><strong>🎯 துணைக்கருப்பொருள்:</strong> ${rec.subTheme || "-"}</div>
+            <div><strong>👨‍🏫 வழிகாட்டி ஆசிரியர்:</strong> ${rec.guideTeacherNameTa || "-"} (${rec.guideTeacherMobile || "-"})</div>
+            <div><strong>👥 பதிவு செய்யப்பட்ட குழு உறுப்பினர்கள்:</strong> ${filledMembers.length} / 10 நபர்கள்</div>
+            <div><strong>🕒 சமர்ப்பித்த நேரம்:</strong> ${rec.timestamp || "-"}</div>
+          </div>
+          ${rec.prizeRank ? `<div style="margin-top:10px; background:#fef3c7; border:1.5px solid #d97706; border-radius:8px; padding:8px 12px; color:#92400e; font-weight:900;">🏆 வாழ்த்துகள்! மாவட்ட அளவிலான அறிவியல் நாடக விழா பரிசு நிலை: <span style="color:#b91c1c;">${rec.prizeRank}</span></div>` : ""}
+        `;
+      }
+    } else {
+      if (sumBox) sumBox.style.display = "none";
+      if (formTno) formTno.innerText = "T-" + (loggedInSchool.uNo || "Auto");
+    }
+  }
+
+  function scrollToSisdcForm() {
+    const f = document.getElementById("sisdcTeamRegistrationForm");
+    if (f) f.scrollIntoView({ behavior: "smooth", block: "start" });
+  }
+
+  function collectCurrentSisdcFormObject() {
+    const uNo = (loggedInSchool && loggedInSchool.uNo) ? String(loggedInSchool.uNo).replace(/^0+/, "") : "101";
+    const udiseNo = (loggedInSchool && loggedInSchool.udiseNo) ? String(loggedInSchool.udiseNo) : "";
+    const existing = loggedInSchool ? getSchoolSisdcRecord(udiseNo, uNo) : null;
+    const teamNo = (existing && existing.teamNo) ? existing.teamNo : ("T-" + uNo);
+
+    const schoolNameTa = (document.getElementById("sisdcSchoolNameTa")?.value || (loggedInSchool && loggedInSchool.nameTa) || "").trim();
+    const schoolNameEn = (document.getElementById("sisdcSchoolNameEn")?.value || (loggedInSchool && loggedInSchool.nameEn) || "").trim();
+    const guideTeacherNameTa = formatNameInitialLast((document.getElementById("sisdcTeacherNameTa")?.value || "").trim(), true);
+    const guideTeacherNameEn = formatNameInitialLast((document.getElementById("sisdcTeacherNameEn")?.value || "").trim(), false);
+    const guideTeacherMobile = (document.getElementById("sisdcTeacherMobile")?.value || "").trim();
+    const dramaTitleTa = (document.getElementById("sisdcDramaTitleTa")?.value || "").trim();
+    const dramaTitleEn = (document.getElementById("sisdcDramaTitleEn")?.value || "").trim();
+    const langEl = document.querySelector('input[name="sisdcLanguage"]:checked');
+    const language = langEl ? langEl.value : "தமிழ்";
+    const durationMins = Math.min(30, Math.max(1, parseInt(document.getElementById("sisdcDurationMins")?.value || "30", 10) || 30));
+    const subEl = document.querySelector('input[name="sisdcSubTheme"]:checked');
+    const subTheme = subEl ? subEl.value : "துணைத்தலைப்பு 1: Artificial Intelligence: Friend, Tool or Threat?";
+
+    const members = SISDC_ROLES.map((r, idx) => {
+      const i = idx + 1;
+      const nTa = formatNameInitialLast((document.getElementById("sisdcMemNameTa_" + i)?.value || "").trim(), true);
+      const nEn = formatNameInitialLast((document.getElementById("sisdcMemNameEn_" + i)?.value || "").trim(), false);
+      const cl = (document.getElementById("sisdcMemClass_" + i)?.value || (r.hasClass ? "" : "-")).trim();
+      return {
+        sno: i,
+        nameTa: nTa,
+        nameEn: nEn,
+        studentClass: cl || (r.hasClass ? "-" : "-"),
+        roleTa: r.roleTa,
+        roleEn: r.roleEn,
+        fullRole: r.fullRole
+      };
+    });
+
+    return {
+      action: "save_sisdc_application",
+      moduleId: "SISDC",
+      teamNo,
+      uNo,
+      udiseNo,
+      block: (loggedInSchool && loggedInSchool.block) || "சிவகங்கை",
+      schoolNameTa,
+      schoolNameEn,
+      schoolNameCombined: schoolNameTa + (schoolNameEn ? " / " + schoolNameEn : ""),
+      guideTeacherNameTa,
+      guideTeacherNameEn,
+      guideTeacherName: guideTeacherNameTa + (guideTeacherNameEn ? " / " + guideTeacherNameEn : ""),
+      guideTeacherMobile,
+      dramaTitleTa,
+      dramaTitleEn,
+      dramaTitle: dramaTitleTa + (dramaTitleEn ? " / " + dramaTitleEn : ""),
+      language,
+      durationMins,
+      subTheme,
+      members,
+      prizeRank: (existing && existing.prizeRank) || "",
+      timestamp: new Date().toLocaleString("en-IN")
+    };
+  }
+
+  async function handleSisdcFormSubmit(event) {
+    event.preventDefault();
+    if (!loggedInSchool) {
+      alert("தயவுசெய்து முதலில் உங்கள் பள்ளியின் கணக்கில் உள்நுழையவும்.");
+      return;
+    }
+    const rec = collectCurrentSisdcFormObject();
+    const hasAtLeastOneMember = rec.members.some(m => m.nameTa || m.nameEn);
+    if (!hasAtLeastOneMember) {
+      alert("⚠️ குழு உறுப்பினர்கள் பட்டியலில் குறைந்தது ஒரு மாணவர் பெயரையாவது உள்ளிடவும்.");
+      return;
+    }
+
+    saveSchoolSisdcRecord(rec);
+    populateSchoolSisdcFormAndSummary();
+    updateDedicatedModuleBoxBadges();
+
+    try {
+      sendToScriptReliably(rec);
+    } catch (e) {}
+
+    showSisfToast("✅ தென்னிந்திய அறிவியல் நாடக விழா (SISDC 2026) குழு விண்ணப்பம் வெற்றிகரமாகச் சேமிக்கப்பட்டது! இப்போது அதிகாரப்பூர்வ படிவத்தை PDF ஆகப் பதிவிறக்கம் செய்யலாம்.");
+    const sumBox = document.getElementById("sisdcSubmittedSummaryBox");
+    if (sumBox) sumBox.scrollIntoView({ behavior: "smooth", block: "center" });
+  }
+
+  function downloadCurrentSchoolSisdcPdf() {
+    let rec = loggedInSchool ? getSchoolSisdcRecord(loggedInSchool.udiseNo, loggedInSchool.uNo) : null;
+    const formTitle = document.getElementById("sisdcDramaTitleTa")?.value?.trim();
+    if (formTitle) {
+      rec = collectCurrentSisdcFormObject();
+    }
+    if (!rec) {
+      rec = collectCurrentSisdcFormObject();
+    }
+    generateAndDownloadSisdcPdf(rec);
+  }
+
+  // =========================================================================
+  // EXACT REPLICA A4 PDF GENERATOR FOR "SISDC Registration Format.pdf"
+  // =========================================================================
+  function generateAndDownloadSisdcPdf(dramaData) {
+    const d = dramaData || {};
+    const cvs = document.createElement("canvas");
+    // High-Resolution A4 Portrait (1240 x 1754 px @ 150 DPI)
+    cvs.width = 1240;
+    cvs.height = 1754;
+    const ctx = cvs.getContext("2d");
+
+    // White background
+    ctx.fillStyle = "#ffffff";
+    ctx.fillRect(0, 0, cvs.width, cvs.height);
+
+    const leftX = 72;
+    const rightX = 1168;
+    const contentW = rightX - leftX; // 1096 px
+
+    // 1. TOP HEADER (Exact match to SISDC Registration Format.pdf)
+    ctx.textAlign = "center";
+    ctx.fillStyle = "#0f2942";
+    ctx.font = "bold 31px 'Mukta Malar', 'Noto Sans Tamil', sans-serif";
+    ctx.fillText("தென்னிந்திய அறிவியல் நாடக விழா 2026", 575, 88, 920);
+
+    ctx.fillStyle = "#0f172a";
+    ctx.font = "bold 21px 'Mukta Malar', 'Noto Sans Tamil', sans-serif";
+    ctx.fillText("மாவட்ட அளவிலான போட்டி - குழு பதிவுப் படிவம் (Official Team Registration Form)", 575, 124, 930);
+
+    ctx.fillStyle = "#475569";
+    ctx.font = "17px 'Mukta Malar', 'Noto Sans Tamil', sans-serif";
+    ctx.fillText("மன்னர் மேல்நிலைப் பள்ளி, சிவகங்கை  |  நாள்: 04.11.2026", 575, 155, 850);
+
+    // Top-Right "Team No" Box (Exact position & blue border as in PDF)
+    const boxX = 1052;
+    const boxY = 56;
+    const boxW = 114;
+    const boxH = 102;
+    ctx.strokeStyle = "#1e3a8a";
+    ctx.lineWidth = 2.5;
+    ctx.strokeRect(boxX, boxY, boxW, boxH);
+    ctx.fillStyle = "#1e3a8a";
+    ctx.font = "bold 16px sans-serif";
+    ctx.fillText("Team No", boxX + boxW / 2, boxY + 24);
+    if (d.teamNo) {
+      ctx.fillStyle = "#0f172a";
+      ctx.font = "bold 20px sans-serif";
+      ctx.fillText(String(d.teamNo), boxX + boxW / 2, boxY + 68, boxW - 10);
+    }
+
+    // Divider line under Header
+    ctx.strokeStyle = "#cbd5e1";
+    ctx.lineWidth = 1.8;
+    ctx.beginPath();
+    ctx.moveTo(leftX, 178);
+    ctx.lineTo(rightX, 178);
+    ctx.stroke();
+
+    // Helper: Section Title Banner with Left Blue Accent Bar
+    function drawSisdcSectionBanner(y, text) {
+      ctx.fillStyle = "#f1f5f9";
+      ctx.fillRect(leftX, y, contentW, 38);
+      ctx.fillStyle = "#1d4ed8";
+      ctx.fillRect(leftX, y, 6, 38);
+      ctx.textAlign = "left";
+      ctx.fillStyle = "#0f2942";
+      ctx.font = "bold 18.5px 'Mukta Malar', 'Noto Sans Tamil', sans-serif";
+      ctx.fillText(text, leftX + 16, y + 25);
+      return y + 48;
+    }
+
+    // =========================================================================
+    // SECTION 1: 1. பள்ளி மற்றும் நாடக விவரங்கள் (SCHOOL & DRAMA DETAILS)
+    // =========================================================================
+    let curY = drawSisdcSectionBanner(195, "1. பள்ளி மற்றும் நாடக விவரங்கள் (SCHOOL & DRAMA DETAILS)");
+
+    const t1X = leftX;
+    const t1W = contentW;
+    const col1W = 265;
+    const rowH = 58;
+
+    // Draw Section 1 Table (4 rows)
+    const schoolDisp = (d.schoolNameTa || d.schoolNameEn)
+      ? `${d.schoolNameTa || ""}${d.schoolNameEn && d.schoolNameEn !== d.schoolNameTa ? " (" + d.schoolNameEn + ")" : ""}${d.uNo ? " [U.NO: " + d.uNo + "]" : ""}`
+      : "";
+    const teacherDisp = (d.guideTeacherNameTa || d.guideTeacherNameEn)
+      ? `${d.guideTeacherNameTa || ""}${d.guideTeacherNameEn && d.guideTeacherNameEn !== d.guideTeacherNameTa ? " / " + d.guideTeacherNameEn : ""}`
+      : "";
+    const titleDisp = (d.dramaTitleTa || d.dramaTitleEn)
+      ? `${d.dramaTitleTa || ""}${d.dramaTitleEn && d.dramaTitleEn !== d.dramaTitleTa ? " / " + d.dramaTitleEn : ""}`
+      : "";
+
+    // Row 1: School Name
+    ctx.fillStyle = "#f8fafc";
+    ctx.fillRect(t1X, curY, col1W, rowH);
+    ctx.strokeStyle = "#94a3b8";
+    ctx.lineWidth = 1.4;
+    ctx.strokeRect(t1X, curY, col1W, rowH);
+    ctx.strokeRect(t1X + col1W, curY, t1W - col1W, rowH);
+
+    ctx.textAlign = "left";
+    ctx.fillStyle = "#0f172a";
+    ctx.font = "bold 16.5px 'Mukta Malar', 'Noto Sans Tamil', sans-serif";
+    ctx.fillText("பள்ளியின் பெயர்", t1X + 14, curY + 24);
+    ctx.fillText("(School Name):", t1X + 14, curY + 46);
+    ctx.font = "bold 17.5px 'Mukta Malar', 'Noto Sans Tamil', sans-serif";
+    ctx.fillStyle = "#1e3a8a";
+    ctx.fillText(schoolDisp, t1X + col1W + 16, curY + 35, t1W - col1W - 28);
+    curY += rowH;
+
+    // Row 2: Guide Teacher Name & Mobile No
+    const midColX = t1X + 740;
+    const midLblW = 140;
+    ctx.fillStyle = "#f8fafc";
+    ctx.fillRect(t1X, curY, col1W, rowH);
+    ctx.fillRect(midColX, curY, midLblW, rowH);
+    ctx.strokeRect(t1X, curY, col1W, rowH);
+    ctx.strokeRect(t1X + col1W, curY, midColX - (t1X + col1W), rowH);
+    ctx.strokeRect(midColX, curY, midLblW, rowH);
+    ctx.strokeRect(midColX + midLblW, curY, (t1X + t1W) - (midColX + midLblW), rowH);
+
+    ctx.fillStyle = "#0f172a";
+    ctx.font = "bold 16.5px 'Mukta Malar', 'Noto Sans Tamil', sans-serif";
+    ctx.fillText("வழிகாட்டி ஆசிரியர்", t1X + 14, curY + 24);
+    ctx.fillText("பெயர்:", t1X + 14, curY + 46);
+    ctx.fillText(teacherDisp, t1X + col1W + 16, curY + 35, midColX - (t1X + col1W) - 24);
+
+    ctx.fillText("கைபேசி", midColX + 14, curY + 24);
+    ctx.fillText("எண்:", midColX + 14, curY + 46);
+    ctx.fillStyle = "#0f172a";
+    ctx.font = "bold 18px sans-serif";
+    ctx.fillText(d.guideTeacherMobile || "", midColX + midLblW + 14, curY + 36);
+    curY += rowH;
+
+    // Row 3: Drama Title
+    ctx.fillStyle = "#f8fafc";
+    ctx.fillRect(t1X, curY, col1W, rowH);
+    ctx.strokeRect(t1X, curY, col1W, rowH);
+    ctx.strokeRect(t1X + col1W, curY, t1W - col1W, rowH);
+
+    ctx.fillStyle = "#0f172a";
+    ctx.font = "bold 16.5px 'Mukta Malar', 'Noto Sans Tamil', sans-serif";
+    ctx.fillText("நாடகத்தின் தலைப்பு", t1X + 14, curY + 24);
+    ctx.fillText("(Drama Title):", t1X + 14, curY + 46);
+    ctx.fillStyle = "#7c2d12";
+    ctx.font = "bold 17.5px 'Mukta Malar', 'Noto Sans Tamil', sans-serif";
+    ctx.fillText(titleDisp, t1X + col1W + 16, curY + 35, t1W - col1W - 28);
+    curY += rowH;
+
+    // Row 4: Language & Duration
+    ctx.fillStyle = "#f8fafc";
+    ctx.fillRect(t1X, curY, col1W, rowH);
+    ctx.fillRect(midColX, curY, midLblW, rowH);
+    ctx.strokeRect(t1X, curY, col1W, rowH);
+    ctx.strokeRect(t1X + col1W, curY, midColX - (t1X + col1W), rowH);
+    ctx.strokeRect(midColX, curY, midLblW, rowH);
+    ctx.strokeRect(midColX + midLblW, curY, (t1X + t1W) - (midColX + midLblW), rowH);
+
+    ctx.fillStyle = "#0f172a";
+    ctx.font = "bold 16.5px 'Mukta Malar', 'Noto Sans Tamil', sans-serif";
+    ctx.fillText("நாடகத்தின் மொழி", t1X + 14, curY + 24);
+    ctx.fillText("(Language):", t1X + 14, curY + 46);
+
+    const isTa = (d.language !== "English");
+    const isEn = (d.language === "English");
+    ctx.font = "bold 17px 'Mukta Malar', 'Noto Sans Tamil', sans-serif";
+    ctx.fillText(`[ ${isTa ? "✓" : "  "} ] தமிழ்      [ ${isEn ? "✓" : "  "} ] English`, t1X + col1W + 22, curY + 35);
+
+    ctx.fillText("கால அளவு:", midColX + 14, curY + 35);
+    ctx.font = "bold 16.5px 'Mukta Malar', 'Noto Sans Tamil', sans-serif";
+    const durVal = d.durationMins ? String(d.durationMins) : "____";
+    ctx.fillText(`${durVal} நிமிடம்`, midColX + midLblW + 14, curY + 24);
+    ctx.font = "15px sans-serif";
+    ctx.fillStyle = "#334155";
+    ctx.fillText("(Max 30)", midColX + midLblW + 14, curY + 46);
+    curY += rowH + 18;
+
+    // =========================================================================
+    // SECTION 2: 2. அதிகாரப்பூர்வ துணைக்கருப்பொருள் (OFFICIAL SUB-THEME CHOSEN)
+    // =========================================================================
+    curY = drawSisdcSectionBanner(curY, "2. அதிகாரப்பூர்வ துணைக்கருப்பொருள் (OFFICIAL SUB-THEME CHOSEN)");
+
+    const stBoxH = 104;
+    ctx.strokeStyle = "#94a3b8";
+    ctx.lineWidth = 1.4;
+    ctx.strokeRect(leftX, curY, contentW, stBoxH);
+
+    const chosenSt = String(d.subTheme || "");
+    const st1Sel = chosenSt.includes("துணைத்தலைப்பு 1") || chosenSt.includes("Artificial Intelligence");
+    const st2Sel = chosenSt.includes("துணைத்தலைப்பு 2") || chosenSt.includes("EV:");
+    const st3Sel = chosenSt.includes("துணைத்தலைப்பு 3") || chosenSt.includes("Interstellar");
+    const st4Sel = chosenSt.includes("துணைத்தலைப்பு 4") || chosenSt.includes("Restoring Oceans");
+
+    function drawSubThemeOption(x, y, checked, line1, line2) {
+      ctx.strokeStyle = "#334155";
+      ctx.lineWidth = 1.8;
+      ctx.strokeRect(x, y - 15, 18, 18);
+      if (checked) {
+        ctx.fillStyle = "#1d4ed8";
+        ctx.font = "bold 18px sans-serif";
+        ctx.fillText("✓", x + 2, y);
+      }
+      ctx.fillStyle = "#0f172a";
+      ctx.font = "bold 15.5px 'Mukta Malar', 'Noto Sans Tamil', sans-serif";
+      ctx.fillText(line1, x + 26, y - 1);
+      if (line2) {
+        ctx.font = "15px sans-serif";
+        ctx.fillText(line2, x + 26, y + 20);
+      }
+    }
+
+    drawSubThemeOption(leftX + 16, curY + 30, st1Sel, "துணைத்தலைப்பு 1: Artificial Intelligence: Friend, Tool or", "Threat?");
+    drawSubThemeOption(leftX + 545, curY + 34, st2Sel, "துணைத்தலைப்பு 2: EV: Way Forward", "");
+    drawSubThemeOption(leftX + 16, curY + 80, st3Sel, "துணைத்தலைப்பு 3: Interstellar Habitats", "");
+    drawSubThemeOption(leftX + 545, curY + 74, st4Sel, "துணைத்தலைப்பு 4: Restoring Oceans - Preserving", "Generations");
+
+    curY += stBoxH + 18;
+
+    // =========================================================================
+    // SECTION 3: 3. குழு உறுப்பினர்கள் விவரம் (TEAM MEMBERS LIST – MAXIMUM 10 MEMBERS)
+    // =========================================================================
+    curY = drawSisdcSectionBanner(curY, "3. குழு உறுப்பினர்கள் விவரம் (TEAM MEMBERS LIST – MAXIMUM 10 MEMBERS)");
+
+    // 6 Columns: வ.எண் (68) | மாணவர் பெயர் (தமிழில்) (278) | Student Name (in English) (278) | வகுப்பு (88) | குழுவில் பங்கு (Role) (224) | கையொப்பம் (160) = 1096
+    const colWidths = [68, 278, 278, 88, 224, 160];
+    const colX = [leftX];
+    for (let i = 0; i < colWidths.length; i++) {
+      colX.push(colX[i] + colWidths[i]);
+    }
+
+    const thH = 54;
+    ctx.fillStyle = "#1e3a5f";
+    ctx.fillRect(leftX, curY, contentW, thH);
+    ctx.strokeStyle = "#cbd5e1";
+    ctx.lineWidth = 1.2;
+    for (let i = 0; i < colWidths.length; i++) {
+      ctx.strokeRect(colX[i], curY, colWidths[i], thH);
+    }
+
+    ctx.fillStyle = "#ffffff";
+    ctx.textAlign = "center";
+    ctx.font = "bold 16px 'Mukta Malar', 'Noto Sans Tamil', sans-serif";
+    ctx.fillText("வ.எண்", colX[0] + colWidths[0] / 2, curY + 33);
+    ctx.fillText("மாணவர் பெயர்", colX[1] + colWidths[1] / 2, curY + 23);
+    ctx.fillText("(தமிழில்)", colX[1] + colWidths[1] / 2, curY + 44);
+    ctx.fillText("Student Name (in English)", colX[2] + colWidths[2] / 2, curY + 33);
+    ctx.fillText("வகுப்பு", colX[3] + colWidths[3] / 2, curY + 33);
+    ctx.fillText("குழுவில் பங்கு", colX[4] + colWidths[4] / 2, curY + 23);
+    ctx.fillText("(Role)", colX[4] + colWidths[4] / 2, curY + 44);
+    ctx.fillText("கையொப்பம்", colX[5] + colWidths[5] / 2, curY + 33);
+
+    curY += thH;
+
+    // 10 Member Rows
+    const memRowH = 68;
+    const membersArr = Array.isArray(d.members) ? d.members : [];
+    for (let idx = 0; idx < 10; idx++) {
+      const roleDef = SISDC_ROLES[idx];
+      const mem = membersArr[idx] || {};
+      const rH = (idx === 9) ? 78 : memRowH;
+
+      // Fill role column background as in PDF
+      ctx.fillStyle = "#f8fafc";
+      ctx.fillRect(colX[4], curY, colWidths[4], rH);
+
+      ctx.strokeStyle = "#94a3b8";
+      ctx.lineWidth = 1.2;
+      for (let c = 0; c < colWidths.length; c++) {
+        ctx.strokeRect(colX[c], curY, colWidths[c], rH);
+      }
+
+      // Col 0: S.No
+      ctx.textAlign = "center";
+      ctx.fillStyle = "#0f172a";
+      ctx.font = "16px sans-serif";
+      ctx.fillText(String(idx + 1), colX[0] + colWidths[0] / 2, curY + rH / 2 + 6);
+
+      // Col 1: Student Name (Tamil)
+      ctx.textAlign = "left";
+      ctx.fillStyle = "#0f172a";
+      ctx.font = "bold 16.5px 'Mukta Malar', 'Noto Sans Tamil', sans-serif";
+      ctx.fillText(mem.nameTa || "", colX[1] + 10, curY + rH / 2 + 6, colWidths[1] - 18);
+
+      // Col 2: Student Name (English)
+      ctx.font = "bold 16px sans-serif";
+      ctx.fillText(mem.nameEn || "", colX[2] + 10, curY + rH / 2 + 6, colWidths[2] - 18);
+
+      // Col 3: Class
+      ctx.textAlign = "center";
+      ctx.font = "bold 16px sans-serif";
+      const clsDisp = mem.studentClass || (roleDef.hasClass ? "" : "-");
+      ctx.fillText(clsDisp, colX[3] + colWidths[3] / 2, curY + rH / 2 + 6);
+
+      // Col 4: Role
+      ctx.textAlign = "left";
+      ctx.fillStyle = "#0f172a";
+      if (idx === 9) {
+        ctx.font = "bold 15.5px 'Mukta Malar', 'Noto Sans Tamil', sans-serif";
+        ctx.fillText("திரைக்கதை", colX[4] + 12, curY + 24);
+        ctx.fillText("எழுத்தாளர்", colX[4] + 12, curY + 45);
+        ctx.font = "bold 14.5px sans-serif";
+        ctx.fillText("(Script Writer)", colX[4] + 12, curY + 65);
+      } else {
+        ctx.font = (idx === 8) ? "bold 16px 'Mukta Malar', 'Noto Sans Tamil', sans-serif" : "15.5px 'Mukta Malar', 'Noto Sans Tamil', sans-serif";
+        ctx.fillText(roleDef.roleTa, colX[4] + 12, curY + 28);
+        ctx.font = (idx === 8) ? "bold 15px sans-serif" : "15px sans-serif";
+        ctx.fillText(roleDef.roleEn, colX[4] + 12, curY + 50);
+      }
+
+      curY += rH;
+    }
+
+    // Bottom-Right Escort / Guide Teacher Signature Block
+    const sigY = Math.min(1685, curY + 62);
+    ctx.strokeStyle = "#0f172a";
+    ctx.lineWidth = 1.6;
+    ctx.beginPath();
+    ctx.moveTo(645, sigY);
+    ctx.lineTo(1158, sigY);
+    ctx.stroke();
+
+    ctx.textAlign = "center";
+    ctx.fillStyle = "#0f2942";
+    ctx.font = "bold 17px 'Mukta Malar', 'Noto Sans Tamil', sans-serif";
+    ctx.fillText("வழிகாட்டி ஆசிரியர் கையொப்பம் (Signature", 901, sigY + 24);
+    ctx.fillText("of Escort / Guide Teacher)", 901, sigY + 46);
+
+    const fName = `SISDC_2026_Team_Registration_${d.uNo || d.teamNo || "School"}.pdf`;
+    buildMultiPagePdfFromCanvasesAndDownload([cvs], fName, false);
+  }
+
+  // =========================================================================
+  // ADMIN DEDICATED MODULE BOX SWITCHER & SISDC ADMIN MANAGEMENT FUNCTIONS
+  // =========================================================================
+  function switchAdminDedicatedBox(boxType) {
+    activeAdminDedicatedBox = (boxType === "SISDC") ? "SISDC" : "SISF";
+    const bSisf = document.getElementById("admDedicatedBoxSisf");
+    const bSisdc = document.getElementById("admDedicatedBoxSisdc");
+    const wSisf = document.getElementById("adminSisfWorkspace");
+    const wSisdc = document.getElementById("adminSisdcWorkspace");
+
+    if (bSisf) bSisf.classList.toggle("active", activeAdminDedicatedBox === "SISF");
+    if (bSisdc) bSisdc.classList.toggle("active", activeAdminDedicatedBox === "SISDC");
+    if (wSisf) wSisf.style.display = (activeAdminDedicatedBox === "SISF") ? "block" : "none";
+    if (wSisdc) wSisdc.style.display = (activeAdminDedicatedBox === "SISDC") ? "block" : "none";
+
+    updateDedicatedModuleBoxBadges();
+    if (activeAdminDedicatedBox === "SISDC") {
+      renderAdminSisdcTeamsTable();
+    }
+  }
+
+  function renderAdminSisdcTeamsTable() {
+    const tbody = document.getElementById("admSisdcTeamsTableBody");
+    if (!tbody) return;
+    const all = getAllSisdcTeamsFromStorage();
+
+    // Update Sub-Theme Counters
+    const setTxt = (id, v) => { const el = document.getElementById(id); if (el) el.innerText = v; };
+    setTxt("admSisdcStatSub1", all.filter(t => String(t.subTheme || "").includes("துணைத்தலைப்பு 1") || String(t.subTheme || "").includes("Artificial")).length);
+    setTxt("admSisdcStatSub2", all.filter(t => String(t.subTheme || "").includes("துணைத்தலைப்பு 2") || String(t.subTheme || "").includes("EV:")).length);
+    setTxt("admSisdcStatSub3", all.filter(t => String(t.subTheme || "").includes("துணைத்தலைப்பு 3") || String(t.subTheme || "").includes("Interstellar")).length);
+    setTxt("admSisdcStatSub4", all.filter(t => String(t.subTheme || "").includes("துணைத்தலைப்பு 4") || String(t.subTheme || "").includes("Restoring")).length);
+    updateDedicatedModuleBoxBadges();
+
+    const stFilter = document.getElementById("admSisdcSubThemeFilter")?.value || "ALL";
+    const lgFilter = document.getElementById("admSisdcLangFilter")?.value || "ALL";
+    const q = (document.getElementById("admSisdcSearchInp")?.value || "").trim().toLowerCase();
+
+    const filtered = all.filter(t => {
+      if (stFilter !== "ALL" && !String(t.subTheme || "").includes(stFilter)) return false;
+      if (lgFilter !== "ALL" && t.language !== lgFilter) return false;
+      if (!q) return true;
+      const hay = [
+        t.teamNo, t.uNo, t.udiseNo, t.schoolNameTa, t.schoolNameEn,
+        t.dramaTitleTa, t.dramaTitleEn, t.guideTeacherNameTa, t.guideTeacherNameEn, t.guideTeacherMobile
+      ].join(" ").toLowerCase();
+      return hay.includes(q);
+    });
+
+    if (filtered.length === 0) {
+      tbody.innerHTML = `<tr><td colspan="9" style="text-align:center; padding:22px; color:#64748b; font-weight:700;">தேர்ந்தெடுக்கப்பட்ட பிரிவில் அறிவியல் நாடகக் குழு விண்ணப்பங்கள் ஏதும் இல்லை.</td></tr>`;
+      return;
+    }
+
+    tbody.innerHTML = filtered.map((t, idx) => {
+      const mems = (t.members || []).filter(m => m && (m.nameTa || m.nameEn));
+      const curRank = t.prizeRank || "";
+      const keyId = t.uNo || t.udiseNo || String(idx);
+      return `
+        <tr>
+          <td style="text-align:center; font-weight:800;">${idx + 1}</td>
+          <td>
+            <input type="text" class="form-control" value="${t.teamNo || ("T-" + (t.uNo || (idx + 1)))}" style="width:92px; padding:4px 6px; font-weight:900; color:#1e3a8a; text-align:center;" onchange="adminUpdateSisdcTeamNo('${keyId}', this.value)" title="Team No மாற்றினால் நேரடியாகப் படிவத்தில் அச்சிடப்படும்">
+          </td>
+          <td>
+            <strong>U.NO: ${t.uNo || "-"}</strong> <span style="font-size:0.75rem; color:#64748b;">(${t.udiseNo || "-"})</span><br>
+            <strong style="color:#0f172a;">${t.schoolNameTa || t.schoolNameEn || "-"}</strong>
+          </td>
+          <td>
+            <strong style="color:#4c1d95;">${t.dramaTitleTa || "-"}</strong>
+            ${t.dramaTitleEn ? `<div style="font-size:0.76rem; color:#475569;">${t.dramaTitleEn}</div>` : ""}
+            <span style="display:inline-block; margin-top:3px; background:#ede9fe; color:#5b21b6; padding:2px 8px; border-radius:6px; font-size:0.74rem; font-weight:800;">
+              🗣️ ${t.language || "தமிழ்"} | ⏱️ ${t.durationMins || 30} நிமிடம்
+            </span>
+          </td>
+          <td style="max-width:210px; font-size:0.8rem; font-weight:700; color:#1e293b;">${t.subTheme || "-"}</td>
+          <td>
+            <strong>${t.guideTeacherNameTa || t.guideTeacherNameEn || "-"}</strong><br>
+            <span style="font-size:0.8rem; color:#0369a1; font-weight:800;">📞 ${t.guideTeacherMobile || "-"}</span>
+          </td>
+          <td>
+            <span style="background:#dcfce7; color:#166534; padding:3px 9px; border-radius:999px; font-weight:800; font-size:0.78rem;">
+              👥 ${mems.length} / 10 உறுப்பினர்கள்
+            </span>
+            <div style="font-size:0.74rem; color:#475569; margin-top:4px; max-height:65px; overflow-y:auto;">
+              ${mems.slice(0, 3).map(m => `${m.sno}) ${m.nameTa || m.nameEn}`).join("<br>")}
+              ${mems.length > 3 ? `<br><em>+${mems.length - 3} நபர்கள்...</em>` : ""}
+            </div>
+          </td>
+          <td>
+            <select class="form-control" style="padding:4px 6px; font-size:0.78rem; font-weight:800;" onchange="adminUpdateSisdcPrizeRank('${keyId}', this.value)">
+              <option value="">-- பரிசு நிலை தேர்வு --</option>
+              <option value="🥇 முதலிடம்" ${curRank.includes("முதலிடம்") ? "selected" : ""}>🥇 முதலிடம்</option>
+              <option value="🥈 இரண்டாமிடம்" ${curRank.includes("இரண்டாமிடம்") ? "selected" : ""}>🥈 இரண்டாமிடம்</option>
+              <option value="🥉 மூன்றாமிடம்" ${curRank.includes("மூன்றாமிடம்") ? "selected" : ""}>🥉 மூன்றாமிடம்</option>
+              <option value="🌟 சிறப்பிடம்" ${curRank.includes("சிறப்பிடம்") ? "selected" : ""}>🌟 சிறப்பிடம்</option>
+              <option value="🎖️ பங்கேற்பாளர்" ${curRank.includes("பங்கேற்பாளர்") ? "selected" : ""}>🎖️ பங்கேற்பாளர்</option>
+            </select>
+          </td>
+          <td>
+            <div style="display:flex; gap:5px; flex-wrap:wrap;">
+              <button type="button" class="btn-sm" style="background:#1e3a8a; color:#fff; font-weight:800; font-size:0.76rem;" onclick="adminDownloadSchoolSisdcPdf('${keyId}')">
+                📥 படிவம் PDF
+              </button>
+              <button type="button" class="btn-sm" style="background:#dc2626; color:#fff; font-weight:800; font-size:0.76rem;" onclick="adminDeleteSisdcTeam('${keyId}')">
+                🗑️ அழி
+              </button>
+            </div>
+          </td>
+        </tr>
+      `;
+    }).join("");
+  }
+
+  function adminUpdateSisdcTeamNo(keyId, newTeamNo) {
+    const all = getAllSisdcTeamsFromStorage();
+    const rec = all.find(t => String(t.uNo || "") === String(keyId) || String(t.udiseNo || "") === String(keyId));
+    if (rec) {
+      rec.teamNo = String(newTeamNo || "").trim();
+      saveSchoolSisdcRecord(rec);
+      showSisfToast(`✅ Team No '${rec.teamNo}' எனப் புதுப்பிக்கப்பட்டது.`);
+    }
+  }
+
+  function adminUpdateSisdcPrizeRank(keyId, newRank) {
+    const all = getAllSisdcTeamsFromStorage();
+    const rec = all.find(t => String(t.uNo || "") === String(keyId) || String(t.udiseNo || "") === String(keyId));
+    if (rec) {
+      rec.prizeRank = newRank;
+      saveSchoolSisdcRecord(rec);
+      renderAdminSisdcTeamsTable();
+      showSisfToast(`🏆 நாடகக் குழுவின் பரிசு நிலை (${newRank || "நீக்கப்பட்டது"}) சேமிக்கப்பட்டது!`);
+    }
+  }
+
+  function adminDownloadSchoolSisdcPdf(keyId) {
+    const all = getAllSisdcTeamsFromStorage();
+    const rec = all.find(t => String(t.uNo || "") === String(keyId) || String(t.udiseNo || "") === String(keyId));
+    if (rec) {
+      generateAndDownloadSisdcPdf(rec);
+    }
+  }
+
+  function adminDeleteSisdcTeam(keyId) {
+    const all = getAllSisdcTeamsFromStorage();
+    const rec = all.find(t => String(t.uNo || "") === String(keyId) || String(t.udiseNo || "") === String(keyId));
+    if (!rec) return;
+    openAdminDeleteConfirmModal(
+      "நாடகக் குழு பதிவை அழிக்க உறுதிப்படுத்தவும்",
+      `<strong>பள்ளி:</strong> ${rec.schoolNameTa || rec.schoolNameEn}<br><strong>நாடகத் தலைப்பு:</strong> ${rec.dramaTitleTa || "-"}`,
+      () => {
+        const remaining = all.filter(t => !(String(t.uNo || "") === String(keyId) || String(t.udiseNo || "") === String(keyId)));
+        saveAllSisdcTeamsToStorage(remaining);
+        try {
+          if (rec.udiseNo) localStorage.removeItem("SISDC_SCHOOL_TEAM_" + rec.udiseNo);
+          if (rec.uNo) localStorage.removeItem("SISDC_SCHOOL_TEAM_" + String(rec.uNo).replace(/^0+/, ""));
+        } catch (e) {}
+        renderAdminSisdcTeamsTable();
+        showSisfToast("🗑️ நாடகக் குழு பதிவு நீக்கப்பட்டது.");
+      }
+    );
+  }
+
+  function exportAdminSisdcTeamsCsv() {
+    const all = getAllSisdcTeamsFromStorage();
+    if (all.length === 0) {
+      showSisfToast("⚠️ பதிவிறக்கம் செய்ய நாடகக் குழு பதிவுகள் ஏதுமில்லை.");
+      return;
+    }
+    const headers = ["S.No", "Team No", "U.NO", "UDISE", "School Name (Tamil)", "School Name (English)", "Drama Title (Tamil)", "Drama Title (English)", "Language", "Duration (Mins)", "Sub-Theme", "Guide Teacher", "Mobile", "Prize Rank", "Members (1 to 10)"];
+    const rows = all.map((t, idx) => {
+      const memStr = (t.members || []).filter(m => m && (m.nameTa || m.nameEn)).map(m => `${m.sno}.${m.nameTa || m.nameEn} (${m.studentClass || "-"} - ${m.roleTa})`).join(" | ");
+      return [
+        idx + 1, t.teamNo || "", t.uNo || "", t.udiseNo || "", t.schoolNameTa || "", t.schoolNameEn || "",
+        t.dramaTitleTa || "", t.dramaTitleEn || "", t.language || "", t.durationMins || 30,
+        t.subTheme || "", t.guideTeacherName || "", t.guideTeacherMobile || "", t.prizeRank || "", memStr
+      ].map(v => `"${String(v || "").replace(/"/g, '""')}"`).join(",");
+    });
+    const csvContent = "\uFEFF" + headers.join(",") + "\n" + rows.join("\n");
+    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "SISDC_2026_Science_Drama_Teams_Report.csv";
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+  }
+
+  function downloadAdminSisdcMasterReportPdf() {
+    const all = getAllSisdcTeamsFromStorage();
+    if (all.length === 0) {
+      showSisfToast("⚠️ நாடகக் குழு பதிவுகள் ஏதுமில்லை.");
+      return;
+    }
+    // Generate each registered school's official SISDC form into a multi-page A4 PDF!
+    // Or generate a summary sheet canvas
+    const cvs = document.createElement("canvas");
+    cvs.width = 1754;
+    cvs.height = 1240;
+    const ctx = cvs.getContext("2d");
+    ctx.fillStyle = "#ffffff";
+    ctx.fillRect(0, 0, cvs.width, cvs.height);
+    ctx.strokeStyle = "#4c1d95";
+    ctx.lineWidth = 3;
+    ctx.strokeRect(30, 30, 1694, 1180);
+
+    ctx.textAlign = "center";
+    ctx.fillStyle = "#4c1d95";
+    ctx.font = "bold 28px 'Mukta Malar', 'Noto Sans Tamil', sans-serif";
+    ctx.fillText("பள்ளிக்கல்வித்துறை – சிவகங்கை மாவட்டம் | தென்னிந்திய அறிவியல் நாடக விழா 2026 (SISDC)", 877, 78);
+    ctx.fillStyle = "#0f172a";
+    ctx.font = "bold 20px 'Mukta Malar', 'Noto Sans Tamil', sans-serif";
+    ctx.fillText("மாவட்ட அளவிலான போட்டி – பதிவு செய்த பள்ளிகளின் நாடகக் குழுக்கள் பட்டியல் (மன்னர் மேல்நிலைப் பள்ளி, சிவகங்கை | நாள்: 04.11.2026)", 877, 114);
+
+    let y = 148;
+    const cols = [50, 115, 210, 520, 840, 1160, 1410, 1560, 1704];
+    const headers = ["வ.எண்", "Team No", "U.NO", "பள்ளியின் பெயர்", "நாடகத்தின் தலைப்பு & மொழி", "துணைக்கருப்பொருள்", "வழிகாட்டி ஆசிரியர்", "உறுப்பினர்கள்"];
+    ctx.fillStyle = "#1e3a5f";
+    ctx.fillRect(cols[0], y, cols[8] - cols[0], 42);
+    ctx.fillStyle = "#ffffff";
+    ctx.font = "bold 15px 'Mukta Malar', 'Noto Sans Tamil', sans-serif";
+    for (let c = 0; c < headers.length; c++) {
+      ctx.fillText(headers[c], (cols[c] + cols[c + 1]) / 2, y + 26);
+    }
+    y += 42;
+
+    ctx.textAlign = "left";
+    all.slice(0, 16).forEach((t, i) => {
+      const rH = 54;
+      ctx.strokeStyle = "#94a3b8";
+      ctx.lineWidth = 1;
+      for (let c = 0; c < 8; c++) ctx.strokeRect(cols[c], y, cols[c + 1] - cols[c], rH);
+      ctx.fillStyle = "#0f172a";
+      ctx.font = "bold 14px 'Mukta Malar', 'Noto Sans Tamil', sans-serif";
+      ctx.fillText(String(i + 1), cols[0] + 15, y + 32);
+      ctx.fillText(t.teamNo || "-", cols[1] + 10, y + 32);
+      ctx.fillText(t.uNo || "-", cols[2] + 10, y + 32);
+      ctx.fillText((t.schoolNameTa || t.schoolNameEn || "-").slice(0, 32), cols[3] + 8, y + 32, cols[4] - cols[3] - 14);
+      ctx.fillText(`${t.dramaTitleTa || "-"} (${t.language || "தமிழ்"})`, cols[4] + 8, y + 32, cols[5] - cols[4] - 14);
+      ctx.fillText((t.subTheme || "-").slice(0, 34), cols[5] + 8, y + 32, cols[6] - cols[5] - 14);
+      ctx.fillText(`${t.guideTeacherNameTa || "-"} (${t.guideTeacherMobile || "-"})`, cols[6] + 8, y + 32, cols[7] - cols[6] - 14);
+      const mCnt = (t.members || []).filter(m => m && (m.nameTa || m.nameEn)).length;
+      ctx.fillText(`${mCnt} / 10 நபர்கள்`, cols[7] + 12, y + 32);
+      y += rH;
+    });
+
+    buildMultiPagePdfFromCanvasesAndDownload([cvs], "SISDC_2026_District_Master_Report.pdf", true);
+  }
+
+  // Initialize SISDC rows and hook into dashboard & admin renderers
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", () => {
+      initSisdcMembersTableRows();
+      updateDedicatedModuleBoxBadges();
+    });
+  } else {
+    initSisdcMembersTableRows();
+    updateDedicatedModuleBoxBadges();
   }
 
 </script>
