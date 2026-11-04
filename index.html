@@ -1562,7 +1562,7 @@
 
     <div class="dedicated-modules-two-box-grid" id="schoolDedicatedModulesGrid">
       <!-- DEDICATED BOX 1: SISF 2026 (SCIENCE FAIR MODULE) -->
-      <div class="dedicated-module-box sisf-box" id="schoolBoxSisf" onclick="switchSchoolModuleBox('SISF')">
+      <div class="dedicated-module-box sisf-box active" id="schoolBoxSisf" onclick="switchSchoolModuleBox('SISF')">
         <div>
           <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:8px; margin-bottom:8px;">
             <span style="background:#0284c7; color:#ffffff; font-weight:900; font-size:0.75rem; padding:4px 12px; border-radius:999px; letter-spacing:0.5px;">
@@ -1585,7 +1585,7 @@
           </div>
         </div>
         <div style="display:flex; gap:8px; align-items:center; justify-content:space-between; padding-top:6px; border-top:1px dashed #cbd5e1;">
-          <span id="schoolBoxSisfSubInfo" style="font-size:0.78rem; font-weight:800; color:#0284c7;">👆 மெனுக்களைக் காண இங்கே சொடுக்கவும்</span>
+          <span id="schoolBoxSisfSubInfo" style="font-size:0.78rem; font-weight:800; color:#047857;">✓ தற்போது திறக்கப்பட்டுள்ளது (Active)</span>
           <button type="button" class="btn-sm" style="background:#0284c7; color:#ffffff; padding:8px 14px; font-weight:800; font-size:0.82rem;" onclick="event.stopPropagation(); switchSchoolModuleBox('SISF')">
             🔬 SISF கண்காட்சிப் பகுதி (Open Module 1)
           </button>
@@ -1627,7 +1627,7 @@
     <!-- ========================================================================= -->
     <!-- MODULE 1 WORKSPACE: SISF 2026 (தென்னிந்திய அறிவியல் கண்காட்சி தனிப்பெட்டி) -->
     <!-- ========================================================================= -->
-    <div class="module-workspace-frame" id="schoolSisfDedicatedWorkspace" style="display: none;">
+    <div class="module-workspace-frame" id="schoolSisfDedicatedWorkspace" style="display: block;">
       <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom:12px; padding-bottom:10px; border-bottom:2px solid #bae6fd;">
         <div>
           <span style="background:#0284c7; color:#fff; font-weight:900; font-size:0.75rem; padding:3px 10px; border-radius:6px;">போட்டி 1 – SISF 2026</span>
@@ -2274,7 +2274,7 @@
 
     <div class="dedicated-modules-two-box-grid" id="adminDedicatedModulesGrid">
       <!-- ADMIN DEDICATED BOX 1: SISF 2026 -->
-      <div class="dedicated-module-box sisf-box" id="admDedicatedBoxSisf" onclick="switchAdminDedicatedBox('SISF')">
+      <div class="dedicated-module-box sisf-box active" id="admDedicatedBoxSisf" onclick="switchAdminDedicatedBox('SISF')">
         <div>
           <div style="display:flex; justify-content:space-between; align-items:center; gap:8px; margin-bottom:8px;">
             <span style="background:#0284c7; color:#ffffff; font-weight:900; font-size:0.76rem; padding:4px 12px; border-radius:999px;">
@@ -2477,7 +2477,7 @@
     <!-- ========================================================================= -->
     <!-- ADMIN MODULE 1 WORKSPACE: SISF 2026 (தென்னிந்திய அறிவியல் கண்காட்சி 2026)  -->
     <!-- ========================================================================= -->
-    <div class="module-workspace-frame" id="adminSisfWorkspace" style="display: none;">
+    <div class="module-workspace-frame" id="adminSisfWorkspace" style="display: block;">
       <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom:14px; padding-bottom:10px; border-bottom:2px solid #bae6fd;">
         <div>
           <span style="background:#0284c7; color:#fff; font-weight:900; font-size:0.76rem; padding:4px 10px; border-radius:6px;">போட்டி 1 – SISF 2026</span>
@@ -4433,7 +4433,7 @@
       return { "Individual": null, "Group": null, "Teacher": null };
     }
 
-    function mergeFromJson(raw, requireSchoolMatch) {
+    function mergeFromJson(rawStr, requireSchoolMatch) {
       if (!rawStr) return;
       try {
         const parsed = JSON.parse(rawStr);
@@ -9965,9 +9965,11 @@ ${n.message}
   }
 
   function refreshAdminCloudData() {
-    // 0. Sync Master Schools & Notifications from Google Sheet
+    // 0. Sync Master Schools, Winners, Judges & Notifications from Google Sheet
     loadMasterSchoolsFromGoogleSheet(true);
     try { syncNotificationsFromCloud(false); } catch (e) {}
+    try { if (typeof syncWinnersFromCloud === "function") syncWinnersFromCloud(); } catch (e) {}
+    try { if (typeof syncJudgesFromCloud === "function") syncJudgesFromCloud(); } catch (e) {}
     // 1. Sync SISF_Applications sheet via gviz JSONP
     try {
       const cbApps = "__sisfAdmAppsCb_" + Date.now();
@@ -10025,7 +10027,24 @@ ${n.message}
             }
             adminAllApps = Object.values(appMap);
             try { localStorage.setItem("SISF_ADMIN_ALL_APPS", JSON.stringify(adminAllApps)); } catch (e) {}
+            try {
+              const bySch = {};
+              adminAllApps.forEach(a => {
+                const uKey = String(a.uNo || "").replace(/^0+/, "");
+                const dKey = String(a.udiseNo || "");
+                if (uKey) {
+                  if (!bySch[uKey]) bySch[uKey] = { Individual: null, Group: null, Teacher: null };
+                  bySch[uKey][a.categoryOfEntry] = a;
+                }
+                if (dKey) {
+                  if (!bySch[dKey]) bySch[dKey] = { Individual: null, Group: null, Teacher: null };
+                  bySch[dKey][a.categoryOfEntry] = a;
+                }
+              });
+              window.__sisfMemAppsBySchool = Object.assign(window.__sisfMemAppsBySchool || {}, bySch);
+            } catch (e) {}
             renderAdminStatsAndTables();
+            try { if (typeof updateDedicatedModuleBoxBadges === "function") updateDedicatedModuleBoxBadges(); } catch (e) {}
           }
         } catch (err) {}
         delete window[cbApps];
@@ -15340,8 +15359,8 @@ ${n.message}
     { sno: 10, roleTa: "திரைக்கதை எழுத்தாளர்", roleEn: "(Script Writer)", fullRole: "திரைக்கதை எழுத்தாளர் (Script Writer)", hasClass: false }
   ];
 
-  let activeSchoolDedicatedBox = null;
-  let activeAdminDedicatedBox = null;
+  let activeSchoolDedicatedBox = "SISF";
+  let activeAdminDedicatedBox = "SISF";
 
   function closeSchoolModuleBoxes() {
     activeSchoolDedicatedBox = null;
@@ -16422,6 +16441,10 @@ ${n.message}
     });
   } else {
     initSisdcMembersTableRows();
+    try { loadLocalAdminData(); } catch (e) {}
+    try { loadWinnersListIntoMemory(); } catch (e) {}
+    try { loadJudgesListIntoMemory(); } catch (e) {}
+    try { refreshAdminCloudData(); } catch (e) {}
     updateDedicatedModuleBoxBadges();
   }
 
