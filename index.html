@@ -1123,28 +1123,26 @@
       <img id="bannerTnLogo" class="header-tn-logo" alt="Tamil Nadu Government Logo">
     </div>
     <div class="header-center-content">
-      <div class="unified-portal-top-pill" id="unifiedPortalTopBadge">
-        🌐 மாவட்ட அளவிலான அனைத்துவிதமான போட்டிகளுக்குமான ஒருங்கிணைந்த தளம் | UNIFIED DISTRICT COMPETITIONS PORTAL
-      </div>
       <div class="header-dept">🏛️ பள்ளிக்கல்வித்துறை – சிவகங்கை மாவட்டம்</div>
       <div class="header-dept-en">DEPARTMENT OF SCHOOL EDUCATION – SIVAGANGAI DISTRICT</div>
-      <div class="header-title-ta" id="headerTitleTa">✨ மாவட்ட அளவிலான தென்னிந்திய அறிவியல் கண்காட்சி (SISF - 2026) ✨</div>
-      <div class="header-title-en" id="headerTitleEn">SOUTHERN INDIA SCIENCE FAIR (SISF 2026) – DISTRICT LEVEL</div>
-      <div class="royal-badge-bar">
-        <span id="headerActiveModuleBadge" style="letter-spacing: 1.5px; font-weight: 800;">MODULE 1: SISF 2026 – REGISTRATION PORTAL</span>
+      <div class="header-title-ta" id="headerTitleTa">✨ மாவட்ட அளவிலான போட்டிகளுக்கான ஒருங்கிணைந்த தளம் ✨</div>
+      <div class="header-title-en" id="headerTitleEn">UNIFIED DISTRICT-LEVEL COMPETITIONS PORTAL</div>
+      <div class="royal-badge-bar" id="headerRoyalBadgeBar">
+        <span id="headerActiveModuleBadge" style="letter-spacing: 2px; font-weight: 800;">REGISTRATION PORTAL</span>
       </div>
+      <span id="unifiedPortalTopBadge" style="display:none;"></span>
     </div>
     <div class="header-right-spacer" aria-hidden="true"></div>
   </header>
 
   <!-- District Level Exhibition Venue & Date Announcement Banner (Top) -->
-  <div class="venue-banner-top" id="topVenueBanner">
+  <div class="venue-banner-top" id="topVenueBanner" style="display: none;">
     <span class="venue-pulse-pill" id="topVenueMainPill">🏛️ மாவட்ட அளவிலான கண்காட்சி சிவகங்கை மன்னர் மேல்நிலைப்பள்ளியில் 03.11.2026 முற்பகல் 10.00 மணிக்கு நடைபெறும்</span>
     <span class="venue-subtext" id="topVenueSubtext">📍 Venue: Mannar Higher Secondary School, Sivagangai &nbsp;|&nbsp; 📅 03.11.2026 – 10.00 AM &nbsp;|&nbsp; <strong id="topLiveDeadlineText" style="color:#fde047; text-decoration:underline;">⏰ போட்டிகள் பதிவு கடைசி தேதி: 30.11.2026</strong></span>
   </div>
 
   <!-- UNIFIED DISTRICT COMPETITIONS MODULE SWITCHER HUB -->
-  <div class="comp-modules-hub-bar" id="unifiedModulesHubBar">
+  <div class="comp-modules-hub-bar" id="unifiedModulesHubBar" style="display: none;">
     <div class="comp-hub-header">
       <div class="comp-hub-title">
         <span>🎯 மாவட்ட அளவிலான ஒருங்கிணைந்த போட்டித் தொகுதிகள் (Select Competition Module):</span>
@@ -1249,7 +1247,7 @@
       <!-- Login Form (Accepts UDISE or U.NO) -->
       <div id="loginFormSection" class="auth-body">
         <!-- Exhibition Venue & Time Highlight Notice on School Portal Home -->
-        <div id="authVenueNoticeBox" style="background: linear-gradient(135deg, #ecfdf5 0%, #fefce8 100%); border: 1.5px solid #10b981; border-left: 5px solid #047857; border-radius: 8px; padding: 12px 14px; margin-bottom: 16px; color: #065f46;">
+        <div id="authVenueNoticeBox" style="display: none; background: linear-gradient(135deg, #ecfdf5 0%, #fefce8 100%); border: 1.5px solid #10b981; border-left: 5px solid #047857; border-radius: 8px; padding: 12px 14px; margin-bottom: 16px; color: #065f46;">
           <div style="font-size: 0.85rem; font-weight: 800; color: #047857; margin-bottom: 3px;">
             📢 முக்கிய அறிவிப்பு / District Science Fair Announcement:
           </div>
@@ -3104,7 +3102,7 @@
   <!-- Footer Section (as in Guidelines Main Page) -->
   <footer class="portal-footer">
     <div>
-      <span class="venue-footer-badge" id="footerVenueBadge">
+      <span class="venue-footer-badge" id="footerVenueBadge" style="display: none;">
         🏛️ <span>மாவட்ட அளவிலான கண்காட்சி <strong>சிவகங்கை மன்னர் மேல்நிலைப்பள்ளியில் 03.11.2026 முற்பகல் 10.00 மணிக்கு</strong> நடைபெறும்</span>
       </span>
     </div>
@@ -4379,22 +4377,44 @@
       if (vF) vF.classList.remove("active");
       if (vAdm) vAdm.classList.remove("active");
 
+      const hubBar = document.getElementById("unifiedModulesHubBar");
+      const topVenue = document.getElementById("topVenueBanner");
+      const fVenue = document.getElementById("footerVenueBadge");
+
       if (viewName === "auth") {
         if (vA) vA.classList.add("active");
+        if (hubBar) hubBar.style.display = "none";
+        if (topVenue) topVenue.style.display = "none";
+        if (fVenue) fVenue.style.display = "none";
+        try { if (typeof updatePortalBannersForActiveModule === "function") updatePortalBannersForActiveModule(); } catch (e) {}
       } else if (viewName === "dashboard") {
+        if (hubBar) hubBar.style.display = "block";
+        if (topVenue) topVenue.style.display = "flex";
+        if (fVenue) fVenue.style.display = "inline-flex";
+        if (vD) vD.classList.add("active");
         try {
+          if (typeof updatePortalBannersForActiveModule === "function") updatePortalBannersForActiveModule();
           renderDashboardUI();
         } catch (uiErr) {
           console.warn("renderDashboardUI notice:", uiErr);
         }
-        if (vD) vD.classList.add("active");
         window.scrollTo({ top: 0, behavior: "smooth" });
       } else if (viewName === "form") {
+        if (hubBar) hubBar.style.display = "none";
+        if (topVenue) topVenue.style.display = "flex";
+        if (fVenue) fVenue.style.display = "inline-flex";
         if (vF) vF.classList.add("active");
+        try { if (typeof updatePortalBannersForActiveModule === "function") updatePortalBannersForActiveModule(); } catch (e) {}
         window.scrollTo({ top: 0, behavior: "smooth" });
       } else if (viewName === "admin") {
+        if (hubBar) hubBar.style.display = "none";
+        if (topVenue) topVenue.style.display = "none";
+        if (fVenue) fVenue.style.display = "inline-flex";
         if (vAdm) vAdm.classList.add("active");
-        try { initAdminDashboard(); } catch (admErr) { console.warn(admErr); }
+        try {
+          if (typeof updatePortalBannersForActiveModule === "function") updatePortalBannersForActiveModule();
+          initAdminDashboard();
+        } catch (admErr) { console.warn(admErr); }
         window.scrollTo({ top: 0, behavior: "smooth" });
       }
     } catch (e) {
@@ -14429,13 +14449,33 @@ ${n.message}
     const m = getActiveCompetitionModule();
     if (!m) return;
 
-    // 1. Update Header Titles
+    const vAuth = document.getElementById("viewAuth");
+    const isAuthActive = vAuth && vAuth.classList.contains("active");
+    const hubBar = document.getElementById("unifiedModulesHubBar");
+    const topVenue = document.getElementById("topVenueBanner");
+    const fVenue = document.getElementById("footerVenueBadge");
+    const authNotice = document.getElementById("authVenueNoticeBox");
+
+    if (isAuthActive) {
+      if (hubBar) hubBar.style.display = "none";
+      if (topVenue) topVenue.style.display = "none";
+      if (fVenue) fVenue.style.display = "none";
+      if (authNotice) authNotice.style.display = "none";
+    }
+
+    // 1. Update Header Titles (On Auth view, strictly show Unified Portal title with NO module name)
     const hTa = document.getElementById("headerTitleTa");
     const hEn = document.getElementById("headerTitleEn");
     const hBadge = document.getElementById("headerActiveModuleBadge");
-    if (hTa) hTa.innerText = `✨ ${m.nameTa} ✨`;
-    if (hEn) hEn.innerText = m.nameEn;
-    if (hBadge) hBadge.innerText = `ACTIVE MODULE: ${m.id} – ${m.shortEn || "REGISTRATION PORTAL"}`;
+    if (isAuthActive) {
+      if (hTa) hTa.innerText = "✨ மாவட்ட அளவிலான போட்டிகளுக்கான ஒருங்கிணைந்த தளம் ✨";
+      if (hEn) hEn.innerText = "UNIFIED DISTRICT-LEVEL COMPETITIONS PORTAL";
+      if (hBadge) hBadge.innerText = "REGISTRATION PORTAL";
+    } else {
+      if (hTa) hTa.innerText = `✨ ${m.nameTa} ✨`;
+      if (hEn) hEn.innerText = m.nameEn;
+      if (hBadge) hBadge.innerText = "REGISTRATION PORTAL";
+    }
 
     // 2. Update Top Venue Banner
     const topMain = document.getElementById("topVenueMainPill");
