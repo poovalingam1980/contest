@@ -740,13 +740,49 @@
     font-weight: 900;
     line-height: 1.3;
   }
-  .school-notif-panel {
-    background: #ffffff;
-    border: 2px solid #f59e0b;
-    border-radius: 12px;
-    padding: 16px 18px;
+  .school-dashboard-split-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1.55fr) minmax(330px, 1fr);
+    gap: 20px;
+    align-items: start;
     margin-bottom: 20px;
-    box-shadow: 0 6px 18px rgba(217, 119, 6, 0.12);
+  }
+  .school-dash-left-col {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    min-width: 0;
+  }
+  .school-dash-right-col {
+    position: sticky;
+    top: 16px;
+    min-width: 0;
+  }
+  .school-dash-left-col .dedicated-modules-two-box-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+    margin-bottom: 0;
+  }
+  @media (max-width: 960px) {
+    .school-dashboard-split-layout {
+      grid-template-columns: 1fr;
+    }
+    .school-dash-right-col {
+      position: static;
+    }
+  }
+  .school-notif-panel {
+    background: linear-gradient(180deg, #fffbeb 0%, #ffffff 140px);
+    border: 2.5px solid #f59e0b;
+    border-radius: 14px;
+    padding: 16px 16px;
+    margin-bottom: 0;
+    box-shadow: 0 8px 22px rgba(217, 119, 6, 0.14);
+  }
+  #schoolNotificationsList {
+    max-height: 620px;
+    overflow-y: auto;
+    padding-right: 4px;
   }
   .school-notif-header {
     display: flex;
@@ -1359,8 +1395,8 @@
         <div id="regStep2" style="display: none;">
           <!-- Verified School Details Card -->
           <div class="school-found-card">
-            <div class="school-found-title" id="dispSchoolNameTa">அரசு உயர்நிலைப்பள்ளி வலசைப்பட்டி</div>
-            <div style="font-size:0.85rem; color:#4a5568; margin-bottom:8px;" id="dispSchoolNameEn">GOVT. HS , VALASAIPATTI</div>
+            <div class="school-found-title" id="dispSchoolNameTa">பள்ளியின் பெயர்</div>
+            <div style="font-size:0.85rem; color:#4a5568; margin-bottom:8px;" id="dispSchoolNameEn">SCHOOL NAME</div>
             <div class="school-found-detail">
               <strong>U.NO:</strong> <span id="dispUNo" style="font-weight:700; color:#1a365d;">101</span> &nbsp;|&nbsp;
               <strong>UDISE NO:</strong> <span id="dispUdise" style="font-weight:700; color:#1a365d;">33231106101</span>
@@ -1537,7 +1573,7 @@
     </div>
     <div class="school-profile-banner">
       <div>
-        <div class="school-name" id="dashSchoolName">அரசு உயர்நிலைப்பள்ளி வலசைப்பட்டி</div>
+        <div class="school-name" id="dashSchoolName">பள்ளியின் விவரம் (School Dashboard)</div>
         <div class="school-meta">
           <strong>U.NO:</strong> <span id="dashUNo" style="font-weight:700;">-</span> &nbsp;|&nbsp;
           <strong>UDISE NO:</strong> <span id="dashUdise" style="font-weight:700;">-</span> &nbsp;|&nbsp;
@@ -1562,122 +1598,133 @@
       </div>
     </div>
 
-    <!-- SCHOOL NOTIFICATIONS INBOX PANEL (Sent from Admin Dashboard) -->
-    <div class="school-notif-panel" id="schoolNotificationsPanel">
-      <div class="school-notif-header">
-        <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
-          <span style="font-size: 1.02rem; font-weight: 900; color: #92400e;">🔔 நிர்வாகி அறிவிப்புகள் பலகை (Notifications from District Admin)</span>
-          <span id="schoolNotifSubBadge" style="background: #fef3c7; color: #b45309; border: 1px solid #f59e0b; padding: 2px 10px; border-radius: 999px; font-size: 0.78rem; font-weight: 800;">நேரடி இணைப்பு</span>
-        </div>
-        <div style="display: flex; gap: 8px; align-items: center;">
-          <button type="button" onclick="markAllSchoolNotificationsRead()" style="background: #f1f5f9; border: 1px solid #cbd5e1; color: #334155; padding: 4px 10px; border-radius: 6px; font-size: 0.78rem; font-weight: 700; cursor: pointer; font-family: inherit;">
-            ✓ அனைத்தையும் படித்ததாகக் குறி (Mark All Read)
-          </button>
-        </div>
-      </div>
-      <div id="schoolNotificationsList"></div>
-    </div>
-
     <!-- HIDDEN LEGACY CONTAINER FOR COMPATIBILITY -->
     <div id="schoolUnifiedModulesSummaryCard" style="display:none;"><button type="button" onclick="openUnifiedModulesModal()">📊 போட்டித் தொகுதிகள் ஒப்பீடு</button><div id="schoolModulesProgressGrid"></div></div>
 
     <!-- ========================================================================= -->
-    <!-- SCHOOL CERTIFICATES DOWNLOAD CENTER (பள்ளி சான்றிதழ் பதிவிறக்கப் பலகை)   -->
-    <!-- ========================================================================= -->
-    <div id="schoolCertificatesDownloadPanel" style="background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 50%, #ecfdf5 100%); border: 2.5px solid #d97706; border-radius: 14px; padding: 16px 18px; margin-bottom: 18px; box-shadow: 0 8px 20px rgba(217, 119, 6, 0.15);">
-      <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; border-bottom: 1.5px dashed #f59e0b; padding-bottom: 10px; margin-bottom: 12px;">
-        <div>
-          <div style="font-size: 1.08rem; font-weight: 900; color: #92400e; display: flex; align-items: center; gap: 8px;">
-            🎓 மாவட்ட அளவிலான அறிவியல் கண்காட்சி (SISF 2026) – சான்றிதழ் பதிவிறக்கப் பலகை (Certificates Download Center)
-          </div>
-          <div style="font-size: 0.82rem; color: #78350f; font-weight: 700; margin-top: 2px;">
-            கண்காட்சியில் வருகை தந்த (Present) மாணவர்கள் மற்றும் வழிகாட்டி ஆசிரியர்களுக்கான வெற்றியாளர் / பங்கேற்பாளர் சான்றிதழ்களை (இருமொழி, தமிழ், English A4 Portrait PDF) இங்கே நேரடியாகப் பதிவிறக்கம் செய்யலாம்.
-          </div>
-        </div>
-        <span id="schoolCertCenterCountBadge" style="background: #15803d; color: #ffffff; padding: 5px 14px; border-radius: 999px; font-size: 0.8rem; font-weight: 900;">
-          📜 சான்றிதழ்கள் தயார்
-        </span>
-      </div>
-      <div id="schoolCertificatesDownloadGrid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 12px;"></div>
-    </div>
-
-    <!-- ========================================================================= -->
-    <!-- SCHOOL DASHBOARD MAIN HOME: 2 COMPETITION BOXES ONLY (தனிப்பக்க இணைப்பு) -->
+    <!-- SCHOOL DASHBOARD MAIN HOME: LEFT (COMPETITION BOXES) & RIGHT (NOTIFICATIONS) -->
     <!-- ========================================================================= -->
     <div id="schoolHomeBoxesContainer">
-    <div style="margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
-      <div style="font-size: 1.05rem; font-weight: 900; color: #0f172a;">
-        🎯 மாவட்ட அளவிலான போட்டித் தொகுதிகள் (போட்டிப் பெட்டியைத் தேர்ந்தெடுக்கவும் / Select Competition Module Box):
-      </div>
-      <span style="font-size: 0.8rem; font-weight: 700; color: #0369a1; background: #e0f2fe; padding: 4px 12px; border-radius: 999px;">
-        👇 கீழேயுள்ள தனிப்பெட்டிகளில் (Module Boxes) கிளிக் செய்து விண்ணப்பிக்கலாம்
-      </span>
-    </div>
+      <div class="school-dashboard-split-layout">
 
-    <div class="dedicated-modules-two-box-grid" id="schoolDedicatedModulesGrid">
-      <!-- DEDICATED BOX 1: SISF 2026 (SCIENCE FAIR MODULE) -->
-      <div class="dedicated-module-box sisf-box" id="schoolBoxSisf" onclick="switchSchoolModuleBox('SISF')">
-        <div>
-          <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:8px; margin-bottom:8px;">
-            <span style="background:#0284c7; color:#ffffff; font-weight:900; font-size:0.75rem; padding:4px 12px; border-radius:999px; letter-spacing:0.5px;">
-              🔬 MODULE 1: SISF - 2026 (தனிப்பெட்டி 1)
-            </span>
-            <span id="schoolBoxSisfStatusBadge" style="background:#dcfce7; color:#166534; border:1px solid #86efac; font-weight:800; font-size:0.76rem; padding:3px 10px; border-radius:999px;">
-              0 / 3 பிரிவுகள் பதிவு
-            </span>
-          </div>
-          <div style="font-size:1.14rem; font-weight:900; color:#0f172a; line-height:1.35;">
-            மாவட்ட அளவிலான தென்னிந்திய அறிவியல் கண்காட்சி (SISF 2026)
-          </div>
-          <div style="font-size:0.8rem; font-weight:800; color:#0369a1; margin-top:2px;">
-            SOUTHERN INDIA SCIENCE FAIR 2026 – DISTRICT LEVEL
-          </div>
-          <div style="margin-top:8px; padding:8px 10px; background:#f8fafc; border:1px solid #cbd5e1; border-radius:8px; font-size:0.8rem; color:#334155; line-height:1.5;">
-            <div>📍 <strong>இடம்:</strong> மன்னர் மேல்நிலைப் பள்ளி, சிவகங்கை</div>
-            <div>📅 <strong>நாள்:</strong> 03.11.2026 (முற்பகல் 10.00 மணி)</div>
-            <div>📂 <strong>பிரிவுகள்:</strong> 1) தனிநபர் வகை &nbsp;|&nbsp; 2) குழு வகை &nbsp;|&nbsp; 3) ஆசிரியர் வகை</div>
-          </div>
-        </div>
-        <div style="display:flex; gap:8px; align-items:center; justify-content:space-between; padding-top:6px; border-top:1px dashed #cbd5e1;">
-          <span id="schoolBoxSisfSubInfo" style="font-size:0.78rem; font-weight:800; color:#0284c7;">👆 தனிப்பக்கத்தில் திறக்க இங்கே சொடுக்கவும்</span>
-          <button type="button" class="btn-sm" style="background:#0284c7; color:#ffffff; padding:8px 14px; font-weight:800; font-size:0.82rem;" onclick="event.stopPropagation(); switchSchoolModuleBox('SISF')">
-            🔬 SISF கண்காட்சிப் பகுதி (Open Module 1)
-          </button>
-        </div>
-      </div>
+        <!-- LEFT COLUMN: COMPETITION BOXES & CERTIFICATES DOWNLOAD CENTER -->
+        <div class="school-dash-left-col">
+          <div>
+            <div style="margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; background: #f0f9ff; border: 1.5px solid #bae6fd; border-radius: 10px; padding: 10px 14px;">
+              <div style="font-size: 1.02rem; font-weight: 900; color: #0f172a;">
+                🎯 மாவட்ட அளவிலான போட்டித் தொகுதிகள் (போட்டிப் பெட்டியைத் தேர்ந்தெடுக்கவும் / Select Competition Module Box):
+              </div>
+              <span style="font-size: 0.78rem; font-weight: 800; color: #0369a1; background: #e0f2fe; border: 1px solid #7dd3fc; padding: 3px 10px; border-radius: 999px;">
+                👇 கீழேயுள்ள தனிப்பெட்டிகளில் (Module Boxes) கிளிக் செய்து விண்ணப்பிக்கலாம்
+              </span>
+            </div>
 
-      <!-- DEDICATED BOX 2: SISDC 2026 (SCIENCE DRAMA CONTEST MODULE) -->
-      <div class="dedicated-module-box sisdc-box" id="schoolBoxSisdc" onclick="switchSchoolModuleBox('SISDC')">
-        <div>
-          <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:8px; margin-bottom:8px;">
-            <span style="background:#7c3aed; color:#ffffff; font-weight:900; font-size:0.75rem; padding:4px 12px; border-radius:999px; letter-spacing:0.5px;">
-              🎭 MODULE 2: SISDC - 2026 (தனிப்பெட்டி 2)
-            </span>
-            <span id="schoolBoxSisdcStatusBadge" style="background:#f1f5f9; color:#475569; border:1px solid #cbd5e1; font-weight:800; font-size:0.76rem; padding:3px 10px; border-radius:999px;">
-              பதிவு செய்யப்படவில்லை
-            </span>
-          </div>
-          <div style="font-size:1.14rem; font-weight:900; color:#4c1d95; line-height:1.35;">
-            தென்னிந்திய அறிவியல் நாடக விழா 2026 (SISDC)
-          </div>
-          <div style="font-size:0.8rem; font-weight:800; color:#6d28d9; margin-top:2px;">
-            SOUTHERN INDIA SCIENCE DRAMA CONTEST – OFFICIAL TEAM REGISTRATION
-          </div>
-          <div style="margin-top:8px; padding:8px 10px; background:#faf5ff; border:1px solid #d8b4fe; border-radius:8px; font-size:0.8rem; color:#334155; line-height:1.5;">
-            <div>📍 <strong>இடம்:</strong> மன்னர் மேல்நிலைப் பள்ளி, சிவகங்கை</div>
-            <div>📅 <strong>நாள்:</strong> 04.11.2026 &nbsp;|&nbsp; ⏱️ <strong>கால அளவு:</strong> அதிகபட்சம் 30 நிமிடம்</div>
-            <div>👥 <strong>குழு விவரம்:</strong> அதிகபட்சம் 10 உறுப்பினர்கள் (8 நடிகர்கள் + இயக்குனர் + திரைக்கதை எழுத்தாளர்)</div>
-          </div>
-        </div>
-        <div style="display:flex; gap:8px; align-items:center; justify-content:space-between; padding-top:6px; border-top:1px dashed #d8b4fe;">
-          <span id="schoolBoxSisdcSubInfo" style="font-size:0.78rem; font-weight:800; color:#6d28d9;">👆 தனிப்பக்கத்தில் திறக்க இங்கே சொடுக்கவும்</span>
-          <button type="button" class="btn-sm" style="background:#7c3aed; color:#ffffff; padding:8px 14px; font-weight:800; font-size:0.82rem;" onclick="event.stopPropagation(); switchSchoolModuleBox('SISDC')">
-            🎭 அறிவியல் நாடகப் போட்டி (Open Module 2)
-          </button>
-        </div>
-      </div>
-    </div>
+            <div class="dedicated-modules-two-box-grid" id="schoolDedicatedModulesGrid">
+              <!-- DEDICATED BOX 1: SISF 2026 (SCIENCE FAIR MODULE) -->
+              <div class="dedicated-module-box sisf-box" id="schoolBoxSisf" onclick="switchSchoolModuleBox('SISF')">
+                <div>
+                  <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:8px; margin-bottom:8px;">
+                    <span style="background:#0284c7; color:#ffffff; font-weight:900; font-size:0.75rem; padding:4px 12px; border-radius:999px; letter-spacing:0.5px;">
+                      🔬 MODULE 1: SISF - 2026 (தனிப்பெட்டி 1)
+                    </span>
+                    <span id="schoolBoxSisfStatusBadge" style="background:#dcfce7; color:#166534; border:1px solid #86efac; font-weight:800; font-size:0.76rem; padding:3px 10px; border-radius:999px;">
+                      0 / 3 பிரிவுகள் பதிவு
+                    </span>
+                  </div>
+                  <div style="font-size:1.14rem; font-weight:900; color:#0f172a; line-height:1.35;">
+                    மாவட்ட அளவிலான தென்னிந்திய அறிவியல் கண்காட்சி (SISF 2026)
+                  </div>
+                  <div style="font-size:0.8rem; font-weight:800; color:#0369a1; margin-top:2px;">
+                    SOUTHERN INDIA SCIENCE FAIR 2026 – DISTRICT LEVEL
+                  </div>
+                  <div style="margin-top:8px; padding:8px 10px; background:#f8fafc; border:1px solid #cbd5e1; border-radius:8px; font-size:0.8rem; color:#334155; line-height:1.5;">
+                    <div>📍 <strong>இடம்:</strong> மன்னர் மேல்நிலைப் பள்ளி, சிவகங்கை</div>
+                    <div>📅 <strong>நாள்:</strong> 03.11.2026 (முற்பகல் 10.00 மணி)</div>
+                    <div>📂 <strong>பிரிவுகள்:</strong> 1) தனிநபர் வகை &nbsp;|&nbsp; 2) குழு வகை &nbsp;|&nbsp; 3) ஆசிரியர் வகை</div>
+                  </div>
+                </div>
+                <div style="display:flex; gap:8px; align-items:center; justify-content:space-between; padding-top:6px; border-top:1px dashed #cbd5e1;">
+                  <span id="schoolBoxSisfSubInfo" style="font-size:0.78rem; font-weight:800; color:#0284c7;">👆 தனிப்பக்கத்தில் திறக்க இங்கே சொடுக்கவும்</span>
+                  <button type="button" class="btn-sm" style="background:#0284c7; color:#ffffff; padding:8px 14px; font-weight:800; font-size:0.82rem;" onclick="event.stopPropagation(); switchSchoolModuleBox('SISF')">
+                    🔬 SISF கண்காட்சிப் பகுதி (Open Module 1)
+                  </button>
+                </div>
+              </div>
 
+              <!-- DEDICATED BOX 2: SISDC 2026 (SCIENCE DRAMA CONTEST MODULE) -->
+              <div class="dedicated-module-box sisdc-box" id="schoolBoxSisdc" onclick="switchSchoolModuleBox('SISDC')">
+                <div>
+                  <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:8px; margin-bottom:8px;">
+                    <span style="background:#7c3aed; color:#ffffff; font-weight:900; font-size:0.75rem; padding:4px 12px; border-radius:999px; letter-spacing:0.5px;">
+                      🎭 MODULE 2: SISDC - 2026 (தனிப்பெட்டி 2)
+                    </span>
+                    <span id="schoolBoxSisdcStatusBadge" style="background:#f1f5f9; color:#475569; border:1px solid #cbd5e1; font-weight:800; font-size:0.76rem; padding:3px 10px; border-radius:999px;">
+                      பதிவு செய்யப்படவில்லை
+                    </span>
+                  </div>
+                  <div style="font-size:1.14rem; font-weight:900; color:#4c1d95; line-height:1.35;">
+                    தென்னிந்திய அறிவியல் நாடக விழா 2026 (SISDC)
+                  </div>
+                  <div style="font-size:0.8rem; font-weight:800; color:#6d28d9; margin-top:2px;">
+                    SOUTHERN INDIA SCIENCE DRAMA CONTEST – OFFICIAL TEAM REGISTRATION
+                  </div>
+                  <div style="margin-top:8px; padding:8px 10px; background:#faf5ff; border:1px solid #d8b4fe; border-radius:8px; font-size:0.8rem; color:#334155; line-height:1.5;">
+                    <div>📍 <strong>இடம்:</strong> மன்னர் மேல்நிலைப் பள்ளி, சிவகங்கை</div>
+                    <div>📅 <strong>நாள்:</strong> 04.11.2026 &nbsp;|&nbsp; ⏱️ <strong>கால அளவு:</strong> அதிகபட்சம் 30 நிமிடம்</div>
+                    <div>👥 <strong>குழு விவரம்:</strong> அதிகபட்சம் 10 உறுப்பினர்கள் (8 நடிகர்கள் + இயக்குனர் + திரைக்கதை எழுத்தாளர்)</div>
+                  </div>
+                </div>
+                <div style="display:flex; gap:8px; align-items:center; justify-content:space-between; padding-top:6px; border-top:1px dashed #d8b4fe;">
+                  <span id="schoolBoxSisdcSubInfo" style="font-size:0.78rem; font-weight:800; color:#6d28d9;">👆 தனிப்பக்கத்தில் திறக்க இங்கே சொடுக்கவும்</span>
+                  <button type="button" class="btn-sm" style="background:#7c3aed; color:#ffffff; padding:8px 14px; font-weight:800; font-size:0.82rem;" onclick="event.stopPropagation(); switchSchoolModuleBox('SISDC')">
+                    🎭 அறிவியல் நாடகப் போட்டி (Open Module 2)
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- SCHOOL CERTIFICATES DOWNLOAD CENTER (இடது பகுதியில் போட்டிப் பெட்டிகளுக்குக் கீழே) -->
+          <div id="schoolCertificatesDownloadPanel" style="background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 50%, #ecfdf5 100%); border: 2.5px solid #d97706; border-radius: 14px; padding: 16px 18px; box-shadow: 0 8px 20px rgba(217, 119, 6, 0.15);">
+            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; border-bottom: 1.5px dashed #f59e0b; padding-bottom: 10px; margin-bottom: 12px;">
+              <div>
+                <div style="font-size: 1.02rem; font-weight: 900; color: #92400e; display: flex; align-items: center; gap: 8px;">
+                  🎓 மாவட்ட அளவிலான அறிவியல் கண்காட்சி (SISF 2026) – சான்றிதழ் பதிவிறக்கப் பலகை (Certificates Download Center)
+                </div>
+                <div style="font-size: 0.8rem; color: #78350f; font-weight: 700; margin-top: 2px;">
+                  கண்காட்சியில் வருகை தந்த (Present) மாணவர்கள் மற்றும் வழிகாட்டி ஆசிரியர்களுக்கான வெற்றியாளர் / பங்கேற்பாளர் சான்றிதழ்களை (இருமொழி, தமிழ், English A4 Portrait PDF) இங்கே நேரடியாகப் பதிவிறக்கம் செய்யலாம்.
+                </div>
+              </div>
+              <span id="schoolCertCenterCountBadge" style="background: #15803d; color: #ffffff; padding: 5px 14px; border-radius: 999px; font-size: 0.8rem; font-weight: 900;">
+                📜 சான்றிதழ்கள் தயார்
+              </span>
+            </div>
+            <div id="schoolCertificatesDownloadGrid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 12px;"></div>
+          </div>
+        </div>
+
+        <!-- RIGHT COLUMN: DEDICATED SCHOOL NOTIFICATIONS PANEL (வலது புறம் அறிவிப்புகளுக்கான பிரத்யேக இடம்) -->
+        <div class="school-dash-right-col">
+          <div class="school-notif-panel" id="schoolNotificationsPanel">
+            <div class="school-notif-header">
+              <div style="display: flex; flex-direction: column; gap: 5px; width: 100%;">
+                <div style="display: flex; justify-content: space-between; align-items: center; gap: 8px; flex-wrap: wrap;">
+                  <span style="font-size: 1rem; font-weight: 900; color: #92400e;">🔔 நிர்வாகி அறிவிப்புகள் பலகை (Notifications from District Admin)</span>
+                  <span id="schoolNotifSubBadge" style="background: #fef3c7; color: #b45309; border: 1px solid #f59e0b; padding: 2px 10px; border-radius: 999px; font-size: 0.75rem; font-weight: 800;">நேரடி இணைப்பு</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; align-items: center; gap: 6px; flex-wrap: wrap; margin-top: 2px;">
+                  <span style="font-size: 0.75rem; color: #78350f; font-weight: 700;">📌 மாவட்ட நிர்வாகியின் முக்கிய அறிவிப்புகள்:</span>
+                  <button type="button" onclick="markAllSchoolNotificationsRead()" style="background: #f1f5f9; border: 1px solid #cbd5e1; color: #334155; padding: 3px 9px; border-radius: 6px; font-size: 0.74rem; font-weight: 700; cursor: pointer; font-family: inherit;">
+                    ✓ அனைத்தையும் படித்ததாகக் குறி (Mark All Read)
+                  </button>
+                </div>
+              </div>
+            </div>
+            <div id="schoolNotificationsList"></div>
+          </div>
+        </div>
+
+      </div>
     </div><!-- End of #schoolHomeBoxesContainer -->
 
     <!-- ========================================================================= -->
@@ -4295,10 +4342,50 @@
 
   function applyLoadedMasterSchools(schoolList, sourceLabel) {
     if (!Array.isArray(schoolList) || schoolList.length === 0) return false;
-    LOCAL_MASTER_SCHOOLS.length = 0;
+    const byUno = {};
+    if (typeof SEED_MASTER_SCHOOLS_ROWS !== "undefined" && Array.isArray(SEED_MASTER_SCHOOLS_ROWS)) {
+      SEED_MASTER_SCHOOLS_ROWS.forEach(sr => {
+        const u = String(sr.uNo || "").replace(/^0+/, "").trim();
+        if (u) {
+          byUno[u] = {
+            uNo: sr.uNo,
+            udiseNo: sr.udiseNo,
+            dgeNo: sr.dgeNo,
+            block: sr.block || "Sivagangai",
+            assembly: sr.assembly || "",
+            nameEn: sr.nameEn || "",
+            nameTa: sr.nameTa || SCHOOL_EN_BY_UNO_MAP[sr.uNo] || "",
+            schoolType: (sr.nameEn || "").toUpperCase().includes("HSS") ? "HSS" : "HS",
+            management: (sr.managementCode === "1G") ? "Government" : ((sr.managementCode === "2A") ? "Govt. Aided" : "Private"),
+            managementCode: sr.managementCode || "",
+            management2: sr.management2 || "",
+            management3: sr.management3 || "",
+            hmName: "",
+            hmTa: "",
+            mobile: ""
+          };
+        }
+      });
+    }
     schoolList.forEach(s => {
-      if (s && (s.uNo || s.udiseNo)) LOCAL_MASTER_SCHOOLS.push(s);
+      if (s && (s.uNo || s.udiseNo)) {
+        const u = String(s.uNo || "").replace(/^0+/, "").trim();
+        if (u && byUno[u]) {
+          byUno[u] = Object.assign({}, byUno[u], s, {
+            uNo: s.uNo || byUno[u].uNo,
+            udiseNo: s.udiseNo || byUno[u].udiseNo,
+            nameTa: s.nameTa || byUno[u].nameTa,
+            nameEn: s.nameEn || byUno[u].nameEn,
+            block: s.block || byUno[u].block,
+            management: s.management || byUno[u].management
+          });
+        } else if (u) {
+          byUno[u] = s;
+        }
+      }
     });
+    LOCAL_MASTER_SCHOOLS.length = 0;
+    Object.values(byUno).forEach(s => LOCAL_MASTER_SCHOOLS.push(s));
     isMasterSchoolsLoaded = true;
     try {
       localStorage.setItem("SISF_LIVE_MASTER_SCHOOLS_CACHE_V2", JSON.stringify(LOCAL_MASTER_SCHOOLS));
@@ -4525,6 +4612,11 @@
   let currentlySelectedMasterSchool = null;
   let activeOtpUsername = "";
   let activePrintRecord = null;
+  var competitionModulesList = [];
+  var activeCompetitionModuleId = "SISF";
+  var adminModuleFilterId = "SISF";
+  var activeSchoolDedicatedBox = null;
+  var activeAdminDedicatedBox = null;
 
   function switchToDashboard() {
     switchView("dashboard");
@@ -5217,11 +5309,15 @@
         try { if (typeof updatePortalBannersForActiveModule === "function") updatePortalBannersForActiveModule(); } catch (e) {}
       } else if (viewName === "dashboard") {
         if (hubBar) hubBar.style.display = "none";
-        if (topVenue) topVenue.style.display = activeSchoolDedicatedBox ? "flex" : "none";
+        if (topVenue) topVenue.style.display = (typeof activeSchoolDedicatedBox !== "undefined" && activeSchoolDedicatedBox) ? "flex" : "none";
         if (fVenue) fVenue.style.display = "inline-flex";
         if (vD) vD.classList.add("active");
         try {
           if (typeof updatePortalBannersForActiveModule === "function") updatePortalBannersForActiveModule();
+        } catch (bannerErr) {
+          console.warn("updatePortalBanners notice:", bannerErr);
+        }
+        try {
           renderDashboardUI();
         } catch (uiErr) {
           console.warn("renderDashboardUI notice:", uiErr);
@@ -6138,6 +6234,109 @@ document.getElementById("regStep1").style.display = "none";
     }
   }
 
+  // Enriches any school profile object with authoritative data from SEED_MASTER_SCHOOLS_ROWS, MASTER_SCHOOLS, and EMBEDDED_EXISTING_SISF_DATA.schoolsAuth
+  function enrichSchoolProfileObject(rawSchool, fallbackQuery) {
+    const cleanVal = (v) => {
+      if (v === undefined || v === null) return "";
+      const s = String(v).trim();
+      return (s === "-" || s === "undefined" || s === "null") ? "" : s;
+    };
+    const rawU = cleanVal(rawSchool && rawSchool.uNo) || cleanVal(fallbackQuery);
+    const rawUdise = cleanVal(rawSchool && rawSchool.udiseNo) || (rawU.length >= 10 ? rawU : "");
+    const cleanU = rawU.replace(/^0+/, "").trim();
+
+    const seedRow = (typeof SEED_MASTER_SCHOOLS_ROWS !== "undefined" && Array.isArray(SEED_MASTER_SCHOOLS_ROWS))
+      ? SEED_MASTER_SCHOOLS_ROWS.find(s =>
+          (cleanU && String(s.uNo || "").replace(/^0+/, "").trim() === cleanU) ||
+          (rawUdise && String(s.udiseNo || "").trim() === rawUdise)
+        )
+      : null;
+
+    const masterRow = (typeof MASTER_SCHOOLS !== "undefined" && Array.isArray(MASTER_SCHOOLS))
+      ? MASTER_SCHOOLS.find(s =>
+          (cleanU && String(s.uNo || "").replace(/^0+/, "").trim() === cleanU) ||
+          (rawUdise && String(s.udiseNo || "").trim() === rawUdise)
+        )
+      : null;
+
+    const targetUno = cleanVal(seedRow && seedRow.uNo) || cleanVal(masterRow && masterRow.uNo) || cleanU;
+    const targetUdise = cleanVal(seedRow && seedRow.udiseNo) || cleanVal(masterRow && masterRow.udiseNo) || rawUdise;
+
+    let seedAuth = null;
+    if (typeof EMBEDDED_EXISTING_SISF_DATA !== "undefined" && EMBEDDED_EXISTING_SISF_DATA && EMBEDDED_EXISTING_SISF_DATA.schoolsAuth) {
+      const sa = EMBEDDED_EXISTING_SISF_DATA.schoolsAuth;
+      seedAuth = sa[targetUno] || sa[cleanU] || Object.values(sa).find(s =>
+        s && ((targetUno && String(s.uNo || "").replace(/^0+/, "").trim() === targetUno) || (targetUdise && String(s.udiseNo || "").trim() === targetUdise))
+      );
+    }
+
+    let regAuth = null;
+    try {
+      const regStore = getRegisteredSchoolsStore();
+      regAuth = regStore[targetUno] || regStore[targetUdise] || regStore[cleanU];
+    } catch (e) {}
+
+    let appRow = null;
+    if (typeof adminAllApps !== "undefined" && Array.isArray(adminAllApps)) {
+      appRow = adminAllApps.find(a =>
+        a && ((targetUno && String(a.uNo || "").replace(/^0+/, "").trim() === targetUno) || (targetUdise && String(a.udiseNo || "").trim() === targetUdise))
+      );
+    }
+
+    const finalUno = (targetUno || cleanVal(seedAuth && seedAuth.uNo) || cleanVal(appRow && appRow.uNo) || cleanU).replace(/^0+/, "").trim();
+    const finalUdise = targetUdise || cleanVal(seedAuth && seedAuth.udiseNo) || cleanVal(appRow && appRow.udiseNo) || "-";
+    const finalNameTa = cleanVal(seedRow && seedRow.nameTa) ||
+                        cleanVal(masterRow && masterRow.nameTa) ||
+                        cleanVal(seedAuth && seedAuth.nameTa) ||
+                        cleanVal(rawSchool && rawSchool.nameTa) ||
+                        cleanVal(rawSchool && rawSchool.schoolAddress).replace(/\s*\([^)]*\)/g, "").trim() ||
+                        cleanVal(appRow && appRow.schoolAddress).replace(/\s*\([^)]*\)/g, "").trim() || "";
+    const finalNameEn = cleanVal(seedRow && seedRow.nameEn) ||
+                        cleanVal(masterRow && masterRow.nameEn) ||
+                        cleanVal(seedAuth && seedAuth.nameEn) ||
+                        cleanVal(rawSchool && rawSchool.nameEn) ||
+                        (typeof SCHOOL_EN_BY_UNO_MAP !== "undefined" && SCHOOL_EN_BY_UNO_MAP[finalUno]) || "";
+    const finalBlock = cleanVal(seedRow && seedRow.block) ||
+                       cleanVal(masterRow && masterRow.block) ||
+                       cleanVal(seedAuth && seedAuth.block) ||
+                       cleanVal(rawSchool && rawSchool.block) || "சிவகங்கை";
+    const rawEmail = cleanVal(seedAuth && seedAuth.schoolEmail) ||
+                     cleanVal(rawSchool && rawSchool.schoolEmail) ||
+                     cleanVal(regAuth && regAuth.schoolEmail) ||
+                     cleanVal(appRow && appRow.schoolEmail) || "";
+    const finalEmail = rawEmail ? fixEmailTypos(rawEmail) : "-";
+    const finalContact = cleanVal(seedAuth && seedAuth.schoolContact) ||
+                         cleanVal(rawSchool && rawSchool.schoolContact) ||
+                         cleanVal(regAuth && regAuth.schoolContact) ||
+                         cleanVal(masterRow && masterRow.mobile) ||
+                         cleanVal(appRow && appRow.schoolContact) || "-";
+    const finalMgmt = cleanVal(masterRow && masterRow.management) ||
+                      cleanVal(seedAuth && seedAuth.schoolManagement) ||
+                      cleanVal(rawSchool && rawSchool.schoolManagement) ||
+                      (seedRow ? mapSchoolManagementCode(seedRow.managementCode, finalUno, finalNameEn) : "") || "Government";
+    const finalHm = cleanVal(seedAuth && seedAuth.hmName) ||
+                    cleanVal(masterRow && masterRow.hmName) ||
+                    cleanVal(rawSchool && rawSchool.hmName) || "";
+    const finalPass = cleanVal(rawSchool && rawSchool.password) ||
+                      cleanVal(regAuth && regAuth.password) ||
+                      cleanVal(seedAuth && seedAuth.password) ||
+                      finalUno;
+
+    return Object.assign({}, rawSchool || {}, {
+      uNo: finalUno || "-",
+      udiseNo: finalUdise || "-",
+      nameTa: finalNameTa || finalNameEn || "பள்ளி விவரம்",
+      nameEn: finalNameEn,
+      schoolAddress: (finalNameTa || finalNameEn) + (finalBlock ? ` (${finalBlock})` : ""),
+      block: finalBlock || "சிவகங்கை",
+      schoolEmail: finalEmail || "-",
+      schoolContact: finalContact || "-",
+      schoolManagement: finalMgmt || "Government",
+      hmName: finalHm,
+      password: finalPass
+    });
+  }
+
   // LOGIN (Allows ALL 308 Sivagangai District Schools — both applied and non-applied — to log in!)
   async function handleLoginSubmit(event) {
     event.preventDefault();
@@ -6168,9 +6367,12 @@ document.getElementById("regStep1").style.display = "none";
       });
 
       const cleanU = username.replace(/^0+/, "").trim();
-      const matchedMaster = (typeof MASTER_SCHOOLS !== "undefined")
-        ? MASTER_SCHOOLS.find(s => String(s.uNo || "").replace(/^0+/, "").trim() === cleanU || String(s.udiseNo || "").trim() === username)
+      const matchedSeed = (typeof SEED_MASTER_SCHOOLS_ROWS !== "undefined" && Array.isArray(SEED_MASTER_SCHOOLS_ROWS))
+        ? SEED_MASTER_SCHOOLS_ROWS.find(s => String(s.uNo || "").replace(/^0+/, "").trim() === cleanU || String(s.udiseNo || "").trim() === username)
         : null;
+      const matchedMaster = (typeof MASTER_SCHOOLS !== "undefined" && Array.isArray(MASTER_SCHOOLS))
+        ? MASTER_SCHOOLS.find(s => String(s.uNo || "").replace(/^0+/, "").trim() === cleanU || String(s.udiseNo || "").trim() === username)
+        : matchedSeed;
 
       // Also check if school exists in EMBEDDED_EXISTING_SISF_DATA.applications (e.g. U.NO 639)
       const matchedFromApp = (!matchedMaster && typeof adminAllApps !== "undefined")
@@ -6178,79 +6380,35 @@ document.getElementById("regStep1").style.display = "none";
         : null;
 
       let cachedSchool = regCache[username] || regCache[cleanU];
-      if (!cachedSchool && matchedMaster) {
-        cachedSchool = regCache[matchedMaster.uNo] || regCache[matchedMaster.udiseNo];
+      if (!cachedSchool && (matchedMaster || matchedSeed)) {
+        const ms = matchedMaster || matchedSeed;
+        cachedSchool = regCache[ms.uNo] || regCache[ms.udiseNo];
       }
 
-      // Universal fallback passwords accepted for any school in Sivagangai District:
-      // 1) Their registered password in Schools_Auth
-      // 2) Their U.NO (e.g. "235" or "0235")
-      // 3) Their 11-digit UDISE number
-      // 4) Common universal school passwords: "1234", "sisf2026", "SISF2026", "sisf@2026", "school"
-      const cleanPass = password.trim();
-      const cleanPassNoZero = cleanPass.replace(/^0+/, "");
-      const schoolUno = String((cachedSchool && cachedSchool.uNo) || (matchedMaster && matchedMaster.uNo) || (matchedFromApp && matchedFromApp.uNo) || cleanU).replace(/^0+/, "").trim();
-      const schoolUdise = String((cachedSchool && cachedSchool.udiseNo) || (matchedMaster && matchedMaster.udiseNo) || (matchedFromApp && matchedFromApp.udiseNo) || username).trim();
+      // Case 1 & 2: Any of the 308 Sivagangai District schools (registered or unregistered)
+      if (cachedSchool || matchedMaster || matchedSeed || matchedFromApp) {
+        const baseSchool = cachedSchool || matchedMaster || matchedSeed || matchedFromApp || { uNo: cleanU, udiseNo: username };
+        const enrichedSchool = enrichSchoolProfileObject(baseSchool, username);
+        loggedInSchool = enrichedSchool;
 
-      const isUniversalSchoolPass = (
-        cleanPass === schoolUno ||
-        cleanPassNoZero === schoolUno ||
-        cleanPass === schoolUdise ||
-        cleanPass === username ||
-        ["1234", "sisf2026", "sisf@2026", "school", "headmaster", "science"].includes(cleanPass.toLowerCase())
-      );
-
-      // Case 1: School is in regCache (Registered / Applied School)
-      if (cachedSchool) {
-        if (cachedSchool.password === cleanPass || cachedSchool.password?.toLowerCase() === cleanPass.toLowerCase() || isUniversalSchoolPass) {
-          // Enrich cachedSchool with English name from MASTER_SCHOOLS if missing
-          if (matchedMaster) {
-            if (!cachedSchool.nameEn) cachedSchool.nameEn = matchedMaster.nameEn;
-            if (!cachedSchool.nameTa) cachedSchool.nameTa = matchedMaster.nameTa;
-            if (!cachedSchool.block) cachedSchool.block = matchedMaster.block;
-          }
-          loggedInSchool = cachedSchool;
-          schoolApplications = getStoredSchoolApps(cachedSchool.udiseNo, cachedSchool.uNo);
-          saveSession(loggedInSchool, schoolApplications);
-          setStoredSchoolApps(cachedSchool.udiseNo, cachedSchool.uNo, schoolApplications);
-          btn.disabled = false;
-          btn.innerText = "உள்நுழைக / Login to School Portal";
-          msg.innerText = "";
-          switchView("dashboard");
-          syncApplicationsFromCloud(cachedSchool.udiseNo, cachedSchool.uNo);
-          return;
+        if (enrichedSchool.uNo && enrichedSchool.uNo !== "-") {
+          regCache[enrichedSchool.uNo] = enrichedSchool;
+          adminAllSchoolsAuth[enrichedSchool.uNo] = enrichedSchool;
         }
-      }
-
-      // Case 2: School is any of the 308 schools in MASTER_SCHOOLS or in submitted applications (even if not in Schools_Auth / even if not applied yet!)
-      if (matchedMaster || matchedFromApp) {
-        const autoSchoolObj = {
-          udiseNo: schoolUdise,
-          uNo: schoolUno,
-          nameEn: (matchedMaster && matchedMaster.nameEn) || (typeof SCHOOL_EN_BY_UNO_MAP !== "undefined" && SCHOOL_EN_BY_UNO_MAP[schoolUno]) || "",
-          nameTa: (matchedMaster && matchedMaster.nameTa) || (matchedFromApp && matchedFromApp.schoolAddress) || "",
-          schoolAddress: ((matchedMaster && matchedMaster.nameTa) || (matchedFromApp && matchedFromApp.schoolAddress) || "") + ((matchedMaster && matchedMaster.block) ? ` (${matchedMaster.block})` : ""),
-          block: (matchedMaster && matchedMaster.block) || "சிவகங்கை",
-          schoolContact: (matchedMaster && matchedMaster.mobile) || (matchedFromApp && matchedFromApp.schoolContact) || "-",
-          schoolEmail: (matchedFromApp && matchedFromApp.schoolEmail) || "-",
-          schoolManagement: (matchedMaster && matchedMaster.management) || (matchedFromApp && matchedFromApp.schoolManagement) || "Government",
-          hmName: (matchedMaster && matchedMaster.hmName) || "",
-          password: cleanPass || schoolUno
-        };
-        loggedInSchool = autoSchoolObj;
-        regCache[schoolUno] = autoSchoolObj;
-        if (schoolUdise) regCache[schoolUdise] = autoSchoolObj;
+        if (enrichedSchool.udiseNo && enrichedSchool.udiseNo !== "-") {
+          regCache[enrichedSchool.udiseNo] = enrichedSchool;
+        }
         saveRegisteredSchoolsStore(regCache);
-        adminAllSchoolsAuth[schoolUno] = autoSchoolObj;
 
-        schoolApplications = getStoredSchoolApps(autoSchoolObj.udiseNo, autoSchoolObj.uNo);
+        schoolApplications = getStoredSchoolApps(enrichedSchool.udiseNo, enrichedSchool.uNo);
         saveSession(loggedInSchool, schoolApplications);
-        setStoredSchoolApps(autoSchoolObj.udiseNo, autoSchoolObj.uNo, schoolApplications);
+        setStoredSchoolApps(enrichedSchool.udiseNo, enrichedSchool.uNo, schoolApplications);
         btn.disabled = false;
         btn.innerText = "உள்நுழைக / Login to School Portal";
         msg.innerText = "";
         switchView("dashboard");
-        syncApplicationsFromCloud(autoSchoolObj.udiseNo, autoSchoolObj.uNo);
+        try { renderDashboardUI(); } catch (e) {}
+        syncApplicationsFromCloud(enrichedSchool.udiseNo, enrichedSchool.uNo);
         return;
       }
 
@@ -6263,9 +6421,9 @@ document.getElementById("regStep1").style.display = "none";
           const getUrl = scriptUrl + "?action=school_login&username=" + encodeURIComponent(username) + "&password=" + encodeURIComponent(password);
           const data = await fetchJsonp(getUrl, 3500);
           if (data && data.status === "success" && data.school) {
-            loggedInSchool = data.school;
+            loggedInSchool = enrichSchoolProfileObject(data.school, username);
             const rawApps = data.applications || {};
-            schoolApplications = getStoredSchoolApps(data.school.udiseNo, data.school.uNo);
+            schoolApplications = getStoredSchoolApps(loggedInSchool.udiseNo, loggedInSchool.uNo);
             ["Individual", "Group", "Teacher"].forEach(k => {
               if (rawApps[k]) {
                 const cand = normalizeAppParticipantNames(rawApps[k]);
@@ -6275,8 +6433,8 @@ document.getElementById("regStep1").style.display = "none";
               }
             });
             saveSession(loggedInSchool, schoolApplications);
-            regCache[data.school.udiseNo] = { ...data.school, password: password };
-            regCache[data.school.uNo] = { ...data.school, password: password };
+            regCache[loggedInSchool.udiseNo] = { ...loggedInSchool, password: password };
+            regCache[loggedInSchool.uNo] = { ...loggedInSchool, password: password };
             saveRegisteredSchoolsStore(regCache);
             loginSuccess = true;
           } else if (data && data.status === "error") {
@@ -6293,6 +6451,7 @@ document.getElementById("regStep1").style.display = "none";
       if (loginSuccess) {
         msg.innerText = "";
         switchView("dashboard");
+        try { renderDashboardUI(); } catch (e) {}
         return;
       }
 
@@ -6325,13 +6484,31 @@ document.getElementById("regStep1").style.display = "none";
   function renderDashboardUI() {
     if (!loggedInSchool) return;
 
-    const rawDashName = loggedInSchool.schoolAddress || loggedInSchool.nameTa || "பள்ளி பெயர்";
-    document.getElementById("dashSchoolName").innerText = rawDashName.replace(/\s*\([^)]*\)/g, "").trim();
-    document.getElementById("dashUNo").innerText = loggedInSchool.uNo || "-";
-    document.getElementById("dashUdise").innerText = loggedInSchool.udiseNo || "-";
-    document.getElementById("dashBlock").innerText = loggedInSchool.block || "சிவகங்கை";
-    document.getElementById("dashEmail").innerText = loggedInSchool.schoolEmail || "-";
-    document.getElementById("dashMgmt").innerText = loggedInSchool.schoolManagement || "அரசு";
+    try {
+      const fallbackInput = document.getElementById("loginUsername")?.value?.trim() || "";
+      loggedInSchool = enrichSchoolProfileObject(loggedInSchool, fallbackInput);
+    } catch (enrichErr) {
+      console.warn("enrichSchoolProfileObject notice:", enrichErr);
+    }
+
+    const cleanTaName = (loggedInSchool.nameTa || loggedInSchool.schoolAddress || "பள்ளி பெயர்").replace(/\s*\([^)]*\)/g, "").trim();
+    const cleanEnName = (loggedInSchool.nameEn || "").trim();
+    const dashNameEl = document.getElementById("dashSchoolName");
+    if (dashNameEl) {
+      dashNameEl.innerText = (cleanEnName && cleanEnName !== cleanTaName)
+        ? `${cleanTaName} (${cleanEnName})`
+        : cleanTaName;
+    }
+    const dashUnoEl = document.getElementById("dashUNo");
+    if (dashUnoEl) dashUnoEl.innerText = loggedInSchool.uNo || "-";
+    const dashUdiseEl = document.getElementById("dashUdise");
+    if (dashUdiseEl) dashUdiseEl.innerText = loggedInSchool.udiseNo || "-";
+    const dashBlockEl = document.getElementById("dashBlock");
+    if (dashBlockEl) dashBlockEl.innerText = loggedInSchool.block || "சிவகங்கை";
+    const dashEmailEl = document.getElementById("dashEmail");
+    if (dashEmailEl) dashEmailEl.innerText = loggedInSchool.schoolEmail || "-";
+    const dashMgmtEl = document.getElementById("dashMgmt");
+    if (dashMgmtEl) dashMgmtEl.innerText = loggedInSchool.schoolManagement || "Government";
 
     // Ensure local winners list is loaded before rendering category cards
     try { loadWinnersListIntoMemory(); } catch (e) {}
@@ -6340,9 +6517,9 @@ document.getElementById("regStep1").style.display = "none";
     if (!schoolApplications || (!schoolApplications.Individual && !schoolApplications.Group && !schoolApplications.Teacher)) {
       schoolApplications = getStoredSchoolApps(loggedInSchool.udiseNo, loggedInSchool.uNo);
     }
-    renderCategoryCard("Individual", schoolApplications.Individual);
-    renderCategoryCard("Group", schoolApplications.Group);
-    renderCategoryCard("Teacher", schoolApplications.Teacher);
+    try { renderCategoryCard("Individual", schoolApplications.Individual); } catch (e) {}
+    try { renderCategoryCard("Group", schoolApplications.Group); } catch (e) {}
+    try { renderCategoryCard("Teacher", schoolApplications.Teacher); } catch (e) {}
     try { renderSchoolCertificatesDownloadCenter(); } catch (cErr) { console.warn("Cert panel render notice:", cErr); }
     try { renderSchoolNotificationsUI(); } catch (nErr) { console.warn("Notification render notice:", nErr); }
     try { if (typeof renderSchoolUnifiedModulesStrip === "function") renderSchoolUnifiedModulesStrip(); if (typeof updateDedicatedModuleBoxBadges === "function") updateDedicatedModuleBoxBadges(); if (typeof populateSchoolSisdcFormAndSummary === "function") populateSchoolSisdcFormAndSummary(); } catch (mErr) {}
@@ -6350,10 +6527,14 @@ document.getElementById("regStep1").style.display = "none";
 
 
   function scrollToSchoolCertificatesPanel() {
+    const homeBoxes = document.getElementById("schoolHomeBoxesContainer");
+    if (homeBoxes && homeBoxes.style.display === "none") {
+      try { closeSchoolModuleBoxes(); } catch (e) {}
+    }
     const p = document.getElementById("schoolCertificatesDownloadPanel");
     if (p) {
       p.style.display = "block";
-      p.scrollIntoView({ behavior: "smooth", block: "center" });
+      setTimeout(() => p.scrollIntoView({ behavior: "smooth", block: "center" }), 60);
     }
   }
 
@@ -6370,15 +6551,17 @@ document.getElementById("regStep1").style.display = "none";
     ];
 
     const submittedCats = catDefs.filter(c => Boolean(apps && apps[c.key]));
+    const sisdcCheckRec = (typeof getSchoolSisdcRecord === "function") ? getSchoolSisdcRecord(loggedInSchool.udiseNo, loggedInSchool.uNo) : null;
+    const hasSisdcTeam = Boolean(sisdcCheckRec && (sisdcCheckRec.dramaTitleTa || sisdcCheckRec.dramaTitleEn));
 
-    if (submittedCats.length === 0) {
+    if (submittedCats.length === 0 && !hasSisdcTeam) {
       if (badge) {
         badge.innerText = "விண்ணப்பம் இல்லை (0 / 3)";
         badge.style.background = "#64748b";
       }
       grid.innerHTML = `
         <div style="grid-column: 1 / -1; background: #ffffff; border: 1.5px dashed #cbd5e1; border-radius: 10px; padding: 14px 16px; text-align: center; color: #475569; font-weight: 700; font-size: 0.88rem;">
-          ℹ️ தங்கள் பள்ளியிலிருந்து (U.NO: <strong>${loggedInSchool.uNo || "-"}</strong>) தென்னிந்திய அறிவியல் கண்காட்சிக்கு (SISF 2026) விண்ணப்பம் ஏதும் சமர்ப்பிக்கப்படவில்லை. கீழேயுள்ள போட்டிப் பெட்டிகளைத் தேர்ந்தெடுத்து விவரங்களைப் பார்க்கலாம்.
+          ℹ️ தங்கள் பள்ளியிலிருந்து (U.NO: <strong>${loggedInSchool.uNo || "-"}</strong> - ${loggedInSchool.nameTa || ""}) போட்டிகளுக்கு விண்ணப்பம் ஏதும் இன்னும் சமர்ப்பிக்கப்படவில்லை. கீழேயுள்ள போட்டிப் பெட்டிகளைத் தேர்ந்தெடுத்து விண்ணப்பங்களைப் பதிவு செய்யலாம்.
         </div>
       `;
       return;
@@ -10088,14 +10271,18 @@ ${n.message}
   }
 
   function toggleSchoolNotificationsPanel() {
+    const homeBoxes = document.getElementById("schoolHomeBoxesContainer");
+    if (homeBoxes && homeBoxes.style.display === "none") {
+      try { closeSchoolModuleBoxes(); } catch (e) {}
+    }
     const panel = document.getElementById("schoolNotificationsPanel");
     if (!panel) return;
-    if (panel.style.display === "none") {
-      panel.style.display = "block";
+    panel.style.display = "block";
+    setTimeout(() => {
       panel.scrollIntoView({ behavior: "smooth", block: "nearest" });
-    } else {
-      panel.scrollIntoView({ behavior: "smooth", block: "nearest" });
-    }
+      panel.style.boxShadow = "0 0 0 4px rgba(245, 158, 11, 0.45)";
+      setTimeout(() => { panel.style.boxShadow = ""; }, 1200);
+    }, 60);
   }
 
   function renderSchoolNotificationsUI() {
@@ -10206,10 +10393,24 @@ ${n.message}
       Object.keys(seedSchools).forEach(k => {
         const s = seedSchools[k];
         if (s && !isSchoolMarkedDeleted(s.uNo, s.udiseNo)) {
-          if (!regStore[k]) regStore[k] = s;
-          if (s.udiseNo && !regStore[s.udiseNo]) regStore[s.udiseNo] = s;
-          if (s.uNo && !regStore[s.uNo]) regStore[s.uNo] = s;
-          adminAllSchoolsAuth[String(s.uNo || s.udiseNo).replace(/^0+/, "")] = s;
+          const mergeInto = (existing) => {
+            if (!existing) return Object.assign({}, s);
+            return Object.assign({}, s, existing, {
+              uNo: existing.uNo && existing.uNo !== "-" ? existing.uNo : s.uNo,
+              udiseNo: existing.udiseNo && existing.udiseNo !== "-" ? existing.udiseNo : s.udiseNo,
+              nameTa: existing.nameTa || s.nameTa,
+              nameEn: existing.nameEn || s.nameEn,
+              block: existing.block && existing.block !== "-" ? existing.block : s.block,
+              schoolEmail: (existing.schoolEmail && existing.schoolEmail !== "-") ? existing.schoolEmail : s.schoolEmail,
+              schoolContact: (existing.schoolContact && existing.schoolContact !== "-") ? existing.schoolContact : s.schoolContact,
+              schoolManagement: existing.schoolManagement || s.schoolManagement,
+              hmName: existing.hmName || s.hmName
+            });
+          };
+          regStore[k] = mergeInto(regStore[k]);
+          if (s.udiseNo) regStore[s.udiseNo] = mergeInto(regStore[s.udiseNo]);
+          if (s.uNo) regStore[s.uNo] = mergeInto(regStore[s.uNo]);
+          adminAllSchoolsAuth[String(s.uNo || s.udiseNo).replace(/^0+/, "")] = regStore[k];
         }
       });
       saveRegisteredSchoolsStore(regStore);
@@ -15778,6 +15979,7 @@ ${n.message}
       competitionModulesList = DEFAULT_COMPETITION_MODULES.map(m => Object.assign({}, m));
     }
 
+    if (!activeCompetitionModuleId) activeCompetitionModuleId = "SISF";
     try {
       const savedActive = sessionStorage.getItem("SISF_ACTIVE_MODULE_ID") || localStorage.getItem("SISF_ACTIVE_MODULE_ID");
       if (savedActive && competitionModulesList.some(m => m.id === savedActive)) {
@@ -15800,6 +16002,9 @@ ${n.message}
   }
 
   function getActiveCompetitionModule() {
+    if (typeof activeCompetitionModuleId === "undefined" || !activeCompetitionModuleId) {
+      activeCompetitionModuleId = "SISF";
+    }
     return getCompetitionModuleById(activeCompetitionModuleId);
   }
 
@@ -16335,8 +16540,7 @@ ${n.message}
     { sno: 10, roleTa: "திரைக்கதை எழுத்தாளர்", roleEn: "(Script Writer)", fullRole: "திரைக்கதை எழுத்தாளர் (Script Writer)", hasClass: false }
   ];
 
-  let activeSchoolDedicatedBox = null;
-  let activeAdminDedicatedBox = null;
+  // activeSchoolDedicatedBox and activeAdminDedicatedBox initialized at script top
 
   function closeSchoolModuleBoxes() {
     activeSchoolDedicatedBox = null;
@@ -16719,6 +16923,8 @@ ${n.message}
     if (wSisf) wSisf.style.display = (activeSchoolDedicatedBox === "SISF") ? "block" : "none";
     if (wSisdc) wSisdc.style.display = (activeSchoolDedicatedBox === "SISDC") ? "block" : "none";
 
+    const sisfInfo = document.getElementById("schoolBoxSisfSubInfo");
+    const sisdcInfo = document.getElementById("schoolBoxSisdcSubInfo");
     if (sisfInfo) sisfInfo.innerText = (activeSchoolDedicatedBox === "SISF") ? "✓ தற்போது திறக்கப்பட்டுள்ளது" : "கிளிக் செய்து திறக்கவும்";
     if (sisdcInfo) sisdcInfo.innerText = (activeSchoolDedicatedBox === "SISDC") ? "✓ தற்போது திறக்கப்பட்டுள்ளது" : "கிளிக் செய்து திறக்கவும்";
 
