@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>SISF 2026 - பள்ளி இணைய முகப்பு & பதிவு மேலாண்மை தளம்</title>
+  <title>SIVAGANGAI DISTRICT COMPETITION REGISTRATION PORTAL</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Mukta+Malar:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -1264,7 +1264,7 @@
       <div class="header-dept">🏛️ பள்ளிக்கல்வித்துறை – சிவகங்கை மாவட்டம்</div>
       <div class="header-dept-en">DEPARTMENT OF SCHOOL EDUCATION – SIVAGANGAI DISTRICT</div>
       <div class="header-title-ta" id="headerTitleTa">✨ மாவட்ட அளவிலான போட்டிகளுக்கான ஒருங்கிணைந்த தளம் ✨</div>
-      <div class="header-title-en" id="headerTitleEn">UNIFIED DISTRICT-LEVEL COMPETITIONS PORTAL</div>
+      <div class="header-title-en" id="headerTitleEn">SIVAGANGAI DISTRICT COMPETITION REGISTRATION PORTAL</div>
       <div class="royal-badge-bar" id="headerRoyalBadgeBar">
         <span id="headerActiveModuleBadge" style="letter-spacing: 2px; font-weight: 800;">REGISTRATION PORTAL</span>
       </div>
@@ -1326,21 +1326,8 @@
 
       <!-- Login Form (Accepts UDISE or U.NO) -->
       <div id="loginFormSection" class="auth-body">
-        <!-- Exhibition Venue & Time Highlight Notice on School Portal Home -->
-        <div id="authVenueNoticeBox" style="display: none; background: linear-gradient(135deg, #ecfdf5 0%, #fefce8 100%); border: 1.5px solid #10b981; border-left: 5px solid #047857; border-radius: 8px; padding: 12px 14px; margin-bottom: 16px; color: #065f46;">
-          <div style="font-size: 0.85rem; font-weight: 800; color: #047857; margin-bottom: 3px;">
-            📢 முக்கிய அறிவிப்பு / District Science Fair Announcement:
-          </div>
-          <div style="font-size: 0.96rem; font-weight: 800; color: #1e293b; line-height: 1.5;">
-            மாவட்ட அளவிலான கண்காட்சி <span style="color: #047857; text-decoration: underline;">சிவகங்கை மன்னர் மேல்நிலைப்பள்ளியில்</span> <span style="color: #b91c1c;">03.11.2026 முற்பகல் 10.00 மணிக்கு</span> நடைபெறும்.
-          </div>
-          <div style="margin-top: 6px; padding-top: 6px; border-top: 1px dashed #6ee7b7; font-size: 0.88rem; font-weight: 800; color: #991b1b; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 6px;">
-            <span>⏰ போட்டிகள் பதிவு செய்வதற்கான கடைசி தேதி: <strong id="authDeadlineDateText" style="background:#fef2f2; border:1px solid #fecaca; padding:1px 8px; border-radius:6px; color:#dc2626;">30.11.2026</strong></span>
-            <span id="authDeadlineStatusBadge" style="background:#dcfce7; color:#166534; border:1px solid #86efac; padding:1px 8px; border-radius:999px; font-size:0.76rem; font-weight:800;">🟢 பதிவு நடைபெறுகிறது</span>
-          </div>
-        </div>
-        <!-- Dynamic Admin Broadcast Notifications on Login Screen -->
-        <div id="authAdminBroadcastBox" style="display: none; margin-bottom: 14px;"></div>
+        <div id="authVenueNoticeBox" style="display: none !important;"><span id="authDeadlineDateText"></span><span id="authDeadlineStatusBadge"></span></div>
+        <div id="authAdminBroadcastBox" style="display: none !important;"></div>
         <!-- Registration Success Notification Banner -->
         <div id="loginSuccessBanner" style="display: none;"></div>
         <form onsubmit="handleLoginSubmit(event)">
@@ -1358,9 +1345,6 @@
             <input type="password" id="loginPassword" class="form-control" placeholder="கடவுச்சொல்லை உள்ளிடவும்" required>
           </div>
           <button type="submit" id="btnLogin" class="btn-block">உள்நுழைக / Login to School Portal</button>
-        <div style="margin-top: 10px; background: #f0f9ff; border: 1.5px solid #bae6fd; border-radius: 8px; padding: 9px 12px; font-size: 0.8rem; color: #0369a1; font-weight: 700; line-height: 1.5;">
-          💡 <strong>அனைத்துப் பள்ளிகளுக்கும் உள்நுழைவு அனுமதி:</strong> சிவகங்கை மாவட்டத்தின் <strong>அனைத்து 308 பள்ளிகளும்</strong> (போட்டிக்கு விண்ணப்பித்த மற்றும் விண்ணப்பிக்காத அனைத்துப் பள்ளிகளும்) தங்களின் <strong>U.NO</strong> (எ.கா: <code>101</code> முதல் <code>964</code> வரை) அல்லது <strong>UDISE</strong> எண்ணை உள்ளிட்டு, தங்களின் பதிவு செய்த கடவுச்சொல் அல்லது <strong>U.NO / <code>1234</code></strong> என்பதை கடவுச்சொல்லாகப் பயன்படுத்தி நேரடியாக உள்நுழையலாம்.
-        </div>
           <div id="loginMsg" class="auth-msg" style="color: var(--accent);"></div>
         </form>
       </div>
@@ -5309,8 +5293,8 @@
         try { if (typeof updatePortalBannersForActiveModule === "function") updatePortalBannersForActiveModule(); } catch (e) {}
       } else if (viewName === "dashboard") {
         if (hubBar) hubBar.style.display = "none";
-        if (topVenue) topVenue.style.display = (typeof activeSchoolDedicatedBox !== "undefined" && activeSchoolDedicatedBox) ? "flex" : "none";
-        if (fVenue) fVenue.style.display = "inline-flex";
+        if (topVenue) topVenue.style.display = "none";
+        if (fVenue) fVenue.style.display = "none";
         if (vD) vD.classList.add("active");
         try {
           if (typeof updatePortalBannersForActiveModule === "function") updatePortalBannersForActiveModule();
@@ -10288,27 +10272,11 @@ ${n.message}
   function renderSchoolNotificationsUI() {
     loadNotificationsIntoMemory();
 
-    // 1. Render public broadcast notifications on Auth / Login screen (#authAdminBroadcastBox)
+    // 1. Keep Auth / Login screen free of broadcast notification banners as requested
     const authBox = document.getElementById("authAdminBroadcastBox");
     if (authBox) {
-      const customBroadcasts = adminNotificationsList.filter(n => n.targetType === "ALL" && n.id !== "NOTIF_DEFAULT_VENUE_2026");
-      if (customBroadcasts.length > 0) {
-        authBox.style.display = "block";
-        authBox.innerHTML = customBroadcasts.slice(0, 3).map(n => `
-          <div style="background: #fff1f2; border: 1.5px solid #fda4af; border-left: 5px solid #e11d48; border-radius: 8px; padding: 10px 14px; margin-bottom: 8px; color: #881337;">
-            <div style="font-size: 0.82rem; font-weight: 800; color: #e11d48; display:flex; justify-content:space-between; flex-wrap:wrap;">
-              <span>🔔 நிர்வாகி அறிவிப்பு: ${n.title}</span>
-              <span style="font-size: 0.74rem; color: #64748b;">${n.timestamp || ""}</span>
-            </div>
-            <div style="font-size: 0.9rem; font-weight: 700; color: #1e293b; margin-top: 3px; line-height: 1.45;">
-              ${n.message}
-            </div>
-          </div>
-        `).join("");
-      } else {
-        authBox.style.display = "none";
-        authBox.innerHTML = "";
-      }
+      authBox.style.display = "none";
+      authBox.innerHTML = "";
     }
 
     // 2. Render school-specific + broadcast notifications in School Dashboard (#schoolNotificationsList)
@@ -16099,30 +16067,32 @@ ${n.message}
     if (!m) return;
 
     const vAuth = document.getElementById("viewAuth");
+    const vDash = document.getElementById("viewDashboard");
     const isAuthActive = vAuth && vAuth.classList.contains("active");
+    const isDashHomeActive = vDash && vDash.classList.contains("active") && !activeSchoolDedicatedBox;
     const hubBar = document.getElementById("unifiedModulesHubBar");
     const topVenue = document.getElementById("topVenueBanner");
     const fVenue = document.getElementById("footerVenueBadge");
     const authNotice = document.getElementById("authVenueNoticeBox");
 
-    if (isAuthActive) {
+    if (isAuthActive || isDashHomeActive) {
       if (hubBar) hubBar.style.display = "none";
       if (topVenue) topVenue.style.display = "none";
       if (fVenue) fVenue.style.display = "none";
       if (authNotice) authNotice.style.display = "none";
     }
 
-    // 1. Update Header Titles (On Auth view, strictly show Unified Portal title with NO module name)
+    // 1. Update Header Titles (On Auth view & School Dashboard home, strictly show Unified Portal banner identical to Login section)
     const hTa = document.getElementById("headerTitleTa");
     const hEn = document.getElementById("headerTitleEn");
     const hBadge = document.getElementById("headerActiveModuleBadge");
-    if (isAuthActive) {
+    if (isAuthActive || (vDash && vDash.classList.contains("active"))) {
       if (hTa) hTa.innerText = "✨ மாவட்ட அளவிலான போட்டிகளுக்கான ஒருங்கிணைந்த தளம் ✨";
-      if (hEn) hEn.innerText = "UNIFIED DISTRICT-LEVEL COMPETITIONS PORTAL";
+      if (hEn) hEn.innerText = "SIVAGANGAI DISTRICT COMPETITION REGISTRATION PORTAL";
       if (hBadge) hBadge.innerText = "REGISTRATION PORTAL";
     } else {
-      if (hTa) hTa.innerText = `✨ ${m.nameTa} ✨`;
-      if (hEn) hEn.innerText = m.nameEn;
+      if (hTa) hTa.innerText = "✨ மாவட்ட அளவிலான போட்டிகளுக்கான ஒருங்கிணைந்த தளம் ✨";
+      if (hEn) hEn.innerText = "SIVAGANGAI DISTRICT COMPETITION REGISTRATION PORTAL";
       if (hBadge) hBadge.innerText = "REGISTRATION PORTAL";
     }
 
@@ -16554,7 +16524,7 @@ ${n.message}
     const hEn = document.getElementById("headerTitleEn");
     const topVenue = document.getElementById("topVenueBanner");
     if (hTa) hTa.innerText = "✨ மாவட்ட அளவிலான போட்டிகளுக்கான ஒருங்கிணைந்த தளம் ✨";
-    if (hEn) hEn.innerText = "UNIFIED DISTRICT-LEVEL COMPETITIONS PORTAL";
+    if (hEn) hEn.innerText = "SIVAGANGAI DISTRICT COMPETITION REGISTRATION PORTAL";
     if (topVenue) topVenue.style.display = "none";
     updateDedicatedModuleBoxBadges();
     window.scrollTo({ top: 0, behavior: "smooth" });
