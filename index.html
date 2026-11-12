@@ -10290,7 +10290,103 @@ document.getElementById("regStep1").style.display = "none";
     attachTanglishHandlers();
   };
 
-  // SISF-ONLY School Certificate Download Center (No SISDC items mixed here!)
+  // Override renderCategoryCard so every SISF category card displays the 3 direct Certificate Download buttons (Bilingual, Tamil, English)
+  renderCategoryCard = function(catKey, appData) {
+    const card = document.getElementById("card" + catKey);
+    const badge = document.getElementById("badge" + catKey);
+    const details = document.getElementById("details" + catKey);
+    const actions = document.getElementById("actions" + catKey);
+    if (!card || !badge || !details || !actions) return;
+
+    if (appData) {
+      card.classList.add("submitted");
+      badge.className = "cat-status-badge status-done";
+      badge.innerHTML = "✅ சமர்ப்பிக்கப்பட்டது (" + (appData.regNo || "SISF-xxxx") + ")";
+
+      let participantsHtml = "";
+      if (catKey === "Individual") {
+        participantsHtml = `<p><span class="cat-details-label">மாணவர்:</span> ${appData.student1Name || "-"} (${appData.student1Class || "-"})</p>`;
+      } else if (catKey === "Group") {
+        participantsHtml = `<p><span class="cat-details-label">மாணவர்கள்:</span> 1) ${appData.student1Name || "-"}, 2) ${appData.student2Name || "-"}</p>`;
+      }
+      participantsHtml += `<p><span class="cat-details-label">ஆசிரியர்:</span> ${appData.guideTeacherName || "-"}</p>`;
+
+      const winnerRec = findWinnerRecordForSchoolCategory(catKey, appData);
+      const isCancelled = winnerRec && winnerRec.prizeRank === "CANCEL";
+      const activeWinRec = isCancelled ? null : winnerRec;
+      const isPartRank = activeWinRec && activeWinRec.prizeRank && activeWinRec.prizeRank.includes("பங்கேற்பாளர்");
+
+      const winnerBannerHtml = activeWinRec ? `
+        <div style="margin-top:8px; background:linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); border:1.5px solid #d97706; border-radius:8px; padding:8px 10px; color:#92400e; font-weight:800; font-size:0.84rem; text-align:center; box-shadow:0 2px 6px rgba(217,119,6,0.2);">
+          ${isPartRank ? "🎖️ பாராட்டுகள்! சான்றிதழ் நிலை:" : "🏆 வாழ்த்துகள்! வெற்றியாளராகத் தேர்வு:"}<br>
+          <span style="color:#b91c1c; font-size:0.9rem;">${normalizePrizeRankLabel(activeWinRec.prizeRank)}</span>
+        </div>
+      ` : "";
+
+      const certBtnHtml = activeWinRec ? `
+        <div style="margin-top:9px; background:#fffbeb; border:1.5px solid #f59e0b; border-radius:8px; padding:8px;">
+          <div style="font-size:0.76rem; font-weight:900; color:#92400e; text-align:center; margin-bottom:6px;">
+            📜 சான்றிதழ் பதிவிறக்கம் (A4 Portrait - 3 வடிவங்கள்)
+          </div>
+          <div style="display:flex; flex-direction:column; gap:5px;">
+            <button type="button" onclick="downloadSchoolWinnerCertificate('${catKey}', 'PARTICIPANT', 'both')" style="width:100%; background:linear-gradient(135deg, #b45309 0%, #d97706 50%, #059669 100%); color:#ffffff; border:none; border-radius:6px; padding:7px 10px; font-weight:800; font-size:0.8rem; cursor:pointer; font-family:inherit; display:flex; align-items:center; justify-content:center; gap:5px;">
+              📜 இருமொழி சான்றிதழ் (தமிழ் & English)
+            </button>
+            <div style="display:flex; gap:5px;">
+              <button type="button" onclick="downloadSchoolWinnerCertificate('${catKey}', 'PARTICIPANT', 'ta')" style="flex:1; background:linear-gradient(135deg, #047857 0%, #10b981 100%); color:#ffffff; border:none; border-radius:6px; padding:6px 8px; font-weight:800; font-size:0.78rem; cursor:pointer; font-family:inherit;">
+                📜 தமிழ் சான்றிதழ்
+              </button>
+              <button type="button" onclick="downloadSchoolWinnerCertificate('${catKey}', 'PARTICIPANT', 'en')" style="flex:1; background:linear-gradient(135deg, #1e40af 0%, #2563eb 100%); color:#ffffff; border:none; border-radius:6px; padding:6px 8px; font-weight:800; font-size:0.78rem; cursor:pointer; font-family:inherit;">
+                📜 English Certificate
+              </button>
+            </div>
+          </div>
+        </div>
+      ` : "";
+
+      details.innerHTML = `
+        <p><span class="cat-details-label">படைப்பின் தலைப்பு:</span> <strong>${appData.exhibitTitle || "-"}</strong></p>
+        <p><span class="cat-details-label">துறை:</span> ${appData.exhibitDiscipline || "-"}</p>
+        ${participantsHtml}
+        <p style="font-size:0.75rem; color:#718096; margin-top:4px;">தேதி: ${appData.timestamp || "-"}</p>
+        ${winnerBannerHtml}
+      `;
+
+      if (isRegistrationDeadlinePassed()) {
+        actions.innerHTML = `
+          <div style="font-size:0.78rem; color:#991b1b; background:#fef2f2; border:1px solid #fecaca; border-radius:6px; padding:5px 8px; margin-bottom:8px; text-align:center; font-weight:700;">
+            🔒 திருத்தம் செய்யும் கடைசி நாள் (30.10.2026) முடிவடைந்தது
+          </div>
+          <div style="display:flex;">
+            <button type="button" class="btn-pdf" style="width:100%; font-weight:800;" onclick="printAppDirectly('${catKey}')">📥 படிவம் PDF (Registration PDF)</button>
+          </div>
+          ${certBtnHtml}
+        `;
+      } else {
+        actions.innerHTML = `
+          <div style="display:flex; gap:8px;">
+            <button type="button" class="btn-edit" style="flex:1;" onclick="openApplicationForm('${catKey}', true)">✏️ திருத்து (Edit)</button>
+            <button type="button" class="btn-pdf" style="flex:1;" onclick="printAppDirectly('${catKey}')">📥 PDF</button>
+          </div>
+          ${certBtnHtml}
+        `;
+      }
+    } else {
+      card.classList.remove("submitted");
+      badge.className = "cat-status-badge status-empty";
+      if (isRegistrationDeadlinePassed()) {
+        badge.innerText = "🔒 காலம் முடிவடைந்தது";
+        details.innerHTML = '<p style="color: #991b1b; font-weight: 600;">விண்ணப்பிக்கும் கடைசி நாள் (30.10.2026) முடிவடைந்துவிட்டது. புதிய பதிவு செய்ய இயலாது.</p>';
+        actions.innerHTML = `<button type="button" class="btn-apply" style="background: #94a3b8; cursor: not-allowed;" disabled>🔒 விண்ணப்பப் பதிவு முடிவடைந்தது</button>`;
+      } else {
+        badge.innerText = "⏳ இன்னும் விண்ணப்பிக்கவில்லை";
+        details.innerHTML = '<p style="color: #a0aec0; font-style: italic;">இப்பிரிவிற்குப் பள்ளி சார்பில் இன்னும் விண்ணப்பிக்கவில்லை. கீழே உள்ள பொத்தானை அழுத்தி விண்ணப்பிக்கலாம்.</p>';
+        actions.innerHTML = `<button type="button" class="btn-apply" onclick="openApplicationForm('${catKey}', false)">➕ இப்பிரிவில் விண்ணப்பிக்க (Apply Now)</button>`;
+      }
+    }
+  };
+
+  // SISF-ONLY School Certificate Download Center (with direct Bilingual, Tamil, and English buttons)
   function renderSchoolCertificatesCenter() {
     const container = document.getElementById("schoolCertificatesListContainer");
     if (!container || !loggedInSchool) return;
@@ -10300,6 +10396,7 @@ document.getElementById("regStep1").style.display = "none";
       const app = schoolApplications ? schoolApplications[catKey] : null;
       const winRec = findWinnerRecordForSchoolCategory(catKey, app);
       if (!winRec && !app) return;
+      if (winRec && winRec.prizeRank === "CANCEL") return;
 
       const rank = normalizePrizeRankLabel((winRec && winRec.prizeRank) || "🎖️ பங்கேற்பாளர்");
       const isPrize = !rank.includes("பங்கேற்பாளர்");
@@ -10320,14 +10417,16 @@ document.getElementById("regStep1").style.display = "none";
             <div style="font-size:0.9rem; font-weight:800; color:#0f172a;">படைப்பு: ${title}</div>
             <div style="font-size:0.8rem; color:#475569; margin-top:2px;">பங்கேற்பாளர்: <strong>${partText}</strong></div>
           </div>
-          <div style="display:flex; gap:8px; flex-wrap:wrap;">
-            <button type="button" class="btn-sm" style="background:linear-gradient(135deg,#059669,#047857); color:#fff; font-weight:800; padding:8px 14px;" onclick="downloadSchoolWinnerCertificate('${catKey}', 'PARTICIPANT')">
-              📜 ${catKey === 'Teacher' ? 'ஆசிரியர் சான்றிதழ் PDF' : 'மாணவர் சான்றிதழ் PDF'}
+          <div style="display:flex; gap:6px; flex-wrap:wrap; align-items:center;">
+            <button type="button" class="btn-sm" style="background:linear-gradient(135deg,#b45309,#d97706,#059669); color:#fff; font-weight:800; padding:7px 12px;" onclick="downloadSchoolWinnerCertificate('${catKey}', 'PARTICIPANT', 'both')">
+              📜 இருமொழி சான்றிதழ் (தமிழ் & English)
             </button>
-            ${catKey !== "Teacher" ? `
-            <button type="button" class="btn-sm" style="background:linear-gradient(135deg,#1e40af,#2563eb); color:#fff; font-weight:800; padding:8px 14px;" onclick="downloadSchoolWinnerCertificate('${catKey}', 'GUIDE_TEACHER')">
-              👨‍🏫 வழிகாட்டி ஆசிரியர் சான்றிதழ் PDF
-            </button>` : ""}
+            <button type="button" class="btn-sm" style="background:linear-gradient(135deg,#059669,#047857); color:#fff; font-weight:800; padding:7px 12px;" onclick="downloadSchoolWinnerCertificate('${catKey}', 'PARTICIPANT', 'ta')">
+              📜 தமிழ் சான்றிதழ்
+            </button>
+            <button type="button" class="btn-sm" style="background:linear-gradient(135deg,#1e40af,#2563eb); color:#fff; font-weight:800; padding:7px 12px;" onclick="downloadSchoolWinnerCertificate('${catKey}', 'PARTICIPANT', 'en')">
+              📜 English Certificate
+            </button>
           </div>
         </div>
       `);
@@ -10336,7 +10435,7 @@ document.getElementById("regStep1").style.display = "none";
     if (itemsHtml.length === 0) {
       container.innerHTML = `
         <div style="background:#ffffff; border:1px dashed #d97706; border-radius:8px; padding:12px; font-size:0.85rem; color:#78350f;">
-          ℹ️ இப்பள்ளியிலிருந்து அறிவியல் கண்காட்சிக்கு (SISF 2026) சமர்ப்பிக்கப்படும் விண்ணப்பங்களுக்கான சான்றிதழ்கள் இங்கே உடனடியாகத் தோன்றும்.
+          ℹ️ இப்பள்ளியிலிருந்து அறிவியல் கண்காட்சிக்கு (SISF 2026) சமர்ப்பிக்கப்படும் விண்ணப்பங்களுக்கான சான்றிதழ்கள் (இருமொழி, தமிழ், English) இங்கே உடனடியாகத் தோன்றும்.
         </div>
       `;
     } else {
@@ -10344,7 +10443,7 @@ document.getElementById("regStep1").style.display = "none";
     }
   }
 
-  // SISDC-ONLY School Certificate Download Center (No SISF items mixed here!)
+  // SISDC-ONLY School Certificate Download Center
   function renderSisdcSchoolCertificatesCenter() {
     const container = document.getElementById("sisdcSchoolCertificatesListContainer");
     if (!container || !loggedInSchool) return;
@@ -10371,12 +10470,15 @@ document.getElementById("regStep1").style.display = "none";
           <div style="font-size:0.9rem; font-weight:800; color:#0f172a;">நாடகம்: ${dramaTeam.dramaTitle || "-"}</div>
           <div style="font-size:0.8rem; color:#475569; margin-top:2px;">வழிகாட்டி ஆசிரியர்: <strong>${dramaTeam.guideTeacher || "-"}</strong></div>
         </div>
-        <div style="display:flex; gap:8px; flex-wrap:wrap;">
-          <button type="button" class="btn-sm" style="background:#059669; color:#fff; font-weight:800; padding:8px 14px;" onclick="downloadSchoolSisdcCertificate('TEAM')">
-            📜 நாடகக் குழு சான்றிதழ் PDF
+        <div style="display:flex; gap:6px; flex-wrap:wrap;">
+          <button type="button" class="btn-sm" style="background:linear-gradient(135deg,#b45309,#d97706,#059669); color:#fff; font-weight:800; padding:7px 12px;" onclick="downloadSchoolSisdcCertificate('TEAM', 'both')">
+            📜 இருமொழி (Bilingual)
           </button>
-          <button type="button" class="btn-sm" style="background:#0284c7; color:#fff; font-weight:800; padding:8px 14px;" onclick="downloadSchoolSisdcCertificate('GUIDE')">
-            👨‍🏫 வழிகாட்டி சான்றிதழ் PDF
+          <button type="button" class="btn-sm" style="background:#059669; color:#fff; font-weight:800; padding:7px 12px;" onclick="downloadSchoolSisdcCertificate('TEAM', 'ta')">
+            📜 தமிழ் சான்றிதழ்
+          </button>
+          <button type="button" class="btn-sm" style="background:#1e40af; color:#fff; font-weight:800; padding:7px 12px;" onclick="downloadSchoolSisdcCertificate('TEAM', 'en')">
+            📜 English Certificate
           </button>
         </div>
       </div>
@@ -10454,87 +10556,307 @@ document.getElementById("regStep1").style.display = "none";
     } catch (e) {}
   }
 
+  // Two-place town name ordering helper for Tamil Certificate Citation
+  function parseSchoolAndTownPartsForCert(rawSchoolNameTa) {
+    let str = String(rawSchoolNameTa || "").split(" / ")[0].replace(/\s*\([^)]*\)/g, "").trim();
+    if (!str) return { townFormatted: "", schoolInflected: "அரசு உயர்நிலைப்பள்ளியில்", fullLine: "அரசு உயர்நிலைப்பள்ளியில்" };
+    const idx = str.lastIndexOf("பள்ளி");
+    if (idx !== -1) {
+      let schoolPart = str.slice(0, idx + 5).replace(/^[\s,.\-]+|[\s,.\-]+$/g, "").trim();
+      let townPart = str.slice(idx + 5).replace(/^[\s,.\-]+|[\s,.\-]+$/g, "").trim();
+      const schoolInflected = schoolPart + "யில்";
+      if (townPart) {
+        const tParts = townPart.split(",").map(s => s.trim()).filter(Boolean);
+        const townFormatted = (tParts.length >= 2) ? tParts.slice().reverse().join(", ") : townPart;
+        return {
+          townFormatted,
+          schoolInflected,
+          fullLine: `${townFormatted}, ${schoolInflected}`
+        };
+      }
+      return { townFormatted: "", schoolInflected, fullLine: schoolInflected };
+    }
+    const fallback = str + " பள்ளியில்";
+    return { townFormatted: "", schoolInflected: fallback, fullLine: fallback };
+  }
+
+  formatSchoolAndTownForCert = function(rawSchoolNameTa) {
+    return parseSchoolAndTownPartsForCert(rawSchoolNameTa).fullLine;
+  };
+
+  function getCleanEnglishSchoolNameForCert(rawNameEn) {
+    let s = String(rawNameEn || "").trim();
+    if (!s) return "Government High School";
+    // Strip any block prefix/suffix like ", 12 Sivagangai" or ", Sivagangai District"
+    s = s.replace(/\s*\([^)]*\)/g, "")
+         .replace(/,\s*\d+\s+[A-Za-z\s]+$/i, "")
+         .replace(/,\s*Sivaganga[i]?\s*District$/i, "")
+         .replace(/\s+-\s+\d+.*$/i, "")
+         .trim();
+    return s;
+  }
+
+  // Compact, realistic fountain-pen green ink signature for Chief Educational Officer, Sivagangai
   function drawNaturalCeoSignature(ctx, centerX, baseY) {
     ctx.save();
-    ctx.strokeStyle = "#1e3a8a";
     ctx.lineCap = "round";
     ctx.lineJoin = "round";
-    ctx.lineWidth = 3.2;
 
+    // Primary fountain-pen stroke in deep emerald/green official ink
+    ctx.strokeStyle = "#047857";
+    ctx.lineWidth = 4.2;
     ctx.beginPath();
-    ctx.moveTo(centerX - 85, baseY - 8);
-    ctx.bezierCurveTo(centerX - 65, baseY - 42, centerX - 35, baseY - 38, centerX - 42, baseY - 6);
-    ctx.bezierCurveTo(centerX - 48, baseY + 12, centerX - 20, baseY - 28, centerX - 5, baseY - 12);
-    ctx.bezierCurveTo(centerX + 8, baseY - 2, centerX + 22, baseY - 30, centerX + 38, baseY - 14);
-    ctx.bezierCurveTo(centerX + 52, baseY - 4, centerX + 68, baseY - 22, centerX + 88, baseY - 16);
+    ctx.moveTo(centerX - 108, baseY - 6);
+    ctx.bezierCurveTo(centerX - 88, baseY - 58, centerX - 42, baseY - 54, centerX - 54, baseY - 4);
+    ctx.bezierCurveTo(centerX - 62, baseY + 18, centerX - 28, baseY - 38, centerX - 10, baseY - 14);
+    ctx.bezierCurveTo(centerX + 4, baseY - 2, centerX + 18, baseY - 40, centerX + 36, baseY - 16);
+    ctx.bezierCurveTo(centerX + 52, baseY - 4, centerX + 68, baseY - 28, centerX + 86, baseY - 14);
+    ctx.bezierCurveTo(centerX + 98, baseY - 6, centerX + 112, baseY - 22, centerX + 124, baseY - 18);
     ctx.stroke();
 
-    ctx.lineWidth = 2.1;
+    // Secondary pressure highlight stroke
+    ctx.strokeStyle = "#065f46";
+    ctx.lineWidth = 2.6;
     ctx.beginPath();
-    ctx.moveTo(centerX - 75, baseY + 4);
-    ctx.quadraticCurveTo(centerX, baseY - 4, centerX + 92, baseY + 2);
+    ctx.moveTo(centerX - 92, baseY + 12);
+    ctx.quadraticCurveTo(centerX + 6, baseY - 2, centerX + 122, baseY + 6);
     ctx.stroke();
+
+    // Subtle two dots under flourish
+    ctx.fillStyle = "#047857";
+    ctx.beginPath();
+    ctx.arc(centerX - 8, baseY + 16, 2.6, 0, Math.PI * 2);
+    ctx.arc(centerX + 12, baseY + 15, 2.6, 0, Math.PI * 2);
+    ctx.fill();
     ctx.restore();
   }
 
-  downloadSchoolWinnerCertificate = function(catKey, recipientRole) {
+  // Draw High-Resolution A4 Portrait (2172 x 3072 px) Science Fair Thematic Border & Motifs
+  function drawPortraitScienceCertificateTemplate(ctx, W, H, compType) {
+    ctx.save();
+    // 1. Royal Ivory / Cream Portrait Background
+    const bgGrad = ctx.createRadialGradient(W / 2, H / 2, 180, W / 2, H / 2, 1850);
+    bgGrad.addColorStop(0, "#fffdf9");
+    bgGrad.addColorStop(0.65, "#fef9e7");
+    bgGrad.addColorStop(1, "#faeed1");
+    ctx.fillStyle = bgGrad;
+    ctx.fillRect(0, 0, W, H);
+
+    // 2. Outer Deep Royal Navy Frame & Multi-Layer Metallic Gold Borders
+    ctx.strokeStyle = "#0f172a";
+    ctx.lineWidth = 24;
+    ctx.strokeRect(44, 44, W - 88, H - 88);
+
+    const goldGrad = ctx.createLinearGradient(0, 0, W, H);
+    goldGrad.addColorStop(0, "#b45309");
+    goldGrad.addColorStop(0.25, "#f59e0b");
+    goldGrad.addColorStop(0.5, "#d97706");
+    goldGrad.addColorStop(0.75, "#fbbf24");
+    goldGrad.addColorStop(1, "#92400e");
+
+    ctx.strokeStyle = goldGrad;
+    ctx.lineWidth = 10;
+    ctx.strokeRect(72, 72, W - 144, H - 144);
+
+    ctx.strokeStyle = "#1e3a8a";
+    ctx.lineWidth = 3.5;
+    ctx.strokeRect(92, 92, W - 184, H - 184);
+
+    ctx.strokeStyle = "#d97706";
+    ctx.lineWidth = 2;
+    ctx.strokeRect(104, 104, W - 208, H - 208);
+
+    // 3. Ornate Corner L-Brackets & Science Motifs
+    const drawAtomMotif = (cx, cy, r, col) => {
+      ctx.save();
+      ctx.translate(cx, cy);
+      ctx.strokeStyle = col;
+      ctx.lineWidth = 2.6;
+      [0, Math.PI / 3, (2 * Math.PI) / 3].forEach(ang => {
+        ctx.save();
+        ctx.rotate(ang);
+        ctx.beginPath();
+        ctx.ellipse(0, 0, r, r * 0.36, 0, 0, Math.PI * 2);
+        ctx.stroke();
+        ctx.restore();
+      });
+      ctx.fillStyle = col;
+      ctx.beginPath();
+      ctx.arc(0, 0, r * 0.14, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.restore();
+    };
+
+    const drawHexLattice = (cx, cy, r, col) => {
+      ctx.save();
+      ctx.translate(cx, cy);
+      ctx.strokeStyle = col;
+      ctx.lineWidth = 2.2;
+      ctx.beginPath();
+      for (let i = 0; i < 6; i++) {
+        const a = (Math.PI / 3) * i;
+        const px = r * Math.cos(a), py = r * Math.sin(a);
+        if (i === 0) ctx.moveTo(px, py); else ctx.lineTo(px, py);
+      }
+      ctx.closePath();
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.arc(0, 0, r * 0.55, 0, Math.PI * 2);
+      ctx.stroke();
+      ctx.restore();
+    };
+
+    const drawFlaskMotif = (cx, cy, scale, col) => {
+      ctx.save();
+      ctx.translate(cx, cy);
+      ctx.scale(scale, scale);
+      ctx.strokeStyle = col;
+      ctx.lineWidth = 2.5;
+      ctx.beginPath();
+      ctx.moveTo(-10, -28);
+      ctx.lineTo(10, -28);
+      ctx.moveTo(-6, -28);
+      ctx.lineTo(-6, -10);
+      ctx.lineTo(-24, 22);
+      ctx.quadraticCurveTo(-26, 28, -18, 28);
+      ctx.lineTo(18, 28);
+      ctx.quadraticCurveTo(26, 28, 24, 22);
+      ctx.lineTo(6, -10);
+      ctx.lineTo(6, -28);
+      ctx.stroke();
+      ctx.restore();
+    };
+
+    // Draw Science Motifs in Top & Bottom Corners & Side Margins
+    drawAtomMotif(205, 205, 58, "rgba(180, 83, 9, 0.38)");
+    drawAtomMotif(W - 205, 205, 58, "rgba(30, 58, 138, 0.35)");
+    drawHexLattice(190, 1480, 42, "rgba(180, 83, 9, 0.22)");
+    drawHexLattice(W - 190, 1480, 42, "rgba(30, 58, 138, 0.22)");
+    drawFlaskMotif(200, 2900, 1.35, "rgba(15, 118, 110, 0.32)");
+    drawAtomMotif(W - 205, 2900, 52, "rgba(180, 83, 9, 0.32)");
+
+    // Subtle Center Watermark Atom & Hexagons
+    drawAtomMotif(W / 2, 1560, 340, "rgba(217, 119, 6, 0.045)");
+
+    // 4. Top-Center Tamil Nadu Government Emblem
+    if (typeof sisfTnLogoImg !== "undefined" && sisfTnLogoImg && sisfTnLogoImg.complete && sisfTnLogoImg.naturalWidth > 0) {
+      ctx.drawImage(sisfTnLogoImg, W / 2 - 82, 120, 164, 180);
+    }
+
+    // 5. Bottom-Center Royal Gold Seal Emblem (without SISF • 2026 text below it)
+    const sealX = W / 2;
+    const sealY = 2720;
+    const sealR = 84;
+    ctx.save();
+    // Twin Ribbons
+    ctx.fillStyle = "#1e3a8a";
+    ctx.beginPath();
+    ctx.moveTo(sealX - 38, sealY + 55);
+    ctx.lineTo(sealX - 66, sealY + 145);
+    ctx.lineTo(sealX - 36, sealY + 128);
+    ctx.lineTo(sealX - 14, sealY + 148);
+    ctx.closePath();
+    ctx.fill();
+
+    ctx.beginPath();
+    ctx.moveTo(sealX + 38, sealY + 55);
+    ctx.lineTo(sealX + 66, sealY + 145);
+    ctx.lineTo(sealX + 36, sealY + 128);
+    ctx.lineTo(sealX + 14, sealY + 148);
+    ctx.closePath();
+    ctx.fill();
+
+    // Serrated Gold Starburst Rosette
+    ctx.fillStyle = goldGrad;
+    ctx.beginPath();
+    const spikes = 36;
+    for (let i = 0; i < spikes * 2; i++) {
+      const rad = (i % 2 === 0) ? sealR : sealR - 11;
+      const ang = (i * Math.PI) / spikes;
+      const px = sealX + Math.cos(ang) * rad;
+      const py = sealY + Math.sin(ang) * rad;
+      if (i === 0) ctx.moveTo(px, py); else ctx.lineTo(px, py);
+    }
+    ctx.closePath();
+    ctx.fill();
+
+    ctx.fillStyle = "#fef3c7";
+    ctx.beginPath();
+    ctx.arc(sealX, sealY, sealR - 18, 0, Math.PI * 2);
+    ctx.fill();
+
+    ctx.strokeStyle = "#b45309";
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+    ctx.arc(sealX, sealY, sealR - 24, 0, Math.PI * 2);
+    ctx.stroke();
+
+    drawAtomMotif(sealX, sealY, 34, "#b45309");
+    ctx.restore();
+    ctx.restore();
+  }
+
+  downloadSchoolWinnerCertificate = function(catKey, recipientRole, explicitLangMode) {
     const app = schoolApplications ? schoolApplications[catKey] : null;
     const winRec = findWinnerRecordForSchoolCategory(catKey, app);
     if (!winRec && !app) {
       showPortalToast("சான்றிதழ் விவரங்கள் கிடைக்கவில்லை.");
       return;
     }
-    const langMode = document.getElementById("schoolCertLangSelect")?.value || "both";
+    const langMode = explicitLangMode || document.getElementById("schoolCertLangSelect")?.value || "both";
+    const sel = document.getElementById("schoolCertLangSelect");
+    if (sel && explicitLangMode) sel.value = explicitLangMode;
     generateAndDownloadWinnerCertificatePdf(winRec, app, langMode, recipientRole || "PARTICIPANT", "பள்ளி உள்நுழைவு (School Login)");
   };
 
-  adminDownloadWinnerCertificateById = function(winId, recipientRole) {
+  adminDownloadWinnerCertificateById = function(winId, recipientRole, explicitLangMode) {
     loadWinnersListIntoMemory();
     const winRec = adminWinnersList.find(w => w.id === winId);
     if (!winRec) return;
     const app = adminAllApps.find(a => a.regNo === winRec.regNo || (String(a.uNo).replace(/^0+/,"") === String(winRec.uNo).replace(/^0+/,"") && a.categoryOfEntry === winRec.category));
-    const langMode = document.getElementById("admCertLangSelect")?.value || "both";
+    const langMode = explicitLangMode || document.getElementById("admCertLangSelect")?.value || "both";
+    const sel = document.getElementById("admCertLangSelect");
+    if (sel && explicitLangMode) sel.value = explicitLangMode;
     generateAndDownloadWinnerCertificatePdf(winRec, app, langMode, recipientRole || "PARTICIPANT", "நிர்வாகி (Admin)");
   };
 
-  adminDownloadWinnerCertificateByRegNo = function(regNo, recipientRole) {
+  adminDownloadWinnerCertificateByRegNo = function(regNo, recipientRole, explicitLangMode) {
     loadWinnersListIntoMemory();
     const app = adminAllApps.find(a => a.regNo === regNo);
     const winRec = adminWinnersList.find(w => w.regNo === regNo || (app && String(w.uNo).replace(/^0+/,"") === String(app.uNo).replace(/^0+/,"") && w.category === app.categoryOfEntry));
-    const langMode = document.getElementById("admCertLangSelect")?.value || "both";
+    const langMode = explicitLangMode || document.getElementById("admCertLangSelect")?.value || "both";
+    const sel = document.getElementById("admCertLangSelect");
+    if (sel && explicitLangMode) sel.value = explicitLangMode;
     generateAndDownloadWinnerCertificatePdf(winRec, app, langMode, recipientRole || "PARTICIPANT", "நிர்வாகி (Admin)");
   };
 
   generateAndDownloadWinnerCertificatePdf = function(winRec, appData, langMode, recipientRole, downloadedByLabel) {
     const mode = langMode || document.getElementById("schoolCertLangSelect")?.value || document.getElementById("admCertLangSelect")?.value || "both";
     const role = recipientRole || "PARTICIPANT";
-    if (sisfCertBgImg && !sisfCertBgImg.complete) {
+    if (typeof sisfTnLogoImg !== "undefined" && sisfTnLogoImg && !sisfTnLogoImg.complete) {
       let doneCalled = false;
       const runNow = () => {
         if (doneCalled) return;
         doneCalled = true;
         renderEnhancedCertificateCanvasToPdf(winRec, appData, mode, role, downloadedByLabel);
       };
-      sisfCertBgImg.onload = runNow;
-      sisfCertBgImg.onerror = runNow;
-      setTimeout(runNow, 400);
+      sisfTnLogoImg.onload = runNow;
+      sisfTnLogoImg.onerror = runNow;
+      setTimeout(runNow, 350);
       return;
     }
     renderEnhancedCertificateCanvasToPdf(winRec, appData, mode, role, downloadedByLabel);
   };
 
+  // High-Resolution 300+ DPI A4 Portrait Certificate Generator (2172 x 3072 px, 595.28 x 841.89 pt)
   function renderEnhancedCertificateCanvasToPdf(winRec, appData, langMode, recipientRole, downloadedByLabel) {
+    const W = 2172;
+    const H = 3072;
+    const centerX = W / 2;
     const cvs = document.createElement("canvas");
-    cvs.width = 2048;
-    cvs.height = 1364;
+    cvs.width = W;
+    cvs.height = H;
     const ctx = cvs.getContext("2d");
-
-    if (sisfCertBgImg && sisfCertBgImg.complete && sisfCertBgImg.naturalWidth > 0) {
-      ctx.drawImage(sisfCertBgImg, 0, 0, 2048, 1364);
-    } else {
-      ctx.fillStyle = "#ffffff";
-      ctx.fillRect(0, 0, 2048, 1364);
-    }
 
     const compType = (winRec && winRec.competition) || "SISF";
     const cat = (winRec && winRec.category) || (appData && appData.categoryOfEntry) || "Individual";
@@ -10546,36 +10868,148 @@ document.getElementById("regStep1").style.display = "none";
     const mSchool = MASTER_SCHOOLS.find(s => (uNo && s.uNo === uNo) || (udise && s.udiseNo === udise)) || null;
     const rawSchoolNameTa = (mSchool && mSchool.nameTa) || (winRec && winRec.schoolName) || (appData && (appData.nameTa || appData.schoolAddress)) || "";
     const rawSchoolNameEn = (mSchool && mSchool.nameEn) || SCHOOL_EN_BY_UNO_MAP[uNo] || SCHOOL_EN_BY_UDISE_MAP[udise] || (winRec && winRec.schoolNameEn) || (appData && appData.nameEn) || rawSchoolNameTa;
-    const formattedSchoolWithTown = formatSchoolAndTownForCert(rawSchoolNameTa);
+
+    const schoolTaParts = parseSchoolAndTownPartsForCert(rawSchoolNameTa);
+    const cleanSchoolNameEn = getCleanEnglishSchoolNameForCert(rawSchoolNameEn);
 
     recordCertificateDownloadEvent(compType, regNo, uNo, udise, cat, rawSchoolNameTa, prizeRank, langMode, downloadedByLabel);
 
-    const discMapTa = {
-      "Physics": "இயற்பியல் (Physics)",
-      "Chemistry": "வேதியியல் (Chemistry)",
-      "Mathematics": "கணிதம் (Mathematics)",
-      "Environmental Science": "சுற்றுச்சூழல் அறிவியல் (Env. Science)",
-      "Engineering": "பொறியியல் (Engineering)",
-      "Bioscience / Biochemistry": "உயிரியல் / உயிர் வேதியியல் (Bioscience)",
-      "Earth & Space Science": "பூமி & விண்வெளி அறிவியல் (Earth & Space)",
-      "Computer Science": "கணினி அறிவியல் (Computer Science)"
+    // 1. Draw Portrait Science Fair Border, Corner Motifs, Top TN Emblem & Bottom Gold Seal
+    drawPortraitScienceCertificateTemplate(ctx, W, H, compType);
+
+    // 2. Department Header (y = 345, 392)
+    ctx.textAlign = "center";
+    ctx.fillStyle = "#0f172a";
+    ctx.font = "900 42px 'Mukta Malar', 'Noto Sans Tamil', sans-serif";
+    ctx.fillText("பள்ளிக்கல்வித்துறை – சிவகங்கை மாவட்டம்", centerX, 345, 1780);
+
+    ctx.fillStyle = "#0f766e";
+    ctx.font = "800 25px sans-serif";
+    ctx.fillText("DEPARTMENT OF SCHOOL EDUCATION – SIVAGANGAI DISTRICT", centerX, 392, 1780);
+
+    // 3. Royal Hero Banner Box (y = 422..576)
+    ctx.save();
+    const bannerGrad = ctx.createLinearGradient(156, 422, W - 156, 576);
+    bannerGrad.addColorStop(0, "#0f172a");
+    bannerGrad.addColorStop(0.5, "#1e3a8a");
+    bannerGrad.addColorStop(1, "#0f172a");
+    ctx.fillStyle = bannerGrad;
+    ctx.strokeStyle = "#f59e0b";
+    ctx.lineWidth = 4;
+    ctx.beginPath();
+    ctx.roundRect(156, 422, W - 312, 154, 18);
+    ctx.fill();
+    ctx.stroke();
+    ctx.restore();
+
+    if (compType === "SISDC") {
+      ctx.fillStyle = "#fde047";
+      ctx.font = "900 43px 'Mukta Malar', 'Noto Sans Tamil', sans-serif";
+      ctx.fillText("மாவட்ட அளவிலான தென்னிந்திய அறிவியல் நாடக விழா – 2026", centerX, 488, 1780);
+      ctx.fillStyle = "#ffffff";
+      ctx.font = "800 25px sans-serif";
+      ctx.fillText("DISTRICT LEVEL SOUTHERN INDIA SCIENCE DRAMA CONTEST (SISDC 2026 – 2027)", centerX, 542, 1780);
+    } else {
+      ctx.fillStyle = "#fde047";
+      ctx.font = "900 44px 'Mukta Malar', 'Noto Sans Tamil', sans-serif";
+      ctx.fillText("மாவட்ட அளவிலான தென்னிந்திய அறிவியல் கண்காட்சி – 2026", centerX, 488, 1780);
+      ctx.fillStyle = "#ffffff";
+      ctx.font = "800 25.5px sans-serif";
+      ctx.fillText("DISTRICT LEVEL SOUTHERN INDIA SCIENCE FAIR (SISF 2026 – 2027)", centerX, 542, 1780);
+    }
+
+    // 4. Venue & Date Pill Positioned Directly Between Hero Banner and Subheader Pill (y = 598..654)
+    ctx.save();
+    ctx.fillStyle = "#fffbeb";
+    ctx.strokeStyle = "#d97706";
+    ctx.lineWidth = 2.5;
+    ctx.beginPath();
+    ctx.roundRect(216, 598, W - 432, 56, 28);
+    ctx.fill();
+    ctx.stroke();
+
+    ctx.fillStyle = "#92400e";
+    ctx.font = "800 24.5px 'Mukta Malar', 'Noto Sans Tamil', sans-serif";
+    let venueBarText = "✦ இடம் : மன்னர் மேல்நிலைப்பள்ளி, சிவகங்கை  |  Venue : Mannar Hr. Sec. School, Sivagangai (03.11.2026) ✦";
+    if (langMode === "ta") {
+      venueBarText = "✦ போட்டி நடைபெற்ற இடம் : மன்னர் மேல்நிலைப்பள்ளி, சிவகங்கை  |  நாள் : 03.11.2026 ✦";
+    } else if (langMode === "en") {
+      venueBarText = "✦ Venue : Mannar Higher Secondary School, Sivagangai  |  Date : 03.11.2026 ✦";
+    }
+    ctx.fillText(venueBarText, centerX, 635, W - 470);
+    ctx.restore();
+
+    // 5. Subheader Gold/Crimson Pill (y = 676..766)
+    const isPartRank = prizeRank.includes("பங்கேற்பாளர்");
+    ctx.save();
+    const pillGrad = ctx.createLinearGradient(centerX - 540, 676, centerX + 540, 766);
+    pillGrad.addColorStop(0, "#fef3c7");
+    pillGrad.addColorStop(0.5, "#fde68a");
+    pillGrad.addColorStop(1, "#fef3c7");
+    ctx.fillStyle = pillGrad;
+    ctx.strokeStyle = "#b45309";
+    ctx.lineWidth = 3.5;
+    ctx.beginPath();
+    ctx.roundRect(centerX - 540, 676, 1080, 88, 44);
+    ctx.fill();
+    ctx.stroke();
+
+    ctx.fillStyle = "#991b1b";
+    if (langMode === "en") {
+      ctx.font = "900 34px sans-serif";
+      ctx.fillText(isPartRank ? "CERTIFICATE OF APPRECIATION" : "CERTIFICATE OF MERIT & APPRECIATION", centerX, 732, 1020);
+    } else if (langMode === "ta") {
+      ctx.font = "900 37px 'Mukta Malar', 'Noto Sans Tamil', sans-serif";
+      ctx.fillText(isPartRank ? "பாராட்டுச்சான்றிதழ்" : "பாராட்டு மற்றும் வெற்றியாளர் சான்றிதழ்", centerX, 733, 1020);
+    } else {
+      ctx.font = "900 34px 'Mukta Malar', 'Noto Sans Tamil', sans-serif";
+      ctx.fillText(isPartRank ? "பாராட்டுச்சான்றிதழ்" : "பாராட்டு மற்றும் வெற்றியாளர் சான்றிதழ்", centerX, 718, 1020);
+      ctx.fillStyle = "#78350f";
+      ctx.font = "800 19px sans-serif";
+      ctx.fillText(isPartRank ? "CERTIFICATE OF APPRECIATION" : "CERTIFICATE OF MERIT & APPRECIATION", centerX, 750, 1020);
+    }
+    ctx.restore();
+
+    // 6. Normalize Disciplines, Category Labels, Participant Names & Titles
+    const discMapTaOnly = {
+      "Physics": "இயற்பியல்",
+      "Chemistry": "வேதியியல்",
+      "Mathematics": "கணிதம்",
+      "Environmental Science": "சுற்றுச்சூழல் அறிவியல்",
+      "Engineering": "பொறியியல்",
+      "Bioscience / Biochemistry": "உயிரியல் / உயிர் வேதியியல்",
+      "Earth & Space Science": "பூமி மற்றும் விண்வெளி அறிவியல்",
+      "Computer Science": "கணினி அறிவியல்"
     };
     const rawDisc = (winRec && winRec.discipline) || (appData && appData.exhibitDiscipline) || "Physics";
-    const discTa = discMapTa[rawDisc] || rawDisc;
+    const discTaPure = discMapTaOnly[rawDisc] || rawDisc.split(" (")[0];
+    const discEnPure = rawDisc;
 
-    let s1Ta = "", s1En = "", s1Class = "";
-    let s2Ta = "", s2En = "", s2Class = "";
+    let s1Ta = "", s1En = "", s1ClassTa = "", s1ClassEn = "";
+    let s2Ta = "", s2En = "", s2ClassTa = "", s2ClassEn = "";
     let tchTa = "", tchEn = "";
+
+    const parseClassBoth = (rawCl) => {
+      const clStr = String(rawCl || "9-ஆம் வகுப்பு").trim();
+      const taCl = clStr.split(" (")[0].split(" / ")[0].trim() || "9-ஆம் வகுப்பு";
+      const numMatch = taCl.match(/\d+/);
+      const enCl = numMatch ? `${numMatch[0]}th Std` : "9th Std";
+      return { ta: taCl, en: enCl };
+    };
 
     if (appData) {
       const p1 = (appData.student1Name || "").split(" / ");
       s1Ta = appData.student1NameTa || p1[0] || "";
       s1En = appData.student1NameEn || p1[1] || s1Ta;
-      s1Class = (appData.student1Class || "").split(" (")[0];
+      const c1 = parseClassBoth(appData.student1Class);
+      s1ClassTa = c1.ta; s1ClassEn = c1.en;
+
       const p2 = (appData.student2Name || "").split(" / ");
       s2Ta = appData.student2NameTa || p2[0] || "";
       s2En = appData.student2NameEn || p2[1] || s2Ta;
-      s2Class = (appData.student2Class || "").split(" (")[0];
+      const c2 = parseClassBoth(appData.student2Class);
+      s2ClassTa = c2.ta; s2ClassEn = c2.en;
+
       const pt = (appData.guideTeacherName || "").split(" / ");
       tchTa = appData.guideTeacherNameTa || pt[0] || "";
       tchEn = appData.guideTeacherNameEn || pt[1] || tchTa;
@@ -10587,7 +11021,8 @@ document.getElementById("regStep1").style.display = "none";
         s1Ta = p1[0] || "";
         s1En = p1[1] || s1Ta;
         const mCl = winRec.student1.match(/\(([^)]+)\)/);
-        if (mCl && !s1Class) s1Class = mCl[1].split(" (")[0];
+        const c1 = parseClassBoth(mCl ? mCl[1] : "9-ஆம் வகுப்பு");
+        if (!s1ClassTa) { s1ClassTa = c1.ta; s1ClassEn = c1.en; }
       }
       if (!s2Ta && winRec.student2 && winRec.student2 !== "-") {
         const cleanS2 = winRec.student2.replace(/\s*\([^)]*\)\s*$/, "");
@@ -10595,7 +11030,8 @@ document.getElementById("regStep1").style.display = "none";
         s2Ta = p2[0] || "";
         s2En = p2[1] || s2Ta;
         const mCl2 = winRec.student2.match(/\(([^)]+)\)/);
-        if (mCl2 && !s2Class) s2Class = mCl2[1].split(" (")[0];
+        const c2 = parseClassBoth(mCl2 ? mCl2[1] : "9-ஆம் வகுப்பு");
+        if (!s2ClassTa) { s2ClassTa = c2.ta; s2ClassEn = c2.en; }
       }
       if (!tchTa && winRec.teacher && winRec.teacher !== "-") {
         const cleanT = winRec.teacher.replace(/\s*\([^)]*\)\s*$/, "");
@@ -10610,165 +11046,316 @@ document.getElementById("regStep1").style.display = "none";
     const projectTitleTa = (appData && appData.exhibitTitleTa) || titleParts[0] || fullTitle;
     const projectTitleEn = (appData && appData.exhibitTitleEn) || titleParts[1] || projectTitleTa;
 
-    ctx.textAlign = "center";
-    ctx.fillStyle = "#0f172a";
-    ctx.font = "900 31px 'Mukta Malar', 'Noto Sans Tamil', sans-serif";
-    ctx.fillText("பள்ளிக்கல்வித்துறை – சிவகங்கை மாவட்டம்", 1024, 188, 920);
-
-    ctx.fillStyle = "#0f766e";
-    ctx.font = "bold 18.5px sans-serif";
-    ctx.fillText("DEPARTMENT OF SCHOOL EDUCATION – SIVAGANGAI DISTRICT", 1024, 222, 920);
-
-    if (compType === "SISDC") {
-      ctx.fillStyle = "#fde047";
-      ctx.font = "900 33px 'Mukta Malar', 'Noto Sans Tamil', sans-serif";
-      ctx.fillText("மாவட்ட அளவிலான தென்னிந்திய அறிவியல் நாடக விழா – 2026", 1024, 298, 960);
-      ctx.fillStyle = "#ffffff";
-      ctx.font = "bold 19.5px sans-serif";
-      ctx.fillText("DISTRICT LEVEL SOUTHERN INDIA SCIENCE DRAMA CONTEST (SISDC 2026 – 2027)", 1024, 335, 960);
-    } else {
-      ctx.fillStyle = "#fde047";
-      ctx.font = "900 33px 'Mukta Malar', 'Noto Sans Tamil', sans-serif";
-      ctx.fillText("மாவட்ட அளவிலான தென்னிந்திய அறிவியல் கண்காட்சி – 2026", 1024, 298, 960);
-      ctx.fillStyle = "#ffffff";
-      ctx.font = "bold 19.5px sans-serif";
-      ctx.fillText("DISTRICT LEVEL SOUTHERN INDIA SCIENCE FAIR (SISF 2026 – 2027)", 1024, 335, 960);
+    let rankTaWord = "";
+    let rankEnPhrase = "participated meritoriously";
+    if (prizeRank.includes("முதலிடம்")) {
+      rankTaWord = "முதலிடம்";
+      rankEnPhrase = "secured First Place (Selected for State Level)";
+    } else if (prizeRank.includes("இரண்டாம்")) {
+      rankTaWord = "இரண்டாமிடம்";
+      rankEnPhrase = "secured Second Place";
+    } else if (prizeRank.includes("மூன்றாம்")) {
+      rankTaWord = "மூன்றாமிடம்";
+      rankEnPhrase = "secured Third Place";
+    } else if (prizeRank.includes("சிறப்ப")) {
+      rankTaWord = "சிறப்பிடம்";
+      rankEnPhrase = "secured Special Prize";
     }
 
-    const isPartRank = prizeRank.includes("பங்கேற்பாளர்");
-    const subHeaderText = recipientRole === "GUIDE_TEACHER"
-      ? "வழிகாட்டி ஆசிரியர் பாராட்டுச் சான்றிதழ்"
-      : (isPartRank ? "பங்கேற்பு மற்றும் பாராட்டுச் சான்றிதழ்" : "பாராட்டு மற்றும் வெற்றியாளர் சான்றிதழ்");
+    const maxLineW = 1820;
 
-    ctx.fillStyle = "#991b1b";
-    ctx.font = "900 29px 'Mukta Malar', 'Noto Sans Tamil', sans-serif";
-    ctx.fillText(subHeaderText, 1024, 414, 730);
-
-    const maxLineW = 1540;
-    let rankTa = "பங்கேற்பாளர்";
-    let rankEn = "Participant";
-    let rankVerbTa = "ஆகப் பங்கேற்றுச் சிறப்பித்தமைக்காக";
-    if (prizeRank.includes("முதலிடம்")) { rankTa = "முதலிடம் (மாநிலப் போட்டிக்குத் தேர்வு)"; rankEn = "First Place (Selected for State Level)"; rankVerbTa = "பெற்றுச் சிறப்பித்தமைக்காக"; }
-    else if (prizeRank.includes("இரண்டாம்")) { rankTa = "இரண்டாமிடம்"; rankEn = "Second Place"; rankVerbTa = "பெற்றுச் சிறப்பித்தமைக்காக"; }
-    else if (prizeRank.includes("மூன்றாம்")) { rankTa = "மூன்றாமிடம்"; rankEn = "Third Place"; rankVerbTa = "பெற்றுச் சிறப்பித்தமைக்காக"; }
-    else if (prizeRank.includes("சிறப்ப")) { rankTa = "சிறப்பிடம்"; rankEn = "Special Prize"; rankVerbTa = "பெற்றுச் சிறப்பித்தமைக்காக"; }
-
-    if (langMode === "en") {
-      const partNameEn = recipientRole === "GUIDE_TEACHER"
-        ? `Guide Teacher ${tchEn || tchTa}`
-        : (cat === "Teacher" ? `Teacher ${tchEn || tchTa}` : (cat === "Group" ? `${s1En || s1Ta}${s2En ? " & " + s2En : ""}` : (s1En || s1Ta)));
-
-      drawRichCenteredLineOnCert(ctx, [
-        { text: "This is to certify that ", size: 27, color: "#1e293b", weight: "bold" },
-        { text: partNameEn, size: 29, color: "#1e3a8a", weight: "900", underline: true }
-      ], 1024, 540, maxLineW);
-
-      drawRichCenteredLineOnCert(ctx, [
-        { text: "of ", size: 27, color: "#1e293b", weight: "bold" },
-        { text: `${rawSchoolNameEn}, Sivagangai District`, size: 28, color: "#047857", weight: "900", underline: true }
-      ], 1024, 620, maxLineW);
-
-      drawRichCenteredLineOnCert(ctx, [
-        { text: recipientRole === "GUIDE_TEACHER" ? "has guided the entry titled " : "has presented the entry titled ", size: 27, color: "#1e293b", weight: "bold" },
-        { text: `“${projectTitleEn}”`, size: 28.5, color: "#9a3412", weight: "900", underline: true }
-      ], 1024, 700, maxLineW);
-
-      drawRichCenteredLineOnCert(ctx, [
-        { text: `in Category: ${cat} (${rawDisc}) and secured `, size: 27, color: "#1e293b", weight: "bold" },
-        { text: rankEn, size: 29, color: "#b91c1c", weight: "900", underline: true }
-      ], 1024, 780, maxLineW);
-
-      drawRichCenteredLineOnCert(ctx, [
-        { text: "at the District Level Competition 2026–2027.", size: 27, color: "#1e293b", weight: "bold" }
-      ], 1024, 860, maxLineW);
-    } else {
-      drawRichCenteredLineOnCert(ctx, [
-        { text: "சிவகங்கை மாவட்டம்,  ", size: 28, color: "#1e293b", weight: "bold" },
-        { text: formattedSchoolWithTown, size: 29.5, color: "#1e3a8a", weight: "900", underline: true, underlineColor: "#93c5fd" }
-      ], 1024, 520, maxLineW);
-
-      if (recipientRole === "GUIDE_TEACHER") {
-        drawRichCenteredLineOnCert(ctx, [
-          { text: "பணியாற்றும் வழிகாட்டி ஆசிரியர் திரு./திருமதி.  ", size: 28, color: "#1e293b", weight: "bold" },
-          { text: tchTa || tchEn || "-", size: 29.5, color: "#1e3a8a", weight: "900", underline: true },
-          { text: "  அவர்கள்,", size: 28, color: "#1e293b", weight: "bold" }
-        ], 1024, 592, maxLineW);
-      } else if (cat === "Individual") {
-        drawRichCenteredLineOnCert(ctx, [
-          { text: s1Class || "9-ஆம் வகுப்பு", size: 28, color: "#b91c1c", weight: "900", underline: true },
-          { text: "  பயிலும் மாணவர் / மாணவி  ", size: 27.5, color: "#1e293b", weight: "bold" },
-          { text: s1Ta || s1En || "-", size: 29, color: "#1e3a8a", weight: "900", underline: true },
-          { text: tchTa ? `  (வழிகாட்டி: ${tchTa})` : "", size: 26, color: "#0f766e", weight: "bold" }
-        ], 1024, 592, maxLineW);
-      } else if (cat === "Group") {
-        const s1Part = `${s1Ta || "-"}${s1Class ? ` (${s1Class})` : ""}`;
-        const s2Part = s2Ta ? `, ${s2Ta}${s2Class ? ` (${s2Class})` : ""}` : "";
-        drawRichCenteredLineOnCert(ctx, [
-          { text: "பங்கேற்ற மாணவர்கள்  ", size: 27, color: "#1e293b", weight: "bold" },
-          { text: s1Part + s2Part, size: 28, color: "#1e3a8a", weight: "900", underline: true },
-          { text: tchTa ? `  [வழிகாட்டி: ${tchTa}]` : "", size: 25.5, color: "#0f766e", weight: "bold" }
-        ], 1024, 592, maxLineW);
+    // Helper to build uniform-font Tamil citation lines
+    const buildTamilCitationLines = (fSize) => {
+      const lines = [];
+      // Line 1 (and 1b if long school name)
+      const fullSchStr = `சிவகங்கை மாவட்டம், ${schoolTaParts.fullLine}`;
+      if (fullSchStr.length > 52 && schoolTaParts.townFormatted) {
+        lines.push([
+          { text: "சிவகங்கை மாவட்டம்,  ", size: fSize, color: "#1e293b", weight: "bold" },
+          { text: schoolTaParts.townFormatted + ",", size: fSize, color: "#1e3a8a", weight: "900", underline: true, underlineColor: "#93c5fd" }
+        ]);
+        lines.push([
+          { text: schoolTaParts.schoolInflected, size: fSize, color: "#1e3a8a", weight: "900", underline: true, underlineColor: "#93c5fd" }
+        ]);
       } else {
-        drawRichCenteredLineOnCert(ctx, [
-          { text: "பணியாற்றும் பங்கேற்பாளர் ஆசிரியர் திரு./திருமதி.  ", size: 28, color: "#1e293b", weight: "bold" },
-          { text: tchTa || "-", size: 29.5, color: "#1e3a8a", weight: "900", underline: true }
-        ], 1024, 592, maxLineW);
+        lines.push([
+          { text: "சிவகங்கை மாவட்டம்,  ", size: fSize, color: "#1e293b", weight: "bold" },
+          { text: schoolTaParts.fullLine, size: fSize, color: "#1e3a8a", weight: "900", underline: true, underlineColor: "#93c5fd" }
+        ]);
       }
 
-      const catMapTa = { "Individual": "தனிநபர் பிரிவு", "Group": "குழுப் பிரிவு", "Teacher": "ஆசிரியர் பிரிவு", "Drama": "அறிவியல் நாடகப் பிரிவு" };
-      drawRichCenteredLineOnCert(ctx, [
-        { text: `${catMapTa[cat] || cat} – ${discTa}`, size: 28, color: "#047857", weight: "900", underline: true },
-        { text: `  பிரிவில்  “ ${projectTitleTa} ”  என்ற படைப்பிற்கு`, size: 27.5, color: "#9a3412", weight: "bold" }
-      ], 1024, 664, maxLineW);
-
-      drawRichCenteredLineOnCert(ctx, [
-        { text: "இப்போட்டியில்  ", size: 28, color: "#1e293b", weight: "bold" },
-        { text: rankTa, size: 29.5, color: "#b91c1c", weight: "900", underline: true },
-        { text: `  ${rankVerbTa} மனதாரப் பாராட்டி இச்சான்றிதழ் வழங்கப்படுகிறது.`, size: 27.5, color: "#1e293b", weight: "bold" }
-      ], 1024, 736, maxLineW);
-
-      if (langMode === "both") {
-        const partEnShort = recipientRole === "GUIDE_TEACHER"
-          ? `Guide Teacher ${tchEn || tchTa}`
-          : (cat === "Teacher" ? (tchEn || tchTa) : `${s1En || s1Ta}${cat === "Group" && s2En ? " & " + s2En : ""}`);
-        drawRichCenteredLineOnCert(ctx, [
-          { text: `Awarded to `, size: 21, color: "#475569", weight: "bold" },
-          { text: partEnShort, size: 22, color: "#1e3a8a", weight: "900" },
-          { text: ` of `, size: 21, color: "#475569", weight: "bold" },
-          { text: rawSchoolNameEn, size: 21.5, color: "#0f766e", weight: "900" }
-        ], 1024, 825, maxLineW);
-
-        drawRichCenteredLineOnCert(ctx, [
-          { text: `for “${projectTitleEn}” (${cat} - ${rawDisc})  |  Status: `, size: 20.5, color: "#475569", weight: "bold" },
-          { text: rankEn, size: 21.5, color: "#b91c1c", weight: "900" }
-        ], 1024, 868, maxLineW);
+      // Line 2 & Line 3: Participant(s) & Guide Teacher
+      if (recipientRole === "GUIDE_TEACHER") {
+        lines.push([
+          { text: "பணியாற்றும் வழிகாட்டி ஆசிரியர் திரு./திருமதி.  ", size: fSize, color: "#1e293b", weight: "bold" },
+          { text: tchTa || tchEn || "-", size: fSize, color: "#1e3a8a", weight: "900", underline: true, underlineColor: "#93c5fd" },
+          { text: "  என்பவர்,", size: fSize, color: "#1e293b", weight: "bold" }
+        ]);
+      } else if (cat === "Individual") {
+        lines.push([
+          { text: s1ClassTa || "9-ஆம் வகுப்பு", size: fSize, color: "#b91c1c", weight: "900", underline: true, underlineColor: "#fca5a5" },
+          { text: "  பயிலும் மாணவர் / மாணவி  ", size: fSize, color: "#1e293b", weight: "bold" },
+          { text: s1Ta || s1En || "-", size: fSize, color: "#1e3a8a", weight: "900", underline: true, underlineColor: "#93c5fd" },
+          { text: "  என்பவர்,", size: fSize, color: "#1e293b", weight: "bold" }
+        ]);
+        if (tchTa || tchEn) {
+          lines.push([
+            { text: `( வழிகாட்டி ஆசிரியர் : திரு./திருமதி. ${tchTa || tchEn} )`, size: fSize, color: "#0f766e", weight: "900" }
+          ]);
+        }
+      } else if (cat === "Group") {
+        const s1Part = `${s1Ta || "-"} (${s1ClassTa || "9-ஆம் வகுப்பு"})`;
+        const s2Part = s2Ta ? `,  ${s2Ta} (${s2ClassTa || "9-ஆம் வகுப்பு"})` : "";
+        lines.push([
+          { text: "பயிலும் மாணவர்கள்  ", size: fSize, color: "#1e293b", weight: "bold" },
+          { text: s1Part + s2Part, size: fSize, color: "#1e3a8a", weight: "900", underline: true, underlineColor: "#93c5fd" },
+          { text: "  ஆகியோர்,", size: fSize, color: "#1e293b", weight: "bold" }
+        ]);
+        if (tchTa || tchEn) {
+          lines.push([
+            { text: `( வழிகாட்டி ஆசிரியர் : திரு./திருமதி. ${tchTa || tchEn} )`, size: fSize, color: "#0f766e", weight: "900" }
+          ]);
+        }
+      } else {
+        lines.push([
+          { text: "பணியாற்றும் ஆசிரியர் திரு./திருமதி.  ", size: fSize, color: "#1e293b", weight: "bold" },
+          { text: tchTa || tchEn || "-", size: fSize, color: "#1e3a8a", weight: "900", underline: true, underlineColor: "#93c5fd" },
+          { text: "  என்பவர்,", size: fSize, color: "#1e293b", weight: "bold" }
+        ]);
       }
+
+      // Line 4: Category & Pure Tamil Discipline
+      const catTaWord = { "Individual": "தனிநபர்", "Group": "குழுப்", "Teacher": "ஆசிரியர்", "Drama": "அறிவியல் நாடகப்" }[cat] || cat;
+      const eventNameTa = (compType === "SISDC") ? "மாவட்ட அறிவியல் நாடக விழாவில்  " : "மாவட்ட அறிவியல் கண்காட்சியில்  ";
+      lines.push([
+        { text: eventNameTa, size: fSize, color: "#1e293b", weight: "bold" },
+        { text: `${catTaWord} பிரிவில் ( ${discTaPure} )`, size: fSize, color: "#047857", weight: "900", underline: true, underlineColor: "#6ee7b7" }
+      ]);
+
+      // Line 5: Exhibit Title
+      if (projectTitleTa.length > 44) {
+        lines.push([
+          { text: `“ ${projectTitleTa} ”`, size: fSize, color: "#9a3412", weight: "900", underline: true, underlineColor: "#fdba74" }
+        ]);
+        lines.push([
+          { text: (compType === "SISDC") ? "என்ற அறிவியல் நாடகத்தினைச் சிறப்பாக அரங்கேற்றி," : "என்ற அறிவியல் படைப்பினைச் சிறப்பாகப் படைத்து,", size: fSize, color: "#1e293b", weight: "bold" }
+        ]);
+      } else {
+        lines.push([
+          { text: `“ ${projectTitleTa} ”`, size: fSize, color: "#9a3412", weight: "900", underline: true, underlineColor: "#fdba74" },
+          { text: (compType === "SISDC") ? "  என்ற அறிவியல் நாடகத்தினைச் சிறப்பாக அரங்கேற்றி," : "  என்ற அறிவியல் படைப்பினைச் சிறப்பாகப் படைத்து,", size: fSize, color: "#1e293b", weight: "bold" }
+        ]);
+      }
+
+      // Line 6: Final Appreciation / Prize Line
+      if (isPartRank) {
+        lines.push([
+          { text: "இப்போட்டியில் பங்கேற்றமையைப் பாராட்டி நற்சான்றிதழ் வழங்கப்படுகிறது.", size: fSize, color: "#1e293b", weight: "900" }
+        ]);
+      } else {
+        lines.push([
+          { text: "இப்போட்டியில்  ", size: fSize, color: "#1e293b", weight: "bold" },
+          { text: rankTaWord, size: fSize, color: "#b91c1c", weight: "900", underline: true, underlineColor: "#fca5a5" },
+          { text: "  பெற்றமையைப் பாராட்டி நற்சான்றிதழ் வழங்கப்படுகிறது.", size: fSize, color: "#1e293b", weight: "bold" }
+        ]);
+      }
+      return lines;
+    };
+
+    // Helper to build uniform-font English citation lines
+    const buildEnglishCitationLines = (fSize) => {
+      const lines = [];
+      const fam = "sans-serif";
+      if (recipientRole === "GUIDE_TEACHER") {
+        lines.push([
+          { text: "This is to certify that Guide Teacher Mr. / Ms. ", size: fSize, color: "#1e293b", weight: "bold", family: fam },
+          { text: tchEn || tchTa || "-", size: fSize, color: "#1e3a8a", weight: "900", underline: true, underlineColor: "#93c5fd", family: fam }
+        ]);
+      } else if (cat === "Individual") {
+        lines.push([
+          { text: "This is to certify that ", size: fSize, color: "#1e293b", weight: "bold", family: fam },
+          { text: `${s1En || s1Ta || "-"} (${s1ClassEn || "9th Std"})`, size: fSize, color: "#1e3a8a", weight: "900", underline: true, underlineColor: "#93c5fd", family: fam }
+        ]);
+      } else if (cat === "Group") {
+        const gText = `${s1En || s1Ta || "-"} (${s1ClassEn || "9th Std"})${s2En || s2Ta ? " & " + (s2En || s2Ta) + " (" + (s2ClassEn || "9th Std") + ")" : ""}`;
+        lines.push([
+          { text: "This is to certify that ", size: fSize, color: "#1e293b", weight: "bold", family: fam },
+          { text: gText, size: fSize, color: "#1e3a8a", weight: "900", underline: true, underlineColor: "#93c5fd", family: fam }
+        ]);
+      } else {
+        lines.push([
+          { text: "This is to certify that Mr. / Ms. ", size: fSize, color: "#1e293b", weight: "bold", family: fam },
+          { text: tchEn || tchTa || "-", size: fSize, color: "#1e3a8a", weight: "900", underline: true, underlineColor: "#93c5fd", family: fam }
+        ]);
+      }
+
+      // Line 2: Clean English School Name (without block code / district suffix)
+      lines.push([
+        { text: "of ", size: fSize, color: "#1e293b", weight: "bold", family: fam },
+        { text: cleanSchoolNameEn + ",", size: fSize, color: "#1e3a8a", weight: "900", underline: true, underlineColor: "#93c5fd", family: fam }
+      ]);
+
+      // Line 3: Guide Teacher (for Individual / Group)
+      if (recipientRole !== "GUIDE_TEACHER" && (cat === "Individual" || cat === "Group") && (tchEn || tchTa)) {
+        lines.push([
+          { text: `( Guide Teacher : Mr. / Ms. ${tchEn || tchTa} )`, size: fSize, color: "#0f766e", weight: "800", family: fam }
+        ]);
+      }
+
+      // Line 4: Exhibit Title
+      const actionVerbEn = recipientRole === "GUIDE_TEACHER" ? "has guided the science exhibit titled " : "has presented the science exhibit titled ";
+      if (projectTitleEn.length > 46) {
+        lines.push([
+          { text: actionVerbEn, size: fSize, color: "#1e293b", weight: "bold", family: fam }
+        ]);
+        lines.push([
+          { text: `“ ${projectTitleEn} ”`, size: fSize, color: "#9a3412", weight: "900", underline: true, underlineColor: "#fdba74", family: fam }
+        ]);
+      } else {
+        lines.push([
+          { text: actionVerbEn, size: fSize, color: "#1e293b", weight: "bold", family: fam },
+          { text: `“ ${projectTitleEn} ”`, size: fSize, color: "#9a3412", weight: "900", underline: true, underlineColor: "#fdba74", family: fam }
+        ]);
+      }
+
+      // Line 5: Category & Discipline
+      const eventNameEn = (compType === "SISDC") ? "at the District Level Science Drama Contest" : "at the District Level Science Fair";
+      lines.push([
+        { text: "in the ", size: fSize, color: "#1e293b", weight: "bold", family: fam },
+        { text: `${cat} Category ( ${discEnPure} )`, size: fSize, color: "#047857", weight: "900", underline: true, underlineColor: "#6ee7b7", family: fam },
+        { text: ` ${eventNameEn}`, size: fSize, color: "#1e293b", weight: "bold", family: fam }
+      ]);
+
+      // Line 6: Held on & Rank / Participation
+      lines.push([
+        { text: "held on 03.11.2026 at Mannar Hr. Sec. School, Sivagangai and ", size: fSize, color: "#1e293b", weight: "bold", family: fam },
+        { text: rankEnPhrase + ".", size: fSize, color: isPartRank ? "#047857" : "#b91c1c", weight: "900", underline: !isPartRank, underlineColor: "#fca5a5", family: fam }
+      ]);
+
+      return lines;
+    };
+
+    // 7. Render Citation Paragraphs According to Language Mode (both, ta, en)
+    if (langMode === "ta") {
+      const taLines = buildTamilCitationLines(38);
+      const startY = 980;
+      const stepY = Math.min(148, Math.floor(1240 / Math.max(taLines.length, 6)));
+      taLines.forEach((segs, idx) => {
+        drawRichCenteredLineOnCert(ctx, segs, centerX, startY + idx * stepY, maxLineW);
+      });
+    } else if (langMode === "en") {
+      const enLines = buildEnglishCitationLines(34);
+      const startY = 990;
+      const stepY = Math.min(145, Math.floor(1220 / Math.max(enLines.length, 6)));
+      enLines.forEach((segs, idx) => {
+        drawRichCenteredLineOnCert(ctx, segs, centerX, startY + idx * stepY, maxLineW);
+      });
+    } else {
+      // Bilingual Mode ('both'): Full Tamil Citation on Top + Ornamental Divider + Full English Citation on Bottom
+      const taLines = buildTamilCitationLines(32.5);
+      const taStartY = 855;
+      const taStepY = Math.min(96, Math.floor(690 / Math.max(taLines.length, 6)));
+      taLines.forEach((segs, idx) => {
+        drawRichCenteredLineOnCert(ctx, segs, centerX, taStartY + idx * taStepY, maxLineW);
+      });
+
+      // Ornamental Gold Divider between Tamil & English Citations
+      const divY = 1615;
+      ctx.save();
+      ctx.strokeStyle = "#d97706";
+      ctx.lineWidth = 2.5;
+      ctx.beginPath();
+      ctx.moveTo(centerX - 520, divY);
+      ctx.lineTo(centerX - 45, divY);
+      ctx.moveTo(centerX + 45, divY);
+      ctx.lineTo(centerX + 520, divY);
+      ctx.stroke();
+      ctx.fillStyle = "#b45309";
+      ctx.font = "900 28px sans-serif";
+      ctx.textAlign = "center";
+      ctx.fillText("❖", centerX, divY + 10);
+      ctx.restore();
+
+      const enLines = buildEnglishCitationLines(28.5);
+      const enStartY = 1715;
+      const enStepY = Math.min(94, Math.floor(650 / Math.max(enLines.length, 6)));
+      enLines.forEach((segs, idx) => {
+        drawRichCenteredLineOnCert(ctx, segs, centerX, enStartY + idx * enStepY, maxLineW);
+      });
     }
 
+    // 8. Bottom-Left Metadata (No vertical gold bar, no U.NO, clear bold Date)
+    ctx.save();
     ctx.textAlign = "left";
+    const metaX = 185;
+    if (langMode === "en") {
+      ctx.fillStyle = "#1e3a8a";
+      ctx.font = "900 29px sans-serif";
+      ctx.fillText(`Reg. No : ${regNo}`, metaX, 2635);
+      ctx.fillStyle = "#0f172a";
+      ctx.font = "900 31px sans-serif";
+      ctx.fillText("Date : 03.11.2026", metaX, 2705);
+      ctx.fillStyle = "#334155";
+      ctx.font = "800 28px sans-serif";
+      ctx.fillText("Place : Sivagangai", metaX, 2775);
+    } else if (langMode === "ta") {
+      ctx.fillStyle = "#1e3a8a";
+      ctx.font = "900 30px 'Mukta Malar', 'Noto Sans Tamil', sans-serif";
+      ctx.fillText(`பதிவு எண் : ${regNo}`, metaX, 2635);
+      ctx.fillStyle = "#0f172a";
+      ctx.font = "900 32px 'Mukta Malar', 'Noto Sans Tamil', sans-serif";
+      ctx.fillText("நாள் : 03.11.2026", metaX, 2705);
+      ctx.fillStyle = "#334155";
+      ctx.font = "800 29px 'Mukta Malar', 'Noto Sans Tamil', sans-serif";
+      ctx.fillText("இடம் : சிவகங்கை", metaX, 2775);
+    } else {
+      ctx.fillStyle = "#1e3a8a";
+      ctx.font = "900 29.5px 'Mukta Malar', 'Noto Sans Tamil', sans-serif";
+      ctx.fillText(`பதிவு எண் / Reg. No : ${regNo}`, metaX, 2635);
+      ctx.fillStyle = "#0f172a";
+      ctx.font = "900 32px 'Mukta Malar', 'Noto Sans Tamil', sans-serif";
+      ctx.fillText("நாள் / Date : 03.11.2026", metaX, 2705);
+      ctx.fillStyle = "#334155";
+      ctx.font = "800 28.5px 'Mukta Malar', 'Noto Sans Tamil', sans-serif";
+      ctx.fillText("இடம் / Place : சிவகங்கை (Sivagangai)", metaX, 2775);
+    }
+    ctx.restore();
+
+    // 9. Bottom-Right Natural Green Fountain-Pen CEO Signature & Uniform Bold Designation
+    const sigCenterX = 1690;
+    drawNaturalCeoSignature(ctx, sigCenterX, 2625);
+
+    ctx.save();
+    ctx.textAlign = "center";
     ctx.fillStyle = "#1e3a8a";
-    ctx.font = "bold 21.5px 'Mukta Malar', 'Noto Sans Tamil', sans-serif";
-    ctx.fillText(`சான்றிதழ் எண் / Reg. No : ${regNo}   |   பள்ளி U.NO : ${uNo || "-"}   |   UDISE : ${udise || "-"}`, 390, 1052);
-    ctx.fillStyle = "#334155";
-    ctx.font = "bold 21px 'Mukta Malar', 'Noto Sans Tamil', sans-serif";
-    ctx.fillText("இடம் : சிவகங்கை மாவட்டம்   |   ஆண்டு : 2026 – 2027", 390, 1094);
+    if (langMode === "en") {
+      ctx.font = "900 30px sans-serif";
+      ctx.fillText("Chief Educational Officer,", sigCenterX, 2705);
+      ctx.font = "900 30px sans-serif";
+      ctx.fillText("Sivagangai.", sigCenterX, 2762);
+    } else {
+      ctx.font = "900 32px 'Mukta Malar', 'Noto Sans Tamil', sans-serif";
+      ctx.fillText("முதன்மைக்கல்வி அலுவலர்,", sigCenterX, 2705);
+      ctx.font = "900 32px 'Mukta Malar', 'Noto Sans Tamil', sans-serif";
+      ctx.fillText("சிவகங்கை.", sigCenterX, 2765);
+    }
+    ctx.restore();
 
-    drawNaturalCeoSignature(ctx, 1525, 1025);
-
+    // 10. Assemble Single-Page A4 Portrait PDF (595.28 x 841.89 pt, 2172 x 3072 px) & Trigger Download
     const dataUrl = cvs.toDataURL("image/jpeg", 0.96);
     const b64 = dataUrl.split(",")[1];
     const binary = atob(b64);
     const imgBytes = new Uint8Array(binary.length);
     for (let i = 0; i < binary.length; i++) imgBytes[i] = binary.charCodeAt(i);
 
-    const wPt = 841.89, hPt = 595.28;
+    const wPt = 595.28, hPt = 841.89;
     const pdfHeader = "%PDF-1.4\n";
     const obj1 = "1 0 obj\n<< /Type /Catalog /Pages 2 0 R >>\nendobj\n";
     const obj2 = "2 0 obj\n<< /Type /Pages /Kids [3 0 R] /Count 1 >>\nendobj\n";
     const obj3 = `3 0 obj\n<< /Type /Page /Parent 2 0 R /MediaBox [0 0 ${wPt} ${hPt}] /Resources << /XObject << /Im1 5 0 R >> >> /Contents 4 0 R >>\nendobj\n`;
     const streamContent = `q\n${wPt} 0 0 ${hPt} 0 0 cm\n/Im1 Do\nQ\n`;
     const obj4 = `4 0 obj\n<< /Length ${streamContent.length} >>\nstream\n${streamContent}endstream\nendobj\n`;
-    const obj5Header = `5 0 obj\n<< /Type /XObject /Subtype /Image /Width 2048 /Height 1364 /ColorSpace /DeviceRGB /BitsPerComponent 8 /Filter /DCTDecode /Length ${imgBytes.length} >>\nstream\n`;
+    const obj5Header = `5 0 obj\n<< /Type /XObject /Subtype /Image /Width ${W} /Height ${H} /ColorSpace /DeviceRGB /BitsPerComponent 8 /Filter /DCTDecode /Length ${imgBytes.length} >>\nstream\n`;
     const obj5Footer = "\nendstream\nendobj\n";
 
     const enc = new TextEncoder();
@@ -10791,7 +11378,8 @@ document.getElementById("regStep1").style.display = "none";
     const blob = new Blob([pdfBuffer], { type: "application/pdf" });
     const blobUrl = URL.createObjectURL(blob);
     const roleSuffix = recipientRole === "GUIDE_TEACHER" ? "_GuideTeacher" : "";
-    const fileName = `${compType}_2026_Certificate_${regNo}_${cat}${roleSuffix}_${langMode}.pdf`;
+    const langLabel = { "both": "Bilingual", "ta": "Tamil", "en": "English" }[langMode] || langMode;
+    const fileName = `${compType}_2026_Certificate_${regNo}_${cat}${roleSuffix}_${langLabel}.pdf`;
 
     const downloadLink = document.createElement("a");
     downloadLink.style.display = "none";
@@ -10808,6 +11396,138 @@ document.getElementById("regStep1").style.display = "none";
       renderCertDownloadTrackerTable();
     }
   }
+
+  // Override adminInstantSetWinnerRank & renderAdminApplicationsTable to support 3 direct Certificate buttons + Cancel option
+  adminInstantSetWinnerRank = function(regNo, selectedRank) {
+    loadWinnersListIntoMemory();
+    const app = adminAllApps.find(a => a.regNo === regNo);
+    if (!app) return;
+
+    if (!selectedRank || selectedRank === "CANCEL") {
+      adminWinnersList = adminWinnersList.filter(w => !(w.regNo === regNo || (String(w.uNo).replace(/^0+/,"") === String(app.uNo).replace(/^0+/,"") && w.category === app.categoryOfEntry)));
+      saveWinnersListToAllStores(adminWinnersList);
+      renderAdminApplicationsTable();
+      renderAdminWinnersTable();
+      if (loggedInSchool) renderDashboardUI();
+      showPortalToast("ℹ️ சான்றிதழ் / வெற்றியாளர் நிலை இரத்து செய்யப்பட்டது.");
+      return;
+    }
+
+    const mSchool = MASTER_SCHOOLS.find(s => s.udiseNo === app.udiseNo || s.uNo === String(app.uNo || "").replace(/^0+/, ""));
+    const sNameClean = (mSchool ? mSchool.nameTa : (app.nameTa || app.schoolAddress || "")).replace(/\s*\([^)]*\)/g, "").trim();
+
+    const winObj = {
+      id: "WIN_" + (app.uNo || app.udiseNo) + "_" + app.categoryOfEntry,
+      category: app.categoryOfEntry,
+      prizeRank: normalizePrizeRankLabel(selectedRank),
+      uNo: String(app.uNo || "").replace(/^0+/, ""),
+      udiseNo: app.udiseNo || "",
+      schoolName: sNameClean,
+      schoolNameEn: mSchool ? mSchool.nameEn : (app.nameEn || ""),
+      regNo: app.regNo || "-",
+      student1: app.student1Name ? `${app.student1Name} (${app.student1Class || ""})` : "-",
+      student2: app.student2Name ? `${app.student2Name} (${app.student2Class || ""})` : "-",
+      teacher: app.guideTeacherName ? `${app.guideTeacherName} (${app.guideTeacherMobile || ""})` : "-",
+      discipline: app.exhibitDiscipline || "Physics",
+      exhibitTitle: app.exhibitTitle || app.exhibitTitleTa || "-",
+      updatedAt: new Date().toLocaleString("en-IN")
+    };
+
+    const existingIdx = adminWinnersList.findIndex(w => w.id === winObj.id || (w.regNo !== "-" && w.regNo === winObj.regNo));
+    if (existingIdx >= 0) {
+      adminWinnersList[existingIdx] = winObj;
+    } else {
+      adminWinnersList.push(winObj);
+    }
+
+    saveWinnersListToAllStores(adminWinnersList);
+    renderAdminApplicationsTable();
+    renderAdminWinnersTable();
+    if (loggedInSchool) renderDashboardUI();
+  };
+
+  renderAdminApplicationsTable = function() {
+    ensureAllParticipantsInWinnersList();
+    const tbody = document.getElementById("admAppsTableBody");
+    if (!tbody) return;
+    const q = (document.getElementById("admAppSearchInput")?.value || "").trim().toLowerCase();
+
+    const filtered = adminAllApps.filter(a => {
+      if (currentAdminCatFilter !== "ALL" && a.categoryOfEntry !== currentAdminCatFilter) return false;
+      if (!q) return true;
+      const hay = [
+        a.regNo, a.uNo, a.udiseNo, a.schoolAddress, a.student1Name, a.student2Name,
+        a.guideTeacherName, a.exhibitTitle, a.exhibitDiscipline
+      ].join(" ").toLowerCase();
+      return hay.includes(q);
+    });
+
+    if (filtered.length === 0) {
+      tbody.innerHTML = `<tr><td colspan="9" style="text-align:center; padding:22px; color:#64748b; font-weight:600;">தேர்ந்தெடுக்கப்பட்ட பிரிவில் விண்ணப்பங்கள் ஏதும் இல்லை.</td></tr>`;
+      return;
+    }
+
+    const catBadgeMap = {
+      "Individual": '<span style="background:#dbeafe; color:#1e40af; padding:3px 8px; border-radius:6px; font-weight:800; font-size:0.78rem;">👤 தனிநபர் (Individual)</span>',
+      "Group": '<span style="background:#ede9fe; color:#5b21b6; padding:3px 8px; border-radius:6px; font-weight:800; font-size:0.78rem;">👥 குழு (Group)</span>',
+      "Teacher": '<span style="background:#ccfbf1; color:#115e59; padding:3px 8px; border-radius:6px; font-weight:800; font-size:0.78rem;">👨‍🏫 ஆசிரியர் (Teacher)</span>'
+    };
+
+    tbody.innerHTML = filtered.map((a, idx) => {
+      const mSchool = MASTER_SCHOOLS.find(s => s.udiseNo === a.udiseNo || s.uNo === String(a.uNo || "").replace(/^0+/, ""));
+      const sName = (mSchool ? mSchool.nameTa : a.schoolAddress) || "-";
+      const sBlock = (mSchool ? mSchool.block : "") || "";
+
+      let partHtml = "";
+      if (a.categoryOfEntry === "Individual") {
+        partHtml = `<div><strong>மாணவர்:</strong> ${a.student1Name || "-"} (${a.student1Class || "-"})</div>`;
+      } else if (a.categoryOfEntry === "Group") {
+        partHtml = `<div><strong>1)</strong> ${a.student1Name || "-"} (${a.student1Class || "-"})</div>
+                    <div><strong>2)</strong> ${a.student2Name || "-"} (${a.student2Class || "-"})</div>`;
+      }
+      partHtml += `<div style="color:#475569; font-size:0.8rem; margin-top:2px;"><strong>ஆசிரியர்:</strong> ${a.guideTeacherName || "-"} (${a.guideTeacherMobile || "-"})</div>`;
+
+      const existingWin = adminWinnersList.find(w => w.regNo === a.regNo || (String(w.uNo).replace(/^0+/,"") === String(a.uNo).replace(/^0+/,"") && w.category === a.categoryOfEntry));
+      const curRank = existingWin ? existingWin.prizeRank : "";
+
+      return `<tr>
+        <td style="font-weight:700;">${idx + 1}</td>
+        <td><strong style="color:#1e3a8a;">${a.regNo || "-"}</strong></td>
+        <td><strong>U.NO: ${a.uNo || "-"}</strong><br><span style="font-size:0.78rem; color:#64748b;">${a.udiseNo || "-"}</span></td>
+        <td style="max-width:220px; word-break:break-word;"><strong>${sName}</strong><br><span style="font-size:0.78rem; color:#64748b;">${sBlock}</span></td>
+        <td>${catBadgeMap[a.categoryOfEntry] || a.categoryOfEntry}</td>
+        <td style="max-width:240px;">${partHtml}</td>
+        <td style="max-width:230px;"><span style="font-size:0.78rem; font-weight:700; color:#0284c7;">${a.exhibitDiscipline || "-"}</span><br><strong>${a.exhibitTitle || "-"}</strong></td>
+        <td style="min-width:230px;">
+          <select class="form-control" style="padding:4px 6px; font-size:0.78rem; font-weight:700; margin-bottom:6px; border-color:${curRank ? '#d97706' : '#cbd5e1'}; background:${curRank ? '#fffbeb' : '#fff'};" onchange="adminInstantSetWinnerRank('${a.regNo}', this.value)">
+            <option value="">-- பரிசு / தகுதி தேர்வு --</option>
+            <option value="🥇 முதலிடம் (மாநில அளவிலான போட்டிக்கு தேர்வு)" ${(curRank.includes("முதலிடம்") || curRank.includes("1st") || curRank.includes("மாநில")) ? "selected" : ""}>🥇 முதலிடம் (மாநில அளவிலான போட்டிக்கு தேர்வு)</option>
+            <option value="🥈 இரண்டாமிடம்" ${(curRank.includes("இரண்டாம்") || curRank.includes("2nd")) ? "selected" : ""}>🥈 இரண்டாமிடம்</option>
+            <option value="🥉 மூன்றாமிடம்" ${(curRank.includes("மூன்றாம்") || curRank.includes("3rd")) ? "selected" : ""}>🥉 மூன்றாமிடம்</option>
+            <option value="🌟 சிறப்பிடம்" ${(curRank.includes("சிறப்ப") || curRank.includes("Special")) ? "selected" : ""}>🌟 சிறப்பிடம்</option>
+            <option value="🎖️ பங்கேற்பாளர்" ${(curRank.includes("பங்கேற்பாளர்") || curRank.includes("Participant")) ? "selected" : ""}>🎖️ பங்கேற்பாளர்</option>
+            <option value="CANCEL">✖️ இரத்து (Cancel)</option>
+          </select>
+          ${existingWin ? `
+          <div style="display:flex; gap:4px; flex-wrap:wrap;">
+            <button type="button" class="btn-sm" style="flex:1; background:linear-gradient(135deg,#b45309,#059669); justify-content:center; font-size:0.72rem; padding:4px 6px; font-weight:800;" onclick="adminDownloadWinnerCertificateByRegNo('${a.regNo}', 'PARTICIPANT', 'both')" title="இருமொழி சான்றிதழ் (Bilingual)">📜 இருமொழி</button>
+            <button type="button" class="btn-sm" style="flex:1; background:#059669; justify-content:center; font-size:0.72rem; padding:4px 6px; font-weight:800;" onclick="adminDownloadWinnerCertificateByRegNo('${a.regNo}', 'PARTICIPANT', 'ta')" title="தமிழ் சான்றிதழ் (Tamil)">📜 தமிழ்</button>
+            <button type="button" class="btn-sm" style="flex:1; background:#1e40af; justify-content:center; font-size:0.72rem; padding:4px 6px; font-weight:800;" onclick="adminDownloadWinnerCertificateByRegNo('${a.regNo}', 'PARTICIPANT', 'en')" title="English Certificate">📜 English</button>
+          </div>` : ""}
+        </td>
+        <td style="white-space:nowrap;">
+          <div style="display:flex; gap:5px; align-items:center;">
+            <button type="button" class="btn-sm" style="background:#2b6cb0; font-weight:700;" onclick="adminDownloadAppPdf('${a.regNo}')" title="விண்ணப்பப் படிவம் PDF பதிவிறக்கம்">
+              📥 படிவம் PDF
+            </button>
+            <button type="button" class="btn-sm" style="background:#dc2626; font-weight:800;" onclick="adminPromptDeleteApplication('${a.regNo}')" title="இந்தப் பங்கேற்பாளர் விண்ணப்பத்தை அழி">
+              🗑️ அழி
+            </button>
+          </div>
+        </td>
+      </tr>`;
+    }).join("");
+  };
 
   // Override switchAdminSubTab to handle all tabs and scope trackers to active competition
   switchAdminSubTab = function(tabName) {
@@ -10952,9 +11672,10 @@ document.getElementById("regStep1").style.display = "none";
         <td><span style="color:#0284c7; font-weight:700; font-size:0.78rem;">${w.discipline}</span><br><strong>${w.exhibitTitle}</strong></td>
         <td style="white-space:nowrap;">
           <div style="display:flex; gap:4px; flex-wrap:wrap;">
-            <button type="button" class="btn-sm" style="background:#059669; font-weight:800; font-size:0.74rem;" onclick="adminDownloadWinnerCertificateById('${w.id}', 'PARTICIPANT')" title="மாணவர் / பங்கேற்பாளர் சான்றிதழ்">📜 சான்றிதழ்</button>
-            ${w.category !== "Teacher" ? `<button type="button" class="btn-sm" style="background:#0284c7; font-weight:800; font-size:0.74rem;" onclick="adminDownloadWinnerCertificateById('${w.id}', 'GUIDE_TEACHER')" title="வழிகாட்டி ஆசிரியர் சான்றிதழ்">👨‍🏫 வழிகாட்டி</button>` : ""}
-            <button type="button" class="btn-sm" style="background:#2b6cb0; font-size:0.74rem;" onclick="editWinnerRecord('${w.id}')" title="திருத்து">✏️</button>
+            <button type="button" class="btn-sm" style="background:linear-gradient(135deg,#b45309,#059669); font-weight:800; font-size:0.72rem; padding:4px 7px;" onclick="adminDownloadWinnerCertificateById('${w.id}', 'PARTICIPANT', 'both')" title="இருமொழி சான்றிதழ் (தமிழ் & English)">📜 இருமொழி</button>
+            <button type="button" class="btn-sm" style="background:#059669; font-weight:800; font-size:0.72rem; padding:4px 7px;" onclick="adminDownloadWinnerCertificateById('${w.id}', 'PARTICIPANT', 'ta')" title="தமிழ் சான்றிதழ்">📜 தமிழ்</button>
+            <button type="button" class="btn-sm" style="background:#1e40af; font-weight:800; font-size:0.72rem; padding:4px 7px;" onclick="adminDownloadWinnerCertificateById('${w.id}', 'PARTICIPANT', 'en')" title="English Certificate">📜 English</button>
+            <button type="button" class="btn-sm" style="background:#2b6cb0; font-size:0.72rem; padding:4px 7px;" onclick="editWinnerRecord('${w.id}')" title="திருத்து">✏️</button>
           </div>
         </td>
       </tr>`;
