@@ -1208,17 +1208,18 @@
                   <span style="font-size:1.05rem; font-weight:900; color:#0f172a;">நாடகப் படைப்பின் விவரம் (DRAMA DETAILS & SUB-THEME)</span>
                 </div>
 
+                <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:6px; margin-bottom:6px;">
+                  <span style="font-size:0.8rem; color:#047857; font-weight:700;">💡 நாடகத் தலைப்பை ஆங்கிலத்தில் தட்டச்சு செய்தால் தமிழிலும், தமிழில் தட்டச்சு செய்தால் ஆங்கிலத்திலும் தானாக மொழிபெயர்க்கப்படும் (இரண்டிலும் திருத்தம் செய்யலாம்)</span>
+                  <span id="sisdcTitleAiStatus" style="font-size:0.8rem; color:#2b6cb0; font-weight:800;"></span>
+                </div>
                 <div class="grid-3" style="display:grid; grid-template-columns:repeat(auto-fit, minmax(220px, 1fr)); gap:12px; margin-bottom:12px;">
                   <div>
-                    <label class="form-label">Drama Title (in English) / நாடகத் தலைப்பு ஆங்கிலத்தில் <span class="required">*</span></label>
-                    <input type="text" id="sisdcTitleEn" class="form-control" placeholder="e.g. Green Earth & Clean Energy" oninput="handleSisdcTitleEnInput()" required>
+                    <label class="form-label">Drama Title (in English) / நாடகத் தலைப்பு ஆங்கிலத்தில் <span class="required">*</span> <span class="phonetic-badge">🤖 AI மொழிபெயர்ப்பு</span></label>
+                    <input type="text" id="sisdcTitleEn" class="form-control" placeholder="e.g. Future Vision of Electric Vehicles" oninput="handleSisdcTitleEnInput()" required>
                   </div>
                   <div>
-                    <label class="form-label">நாடகத்தின் தலைப்பு (தமிழில்) <span class="required">*</span> <span class="phonetic-badge">⌨️ தங்லீஷ் + En➔Ta</span></label>
-                    <div style="display:flex; gap:6px;">
-                      <input type="text" id="sisdcTitleTa" class="form-control tanglish-enabled" placeholder="எ.கா: பசுமைப் பூமி" style="flex:1;" required>
-                      <button type="button" onclick="convertSisdcTitleEnToTa()" style="background:#eff6ff; color:#1e40af; border:1.5px solid #93c5fd; border-radius:6px; padding:0 10px; font-size:0.76rem; font-weight:800; cursor:pointer; white-space:nowrap;">🔄 En➔Ta</button>
-                    </div>
+                    <label class="form-label">நாடகத்தின் தலைப்பு (தமிழில்) <span class="required">*</span> <span class="phonetic-badge">⌨️ தங்லீஷ் + AI</span></label>
+                    <input type="text" id="sisdcTitleTa" class="form-control tanglish-enabled" data-sync-fn="handleSisdcTitleTaInput" placeholder="எ.கா: மின்வாகனத்தின் எதிர்கால நோக்கு" oninput="handleSisdcTitleTaInput()" required>
                   </div>
                   <div>
                     <label class="form-label">துணைக் கருப்பொருள் (Official Sub-Theme) <span class="required">*</span></label>
@@ -1260,11 +1261,8 @@
                     <input type="text" id="sisdcGuideTeacherEn" class="form-control" placeholder="e.g. Murugan P" oninput="handleSisdcGuideEnInput()" onblur="handleSisdcGuideEnBlur()" required>
                   </div>
                   <div>
-                    <label class="form-label">வழிகாட்டி ஆசிரியர் பெயர் (தமிழில்) <span class="required">*</span> <span class="phonetic-badge">⌨️ தங்லீஷ் + En➔Ta</span></label>
-                    <div style="display:flex; gap:6px;">
-                      <input type="text" id="sisdcGuideTeacherTa" class="form-control tanglish-enabled" data-is-name="true" data-no-en-sync="true" placeholder="எ.கா: முருகன் ப" oninput="handleSisdcGuideTaManualInput()" onblur="handleTamilNameBlurNoEnSync('sisdcGuideTeacherTa')" style="flex:1;" required>
-                      <button type="button" onclick="convertSisdcGuideEnToTa(true)" title="ஆங்கிலப் பெயரைத் தமிழில் மாற்றுக" style="background:#eff6ff; color:#1e40af; border:1.5px solid #93c5fd; border-radius:6px; padding:0 10px; font-size:0.76rem; font-weight:800; cursor:pointer; white-space:nowrap;">🔄 En➔Ta</button>
-                    </div>
+                    <label class="form-label">வழிகாட்டி ஆசிரியர் பெயர் (தமிழில்) <span class="required">*</span> <span class="phonetic-badge">⌨️ தங்லீஷ் (Tanglish)</span></label>
+                    <input type="text" id="sisdcGuideTeacherTa" class="form-control tanglish-enabled" data-is-name="true" data-no-en-sync="true" placeholder="எ.கா: முருகன் ப" oninput="handleSisdcGuideTaManualInput()" onblur="handleTamilNameBlurNoEnSync('sisdcGuideTeacherTa')" required>
                   </div>
                   <div>
                     <label class="form-label">வழிகாட்டி ஆசிரியர் கைபேசி எண் (Mobile) <span class="required">*</span></label>
@@ -1282,11 +1280,8 @@
                   </div>
                   <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
                     <span style="background:#ecfdf5; color:#047857; border:1px solid #6ee7b7; border-radius:999px; padding:5px 14px; font-size:0.78rem; font-weight:800;">
-                      ⌨️ 2-வது நெடுவரிசையில் ஆங்கிலத்தில் தட்டச்சு செய்யவும் | 3-வது நெடுவரிசையில் தங்லீஷ் அல்லது 🔄 En➔Ta மூலம் தமிழில் திருத்தலாம் (ஆங்கிலப் பெயர் மாறாது)
+                      ⌨️ ஆங்கிலத்தில் தட்டச்சு செய்தால் தானாகத் தமிழில் நிரப்பப்படும் | தமிழில் தங்லீஷ் முறையிலும் திருத்தலாம் (ஆங்கிலப் பெயர் மாறாது)
                     </span>
-                    <button type="button" onclick="convertAllSisdcMembersEnToTa()" style="background:#1e40af; color:#ffffff; border:none; border-radius:999px; padding:5px 14px; font-size:0.78rem; font-weight:800; cursor:pointer;">
-                      🔄 அனைத்தும் En➔Ta மாற்றுக
-                    </button>
                   </div>
                 </div>
 
@@ -1294,10 +1289,10 @@
                   <table style="width:100%; border-collapse:collapse; min-width:760px;">
                     <thead>
                       <tr style="background:#132a4a; color:#ffffff; font-size:0.86rem; font-weight:800;">
-                        <th style="width:60px; padding:12px 8px; text-align:center;">வ.எண்</th>
-                        <th style="width:33%; padding:12px 10px; text-align:left;">Student Name (in English) <span style="color:#93c5fd; font-size:0.76rem;">(ஆங்கிலத்தில் தட்டச்சு செய்க)</span></th>
-                        <th style="width:35%; padding:12px 10px; text-align:left;">மாணவர் பெயர் (தமிழில்) <span style="color:#fde047; font-size:0.76rem;">(தங்லீஷ் / 🔄 En➔Ta)</span></th>
-                        <th style="width:155px; padding:12px 10px; text-align:left;">வகுப்பு (Class)</th>
+                        <th style="width:55px; padding:12px 8px; text-align:center;">வ.எண்</th>
+                        <th style="width:32%; padding:12px 10px; text-align:left;">Student Name (in English) <span style="color:#93c5fd; font-size:0.76rem;">(ஆங்கிலத்தில் தட்டச்சு செய்க)</span></th>
+                        <th style="width:32%; padding:12px 10px; text-align:left;">மாணவர் பெயர் (தமிழில்) <span style="color:#fde047; font-size:0.76rem;">(தங்லீஷ்)</span></th>
+                        <th style="width:200px; padding:12px 10px; text-align:left;">வகுப்பு (Class)</th>
                         <th style="width:185px; padding:12px 12px; text-align:left;">குழுவில் பங்கு (Role)</th>
                       </tr>
                     </thead>
@@ -1309,12 +1304,7 @@
                       <input type="text" id="sisdcMemEn_1" class="form-control" placeholder="Student / Member Name in English (வ.எண் 1)" oninput="handleSisdcMemberEnInput(1)" onblur="handleSisdcMemberEnBlur(1)" style="background:#f8fafc;" required>
                     </td>
                     <td style="padding: 8px 10px;">
-                      <div style="display: flex; gap: 6px; align-items: center;">
-                        <input type="text" id="sisdcMemTa_1" class="form-control tanglish-enabled" data-is-name="true" data-no-en-sync="true" placeholder="பெயர் தமிழில் (வ.எண் 1)" oninput="handleSisdcMemberTaManualInput(1)" onblur="handleTamilNameBlurNoEnSync('sisdcMemTa_1')" style="background:#f8fafc; flex:1;" required>
-                        <button type="button" onclick="convertSisdcMemberEnToTa(1, true)" title="ஆங்கிலப் பெயரைத் தமிழில் மாற்றுக (English to Tamil)" style="background: #eff6ff; color: #1e40af; border: 1.5px solid #93c5fd; border-radius: 6px; padding: 7px 10px; font-size: 0.76rem; font-weight: 800; cursor: pointer; white-space: nowrap; flex-shrink: 0;">
-                          🔄 En➔Ta
-                        </button>
-                      </div>
+                      <input type="text" id="sisdcMemTa_1" class="form-control tanglish-enabled" data-is-name="true" data-no-en-sync="true" placeholder="பெயர் தமிழில் (வ.எண் 1)" oninput="handleSisdcMemberTaManualInput(1)" onblur="handleTamilNameBlurNoEnSync('sisdcMemTa_1')" style="background:#f8fafc; width:100%;" required>
                     </td>
                     <td style="padding: 8px 10px;">
                       <select id="sisdcMemClass_1" class="form-control" style="background:#f8fafc; font-weight:700;">
@@ -1336,12 +1326,7 @@
                       <input type="text" id="sisdcMemEn_2" class="form-control" placeholder="Student / Member Name in English (வ.எண் 2)" oninput="handleSisdcMemberEnInput(2)" onblur="handleSisdcMemberEnBlur(2)" style="background:#f8fafc;" >
                     </td>
                     <td style="padding: 8px 10px;">
-                      <div style="display: flex; gap: 6px; align-items: center;">
-                        <input type="text" id="sisdcMemTa_2" class="form-control tanglish-enabled" data-is-name="true" data-no-en-sync="true" placeholder="பெயர் தமிழில் (வ.எண் 2)" oninput="handleSisdcMemberTaManualInput(2)" onblur="handleTamilNameBlurNoEnSync('sisdcMemTa_2')" style="background:#f8fafc; flex:1;" >
-                        <button type="button" onclick="convertSisdcMemberEnToTa(2, true)" title="ஆங்கிலப் பெயரைத் தமிழில் மாற்றுக (English to Tamil)" style="background: #eff6ff; color: #1e40af; border: 1.5px solid #93c5fd; border-radius: 6px; padding: 7px 10px; font-size: 0.76rem; font-weight: 800; cursor: pointer; white-space: nowrap; flex-shrink: 0;">
-                          🔄 En➔Ta
-                        </button>
-                      </div>
+                      <input type="text" id="sisdcMemTa_2" class="form-control tanglish-enabled" data-is-name="true" data-no-en-sync="true" placeholder="பெயர் தமிழில் (வ.எண் 2)" oninput="handleSisdcMemberTaManualInput(2)" onblur="handleTamilNameBlurNoEnSync('sisdcMemTa_2')" style="background:#f8fafc; width:100%;" >
                     </td>
                     <td style="padding: 8px 10px;">
                       <select id="sisdcMemClass_2" class="form-control" style="background:#f8fafc; font-weight:700;">
@@ -1363,12 +1348,7 @@
                       <input type="text" id="sisdcMemEn_3" class="form-control" placeholder="Student / Member Name in English (வ.எண் 3)" oninput="handleSisdcMemberEnInput(3)" onblur="handleSisdcMemberEnBlur(3)" style="background:#f8fafc;" >
                     </td>
                     <td style="padding: 8px 10px;">
-                      <div style="display: flex; gap: 6px; align-items: center;">
-                        <input type="text" id="sisdcMemTa_3" class="form-control tanglish-enabled" data-is-name="true" data-no-en-sync="true" placeholder="பெயர் தமிழில் (வ.எண் 3)" oninput="handleSisdcMemberTaManualInput(3)" onblur="handleTamilNameBlurNoEnSync('sisdcMemTa_3')" style="background:#f8fafc; flex:1;" >
-                        <button type="button" onclick="convertSisdcMemberEnToTa(3, true)" title="ஆங்கிலப் பெயரைத் தமிழில் மாற்றுக (English to Tamil)" style="background: #eff6ff; color: #1e40af; border: 1.5px solid #93c5fd; border-radius: 6px; padding: 7px 10px; font-size: 0.76rem; font-weight: 800; cursor: pointer; white-space: nowrap; flex-shrink: 0;">
-                          🔄 En➔Ta
-                        </button>
-                      </div>
+                      <input type="text" id="sisdcMemTa_3" class="form-control tanglish-enabled" data-is-name="true" data-no-en-sync="true" placeholder="பெயர் தமிழில் (வ.எண் 3)" oninput="handleSisdcMemberTaManualInput(3)" onblur="handleTamilNameBlurNoEnSync('sisdcMemTa_3')" style="background:#f8fafc; width:100%;" >
                     </td>
                     <td style="padding: 8px 10px;">
                       <select id="sisdcMemClass_3" class="form-control" style="background:#f8fafc; font-weight:700;">
@@ -1390,12 +1370,7 @@
                       <input type="text" id="sisdcMemEn_4" class="form-control" placeholder="Student / Member Name in English (வ.எண் 4)" oninput="handleSisdcMemberEnInput(4)" onblur="handleSisdcMemberEnBlur(4)" style="background:#f8fafc;" >
                     </td>
                     <td style="padding: 8px 10px;">
-                      <div style="display: flex; gap: 6px; align-items: center;">
-                        <input type="text" id="sisdcMemTa_4" class="form-control tanglish-enabled" data-is-name="true" data-no-en-sync="true" placeholder="பெயர் தமிழில் (வ.எண் 4)" oninput="handleSisdcMemberTaManualInput(4)" onblur="handleTamilNameBlurNoEnSync('sisdcMemTa_4')" style="background:#f8fafc; flex:1;" >
-                        <button type="button" onclick="convertSisdcMemberEnToTa(4, true)" title="ஆங்கிலப் பெயரைத் தமிழில் மாற்றுக (English to Tamil)" style="background: #eff6ff; color: #1e40af; border: 1.5px solid #93c5fd; border-radius: 6px; padding: 7px 10px; font-size: 0.76rem; font-weight: 800; cursor: pointer; white-space: nowrap; flex-shrink: 0;">
-                          🔄 En➔Ta
-                        </button>
-                      </div>
+                      <input type="text" id="sisdcMemTa_4" class="form-control tanglish-enabled" data-is-name="true" data-no-en-sync="true" placeholder="பெயர் தமிழில் (வ.எண் 4)" oninput="handleSisdcMemberTaManualInput(4)" onblur="handleTamilNameBlurNoEnSync('sisdcMemTa_4')" style="background:#f8fafc; width:100%;" >
                     </td>
                     <td style="padding: 8px 10px;">
                       <select id="sisdcMemClass_4" class="form-control" style="background:#f8fafc; font-weight:700;">
@@ -1417,12 +1392,7 @@
                       <input type="text" id="sisdcMemEn_5" class="form-control" placeholder="Student / Member Name in English (வ.எண் 5)" oninput="handleSisdcMemberEnInput(5)" onblur="handleSisdcMemberEnBlur(5)" style="background:#f8fafc;" >
                     </td>
                     <td style="padding: 8px 10px;">
-                      <div style="display: flex; gap: 6px; align-items: center;">
-                        <input type="text" id="sisdcMemTa_5" class="form-control tanglish-enabled" data-is-name="true" data-no-en-sync="true" placeholder="பெயர் தமிழில் (வ.எண் 5)" oninput="handleSisdcMemberTaManualInput(5)" onblur="handleTamilNameBlurNoEnSync('sisdcMemTa_5')" style="background:#f8fafc; flex:1;" >
-                        <button type="button" onclick="convertSisdcMemberEnToTa(5, true)" title="ஆங்கிலப் பெயரைத் தமிழில் மாற்றுக (English to Tamil)" style="background: #eff6ff; color: #1e40af; border: 1.5px solid #93c5fd; border-radius: 6px; padding: 7px 10px; font-size: 0.76rem; font-weight: 800; cursor: pointer; white-space: nowrap; flex-shrink: 0;">
-                          🔄 En➔Ta
-                        </button>
-                      </div>
+                      <input type="text" id="sisdcMemTa_5" class="form-control tanglish-enabled" data-is-name="true" data-no-en-sync="true" placeholder="பெயர் தமிழில் (வ.எண் 5)" oninput="handleSisdcMemberTaManualInput(5)" onblur="handleTamilNameBlurNoEnSync('sisdcMemTa_5')" style="background:#f8fafc; width:100%;" >
                     </td>
                     <td style="padding: 8px 10px;">
                       <select id="sisdcMemClass_5" class="form-control" style="background:#f8fafc; font-weight:700;">
@@ -1444,12 +1414,7 @@
                       <input type="text" id="sisdcMemEn_6" class="form-control" placeholder="Student / Member Name in English (வ.எண் 6)" oninput="handleSisdcMemberEnInput(6)" onblur="handleSisdcMemberEnBlur(6)" style="background:#f8fafc;" >
                     </td>
                     <td style="padding: 8px 10px;">
-                      <div style="display: flex; gap: 6px; align-items: center;">
-                        <input type="text" id="sisdcMemTa_6" class="form-control tanglish-enabled" data-is-name="true" data-no-en-sync="true" placeholder="பெயர் தமிழில் (வ.எண் 6)" oninput="handleSisdcMemberTaManualInput(6)" onblur="handleTamilNameBlurNoEnSync('sisdcMemTa_6')" style="background:#f8fafc; flex:1;" >
-                        <button type="button" onclick="convertSisdcMemberEnToTa(6, true)" title="ஆங்கிலப் பெயரைத் தமிழில் மாற்றுக (English to Tamil)" style="background: #eff6ff; color: #1e40af; border: 1.5px solid #93c5fd; border-radius: 6px; padding: 7px 10px; font-size: 0.76rem; font-weight: 800; cursor: pointer; white-space: nowrap; flex-shrink: 0;">
-                          🔄 En➔Ta
-                        </button>
-                      </div>
+                      <input type="text" id="sisdcMemTa_6" class="form-control tanglish-enabled" data-is-name="true" data-no-en-sync="true" placeholder="பெயர் தமிழில் (வ.எண் 6)" oninput="handleSisdcMemberTaManualInput(6)" onblur="handleTamilNameBlurNoEnSync('sisdcMemTa_6')" style="background:#f8fafc; width:100%;" >
                     </td>
                     <td style="padding: 8px 10px;">
                       <select id="sisdcMemClass_6" class="form-control" style="background:#f8fafc; font-weight:700;">
@@ -1471,12 +1436,7 @@
                       <input type="text" id="sisdcMemEn_7" class="form-control" placeholder="Student / Member Name in English (வ.எண் 7)" oninput="handleSisdcMemberEnInput(7)" onblur="handleSisdcMemberEnBlur(7)" style="background:#f8fafc;" >
                     </td>
                     <td style="padding: 8px 10px;">
-                      <div style="display: flex; gap: 6px; align-items: center;">
-                        <input type="text" id="sisdcMemTa_7" class="form-control tanglish-enabled" data-is-name="true" data-no-en-sync="true" placeholder="பெயர் தமிழில் (வ.எண் 7)" oninput="handleSisdcMemberTaManualInput(7)" onblur="handleTamilNameBlurNoEnSync('sisdcMemTa_7')" style="background:#f8fafc; flex:1;" >
-                        <button type="button" onclick="convertSisdcMemberEnToTa(7, true)" title="ஆங்கிலப் பெயரைத் தமிழில் மாற்றுக (English to Tamil)" style="background: #eff6ff; color: #1e40af; border: 1.5px solid #93c5fd; border-radius: 6px; padding: 7px 10px; font-size: 0.76rem; font-weight: 800; cursor: pointer; white-space: nowrap; flex-shrink: 0;">
-                          🔄 En➔Ta
-                        </button>
-                      </div>
+                      <input type="text" id="sisdcMemTa_7" class="form-control tanglish-enabled" data-is-name="true" data-no-en-sync="true" placeholder="பெயர் தமிழில் (வ.எண் 7)" oninput="handleSisdcMemberTaManualInput(7)" onblur="handleTamilNameBlurNoEnSync('sisdcMemTa_7')" style="background:#f8fafc; width:100%;" >
                     </td>
                     <td style="padding: 8px 10px;">
                       <select id="sisdcMemClass_7" class="form-control" style="background:#f8fafc; font-weight:700;">
@@ -1498,12 +1458,7 @@
                       <input type="text" id="sisdcMemEn_8" class="form-control" placeholder="Student / Member Name in English (வ.எண் 8)" oninput="handleSisdcMemberEnInput(8)" onblur="handleSisdcMemberEnBlur(8)" style="background:#f8fafc;" >
                     </td>
                     <td style="padding: 8px 10px;">
-                      <div style="display: flex; gap: 6px; align-items: center;">
-                        <input type="text" id="sisdcMemTa_8" class="form-control tanglish-enabled" data-is-name="true" data-no-en-sync="true" placeholder="பெயர் தமிழில் (வ.எண் 8)" oninput="handleSisdcMemberTaManualInput(8)" onblur="handleTamilNameBlurNoEnSync('sisdcMemTa_8')" style="background:#f8fafc; flex:1;" >
-                        <button type="button" onclick="convertSisdcMemberEnToTa(8, true)" title="ஆங்கிலப் பெயரைத் தமிழில் மாற்றுக (English to Tamil)" style="background: #eff6ff; color: #1e40af; border: 1.5px solid #93c5fd; border-radius: 6px; padding: 7px 10px; font-size: 0.76rem; font-weight: 800; cursor: pointer; white-space: nowrap; flex-shrink: 0;">
-                          🔄 En➔Ta
-                        </button>
-                      </div>
+                      <input type="text" id="sisdcMemTa_8" class="form-control tanglish-enabled" data-is-name="true" data-no-en-sync="true" placeholder="பெயர் தமிழில் (வ.எண் 8)" oninput="handleSisdcMemberTaManualInput(8)" onblur="handleTamilNameBlurNoEnSync('sisdcMemTa_8')" style="background:#f8fafc; width:100%;" >
                     </td>
                     <td style="padding: 8px 10px;">
                       <select id="sisdcMemClass_8" class="form-control" style="background:#f8fafc; font-weight:700;">
@@ -1525,12 +1480,7 @@
                       <input type="text" id="sisdcMemEn_9" class="form-control" placeholder="Student / Member Name in English (வ.எண் 9)" oninput="handleSisdcMemberEnInput(9)" onblur="handleSisdcMemberEnBlur(9)" style="background:#f8fafc;" >
                     </td>
                     <td style="padding: 8px 10px;">
-                      <div style="display: flex; gap: 6px; align-items: center;">
-                        <input type="text" id="sisdcMemTa_9" class="form-control tanglish-enabled" data-is-name="true" data-no-en-sync="true" placeholder="பெயர் தமிழில் (வ.எண் 9)" oninput="handleSisdcMemberTaManualInput(9)" onblur="handleTamilNameBlurNoEnSync('sisdcMemTa_9')" style="background:#f8fafc; flex:1;" >
-                        <button type="button" onclick="convertSisdcMemberEnToTa(9, true)" title="ஆங்கிலப் பெயரைத் தமிழில் மாற்றுக (English to Tamil)" style="background: #eff6ff; color: #1e40af; border: 1.5px solid #93c5fd; border-radius: 6px; padding: 7px 10px; font-size: 0.76rem; font-weight: 800; cursor: pointer; white-space: nowrap; flex-shrink: 0;">
-                          🔄 En➔Ta
-                        </button>
-                      </div>
+                      <input type="text" id="sisdcMemTa_9" class="form-control tanglish-enabled" data-is-name="true" data-no-en-sync="true" placeholder="பெயர் தமிழில் (வ.எண் 9)" oninput="handleSisdcMemberTaManualInput(9)" onblur="handleTamilNameBlurNoEnSync('sisdcMemTa_9')" style="background:#f8fafc; width:100%;" >
                     </td>
                     <td style="padding: 8px 10px;">
                       <select id="sisdcMemClass_9" class="form-control" style="background:#f8fafc; font-weight:700;">
@@ -1552,12 +1502,7 @@
                       <input type="text" id="sisdcMemEn_10" class="form-control" placeholder="Student / Member Name in English (வ.எண் 10)" oninput="handleSisdcMemberEnInput(10)" onblur="handleSisdcMemberEnBlur(10)" style="background:#f8fafc;" >
                     </td>
                     <td style="padding: 8px 10px;">
-                      <div style="display: flex; gap: 6px; align-items: center;">
-                        <input type="text" id="sisdcMemTa_10" class="form-control tanglish-enabled" data-is-name="true" data-no-en-sync="true" placeholder="பெயர் தமிழில் (வ.எண் 10)" oninput="handleSisdcMemberTaManualInput(10)" onblur="handleTamilNameBlurNoEnSync('sisdcMemTa_10')" style="background:#f8fafc; flex:1;" >
-                        <button type="button" onclick="convertSisdcMemberEnToTa(10, true)" title="ஆங்கிலப் பெயரைத் தமிழில் மாற்றுக (English to Tamil)" style="background: #eff6ff; color: #1e40af; border: 1.5px solid #93c5fd; border-radius: 6px; padding: 7px 10px; font-size: 0.76rem; font-weight: 800; cursor: pointer; white-space: nowrap; flex-shrink: 0;">
-                          🔄 En➔Ta
-                        </button>
-                      </div>
+                      <input type="text" id="sisdcMemTa_10" class="form-control tanglish-enabled" data-is-name="true" data-no-en-sync="true" placeholder="பெயர் தமிழில் (வ.எண் 10)" oninput="handleSisdcMemberTaManualInput(10)" onblur="handleTamilNameBlurNoEnSync('sisdcMemTa_10')" style="background:#f8fafc; width:100%;" >
                     </td>
                     <td style="padding: 8px 10px;">
                       <select id="sisdcMemClass_10" class="form-control" style="background:#f8fafc; font-weight:700;">
@@ -1692,7 +1637,7 @@
             </div>
             <div class="form-group" style="position:relative;">
               <label class="form-label">மாணவர் பெயர் தமிழில் / Name in Tamil <span class="required">*</span> <span class="phonetic-badge">⌨️ தங்லீஷ் (Tanglish)</span></label>
-              <div style="display:flex; gap:6px;"><input type="text" id="formS1NameTa" class="form-control tanglish-enabled" data-is-name="true" data-no-en-sync="true" placeholder="எ.கா. பூவலிங்கம் க" onblur="handleTamilNameBlurNoEnSync('formS1NameTa')" style="flex:1;"><button type="button" onclick="convertEnglishToTamilNameById('formS1NameEn', 'formS1NameTa', true)" style="background:#eff6ff; color:#1e40af; border:1.5px solid #93c5fd; border-radius:6px; padding:0 10px; font-size:0.76rem; font-weight:800; cursor:pointer; white-space:nowrap;">🔄 En➔Ta</button></div>
+              <input type="text" id="formS1NameTa" class="form-control tanglish-enabled" data-is-name="true" data-no-en-sync="true" placeholder="எ.கா. பூவலிங்கம் க" onblur="handleTamilNameBlurNoEnSync('formS1NameTa')">
               <div style="font-size:0.75rem; color:#2b6cb0; margin-top:3px;">(தங்லீஷ் முறையிலும் தட்டச்சு செய்து திருத்தலாம்; எ.கா: poovalingam k ➔ Space)</div>
             </div>
           </div>
@@ -1726,7 +1671,7 @@
             </div>
             <div class="form-group" style="position:relative;">
               <label class="form-label">மாணவர் 2 பெயர் தமிழில் / Name in Tamil <span class="required">*</span> <span class="phonetic-badge">⌨️ தங்லீஷ் (Tanglish)</span></label>
-              <div style="display:flex; gap:6px;"><input type="text" id="formS2NameTa" class="form-control tanglish-enabled" data-is-name="true" data-no-en-sync="true" placeholder="எ.கா. பாரதி செ" onblur="handleTamilNameBlurNoEnSync('formS2NameTa')" style="flex:1;"><button type="button" onclick="convertEnglishToTamilNameById('formS2NameEn', 'formS2NameTa', true)" style="background:#eff6ff; color:#1e40af; border:1.5px solid #93c5fd; border-radius:6px; padding:0 10px; font-size:0.76rem; font-weight:800; cursor:pointer; white-space:nowrap;">🔄 En➔Ta</button></div>
+              <input type="text" id="formS2NameTa" class="form-control tanglish-enabled" data-is-name="true" data-no-en-sync="true" placeholder="எ.கா. பாரதி செ" onblur="handleTamilNameBlurNoEnSync('formS2NameTa')">
               <div style="font-size:0.75rem; color:#2b6cb0; margin-top:3px;">(தங்லீஷ் முறையிலும் தட்டச்சு செய்து திருத்தலாம்; எ.கா: bharathi s ➔ Space)</div>
             </div>
           </div>
@@ -1763,7 +1708,7 @@
             </div>
             <div class="form-group" style="position:relative;">
               <label class="form-label">ஆசிரியர் பெயர் தமிழில் / Name in Tamil <span class="required">*</span> <span class="phonetic-badge">⌨️ தங்லீஷ் (Tanglish)</span></label>
-              <div style="display:flex; gap:6px;"><input type="text" id="formTeacherNameTa" class="form-control tanglish-enabled" data-is-name="true" data-no-en-sync="true" placeholder="எ.கா. கிஷோர்லிங்கம் ப" onblur="handleTamilNameBlurNoEnSync('formTeacherNameTa')" style="flex:1;" required><button type="button" onclick="convertEnglishToTamilNameById('formTeacherNameEn', 'formTeacherNameTa', true)" style="background:#eff6ff; color:#1e40af; border:1.5px solid #93c5fd; border-radius:6px; padding:0 10px; font-size:0.76rem; font-weight:800; cursor:pointer; white-space:nowrap;">🔄 En➔Ta</button></div>
+              <input type="text" id="formTeacherNameTa" class="form-control tanglish-enabled" data-is-name="true" data-no-en-sync="true" placeholder="எ.கா. கிஷோர்லிங்கம் ப" onblur="handleTamilNameBlurNoEnSync('formTeacherNameTa')" required>
               <div style="font-size:0.75rem; color:#2b6cb0; margin-top:3px;">(தங்லீஷ் முறையிலும் தட்டச்சு செய்து திருத்தலாம்; எ.கா: kishorelingam p ➔ Space)</div>
             </div>
           </div>
@@ -2666,11 +2611,8 @@
               <input type="text" id="admJudgeNameEn" class="form-control" placeholder="e.g. Dr. K. Senthilkumar" oninput="handleEnglishNameInput('admJudgeNameEn', 'admJudgeNameTa')" required>
             </div>
             <div>
-              <label class="form-label">2. நடுவர் பெயர் (தமிழில்) <span class="required">*</span> <span class="phonetic-badge">⌨️ தங்லீஷ் + En➔Ta</span></label>
-              <div style="display:flex; gap:6px;">
-                <input type="text" id="admJudgeNameTa" class="form-control tanglish-enabled" data-is-name="true" data-no-en-sync="true" placeholder="எ.கா: முனைவர் செந்தில்குமார் க" onblur="handleTamilNameBlurNoEnSync('admJudgeNameTa')" style="flex:1;" required>
-                <button type="button" onclick="convertEnglishToTamilNameById('admJudgeNameEn', 'admJudgeNameTa', true)" style="background:#eff6ff; color:#1e40af; border:1.5px solid #93c5fd; border-radius:6px; padding:0 10px; font-size:0.76rem; font-weight:800; cursor:pointer;">🔄 En➔Ta</button>
-              </div>
+              <label class="form-label">2. நடுவர் பெயர் (தமிழில்) <span class="required">*</span> <span class="phonetic-badge">⌨️ தங்லீஷ்</span></label>
+              <input type="text" id="admJudgeNameTa" class="form-control tanglish-enabled" data-is-name="true" data-no-en-sync="true" placeholder="எ.கா: முனைவர் செந்தில்குமார் க" onblur="handleTamilNameBlurNoEnSync('admJudgeNameTa')" required>
             </div>
             <div>
               <label class="form-label">3. பதவி (Designation) <span class="required">*</span></label>
@@ -9480,19 +9422,17 @@ document.getElementById("regStep1").style.display = "none";
     taEl.dataset.manualEdited = "true";
   }
 
-  // SISDC 10-Member Table Name Handlers (Column 2 = English, Column 3 = Tamil with Tanglish & En➔Ta button)
+  // SISDC 10-Member Table Name Handlers (Column 2 = English -> Auto Tamil in Column 3; Editing Tamil NEVER changes English!)
   function handleSisdcMemberEnInput(idx) {
     const enEl = document.getElementById("sisdcMemEn_" + idx);
     const taEl = document.getElementById("sisdcMemTa_" + idx);
     if (!enEl || !taEl) return;
+    taEl.dataset.manualEdited = "false";
     if (!enEl.value.trim()) {
-      if (taEl.dataset.manualEdited !== "true") taEl.value = "";
+      taEl.value = "";
       return;
     }
-    // Auto-populate Tamil as user types in English unless user manually locked Tamil
-    if (taEl.dataset.manualEdited !== "true") {
-      handleEnglishNameInput("sisdcMemEn_" + idx, "sisdcMemTa_" + idx);
-    }
+    handleEnglishNameInput("sisdcMemEn_" + idx, "sisdcMemTa_" + idx);
   }
 
   function handleSisdcMemberEnBlur(idx) {
@@ -9500,8 +9440,8 @@ document.getElementById("regStep1").style.display = "none";
     const taEl = document.getElementById("sisdcMemTa_" + idx);
     if (enEl && enEl.value.trim()) {
       enEl.value = formatNameInitialLast(enEl.value, false);
-      if (taEl && (!taEl.value.trim() || taEl.dataset.manualEdited !== "true")) {
-        convertEnglishToTamilNameById("sisdcMemEn_" + idx, "sisdcMemTa_" + idx, false);
+      if (taEl && taEl.dataset.manualEdited !== "true") {
+        taEl.value = formatNameInitialLast(taEl.value || transliterateEnglishToTamilName(enEl.value), true);
       }
     }
   }
@@ -9511,76 +9451,75 @@ document.getElementById("regStep1").style.display = "none";
     if (taEl) {
       taEl.dataset.manualEdited = "true";
     }
-    // Note: English field sisdcMemEn_${idx} is NEVER touched when Tamil field is edited!
+    // English field sisdcMemEn_${idx} is NEVER touched when Tamil field is edited!
   }
 
-  function convertSisdcMemberEnToTa(idx, force) {
-    const enEl = document.getElementById("sisdcMemEn_" + idx);
-    if (!enEl || !enEl.value.trim()) {
-      showPortalToast(`வ.எண் ${idx}-ல் முதலில் ஆங்கிலப் பெயரை (Student Name in English) உள்ளிடவும்.`);
-      if (enEl) enEl.focus();
-      return;
-    }
-    convertEnglishToTamilNameById("sisdcMemEn_" + idx, "sisdcMemTa_" + idx, true);
-  }
-
-  function convertAllSisdcMembersEnToTa() {
-    let count = 0;
-    for (let i = 1; i <= 10; i++) {
-      const enEl = document.getElementById("sisdcMemEn_" + i);
-      if (enEl && enEl.value.trim()) {
-        convertEnglishToTamilNameById("sisdcMemEn_" + i, "sisdcMemTa_" + i, true);
-        count++;
-      }
-    }
-    if (count > 0) {
-      showPortalToast(`✅ ${count} உறுப்பினர்களின் ஆங்கிலப் பெயர்கள் தமிழில் மாற்றப்பட்டன!`);
-    } else {
-      showPortalToast("முதலில் 2-வது நெடுவரிசையில் ஆங்கிலத்தில் பெயர்களை உள்ளிடவும்.");
-    }
-  }
-
-  // SISDC Guide Teacher & Drama Title En -> Ta Handlers (One-way so Tamil edit never changes English)
+  // SISDC Guide Teacher Name Handlers (Typing English auto-fills Tamil; editing Tamil never changes English)
   function handleSisdcGuideEnInput() {
     const taEl = document.getElementById("sisdcGuideTeacherTa");
-    if (taEl && taEl.dataset.manualEdited !== "true") {
-      handleEnglishNameInput("sisdcGuideTeacherEn", "sisdcGuideTeacherTa");
-    }
+    if (taEl) taEl.dataset.manualEdited = "false";
+    handleEnglishNameInput("sisdcGuideTeacherEn", "sisdcGuideTeacherTa");
   }
   function handleSisdcGuideEnBlur() {
     const enEl = document.getElementById("sisdcGuideTeacherEn");
+    const taEl = document.getElementById("sisdcGuideTeacherTa");
     if (enEl && enEl.value.trim()) {
       enEl.value = formatNameInitialLast(enEl.value, false);
+      if (taEl && taEl.dataset.manualEdited !== "true") {
+        taEl.value = formatNameInitialLast(taEl.value || transliterateEnglishToTamilName(enEl.value), true);
+      }
     }
   }
   function handleSisdcGuideTaManualInput() {
     const taEl = document.getElementById("sisdcGuideTeacherTa");
     if (taEl) taEl.dataset.manualEdited = "true";
   }
-  function convertSisdcGuideEnToTa(force) {
-    convertEnglishToTamilNameById("sisdcGuideTeacherEn", "sisdcGuideTeacherTa", force);
+
+  // SISDC Drama Title Bidirectional Translation (English <-> Tamil, while allowing manual edits in both!)
+  let sisdcTitleEnTimer = null;
+  let sisdcTitleTaTimer = null;
+
+  function handleSisdcTitleEnInput() {
+    clearTimeout(sisdcTitleEnTimer);
+    const enEl = document.getElementById("sisdcTitleEn");
+    const taEl = document.getElementById("sisdcTitleTa");
+    const st = document.getElementById("sisdcTitleAiStatus");
+    if (!enEl || !taEl) return;
+    const enVal = enEl.value.trim();
+    if (!enVal) return;
+
+    if (st) st.innerHTML = "🔄 தமிழில் மொழிபெயர்க்கிறது...";
+    sisdcTitleEnTimer = setTimeout(async () => {
+      const translated = await translateTextSmart(enVal, "en", "ta");
+      if (translated && document.activeElement !== taEl) {
+        taEl.value = translated;
+        if (st) st.innerHTML = "✅ தமிழில் நிரப்பப்பட்டது (திருத்தம் செய்யலாம்)";
+      }
+      setTimeout(() => { if (st) st.innerHTML = ""; }, 2500);
+    }, 650);
   }
 
-  let sisdcTitleTimer = null;
-  function handleSisdcTitleEnInput() {
-    clearTimeout(sisdcTitleTimer);
-    const enVal = document.getElementById("sisdcTitleEn")?.value.trim();
+  function handleSisdcTitleTaInput() {
+    clearTimeout(sisdcTitleTaTimer);
     const taEl = document.getElementById("sisdcTitleTa");
-    if (!enVal || !taEl) return;
-    sisdcTitleTimer = setTimeout(async () => {
-      const translated = await translateTextSmart(enVal, "en", "ta");
-      if (translated) taEl.value = translated;
-    }, 600);
-  }
-  async function convertSisdcTitleEnToTa() {
-    const enVal = document.getElementById("sisdcTitleEn")?.value.trim();
-    const taEl = document.getElementById("sisdcTitleTa");
-    if (!enVal || !taEl) {
-      showPortalToast("முதலில் ஆங்கிலத்தில் நாடகத் தலைப்பை உள்ளிடவும்.");
-      return;
-    }
-    const translated = await translateTextSmart(enVal, "en", "ta");
-    if (translated) taEl.value = translated;
+    const enEl = document.getElementById("sisdcTitleEn");
+    const st = document.getElementById("sisdcTitleAiStatus");
+    if (!taEl || !enEl) return;
+    const taVal = taEl.value.trim();
+    if (!taVal) return;
+    // Wait until current English token (if typing Tanglish) is converted to Tamil
+    if (/[A-Za-z]/.test(taVal) && !/[஀-௿]/.test(taVal)) return;
+
+    if (st) st.innerHTML = "🔄 ஆங்கிலத்தில் மொழிபெயர்க்கிறது...";
+    sisdcTitleTaTimer = setTimeout(async () => {
+      const cleanTa = convertRemainingEnglishInTamilText(taEl.value.trim());
+      const translated = await translateTextSmart(cleanTa, "ta", "en");
+      if (translated && document.activeElement !== enEl) {
+        enEl.value = translated;
+        if (st) st.innerHTML = "✅ ஆங்கிலத்தில் நிரப்பப்பட்டது (திருத்தம் செய்யலாம்)";
+      }
+      setTimeout(() => { if (st) st.innerHTML = ""; }, 2500);
+    }, 650);
   }
 
   // Helper: Resolve complete school profile from U.NO or UDISE across all 308 Master Schools & Registered Auth
