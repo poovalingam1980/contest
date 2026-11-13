@@ -1927,12 +1927,12 @@
 
           <div class="grid-3" style="display:grid; grid-template-columns:repeat(auto-fit, minmax(220px, 1fr)); gap:12px;">
             <div class="form-group">
-              <label class="form-label">வழிகாட்டி ஆசிரியர் பெயர் (தமிழில்) <span class="required">*</span> <span class="phonetic-badge">⌨️ தங்லீஷ் + AI</span></label>
-              <input type="text" id="sisdcTeacherNameTa" class="form-control tanglish-enabled" data-sync-fn="handleSisdcTeacherTaInput" oninput="handleSisdcTeacherTaInput()" placeholder="எ.கா. பூவலிங்கம் கூ" required>
+              <label class="form-label">வழிகாட்டி ஆசிரியர் பெயர் (தமிழில்) <span class="required">*</span> <span class="phonetic-badge">⌨️ தங்லீஷ் + ஒலியாக்கம்</span></label>
+              <input type="text" id="sisdcTeacherNameTa" class="form-control tanglish-enabled" data-is-name="true" data-sync-fn="handleSisdcTeacherTaInput" oninput="handleSisdcTeacherTaInput()" onblur="handleTamilNameBlur('sisdcTeacherNameTa'); handleSisdcTeacherTaInput();" placeholder="எ.கா. பூவலிங்கம் கூ" required>
             </div>
             <div class="form-group">
-              <label class="form-label">Guide Teacher Name (in English) <span class="required">*</span></label>
-              <input type="text" id="sisdcTeacherNameEn" class="form-control" oninput="handleSisdcTeacherEnInput()" placeholder="e.g. Poovalingam K" required>
+              <label class="form-label">Guide Teacher Name (in English) <span class="required">*</span> <span class="phonetic-badge">🔤 PHONETIC</span></label>
+              <input type="text" id="sisdcTeacherNameEn" class="form-control" oninput="handleSisdcTeacherEnInput()" onblur="handleSisdcTeacherEnBlur()" placeholder="e.g. POOVALINGAM K" style="text-transform:uppercase; font-weight:800;" required>
             </div>
             <div class="form-group">
               <label class="form-label">கைபேசி எண் (Mobile Number) <span class="required">*</span></label>
@@ -2588,14 +2588,15 @@
         <button type="button" class="admin-nav-btn" id="sisdcAdmTabBtnReports" onclick="switchSisdcAdminSubTab('reports')">
           📋 நாடகக் குழுக்கள் வருகைப்பதிவேடு & அறிக்கை (Attendance & Reports)
         </button>
-        <button type="button" class="admin-nav-btn" onclick="switchAdminDedicatedBox('SISF'); switchAdminSubTab('judges');">
-          ⚖️ நடுவர்கள் விவரம் & சான்றிதழ் (Judges & Certificates)
+        <button type="button" class="admin-nav-btn" id="sisdcAdmTabBtnJudges" onclick="switchSisdcAdminSubTab('judges')">
+          ⚖️ நாடக விழா நடுவர்கள் & சான்றிதழ் (SISDC Judges & Certificates)
         </button>
         <button type="button" class="admin-nav-btn" style="background:#f1f5f9; color:#475569;" onclick="closeAdminModuleBoxes()">
           ✖️ மெனுக்களை மூடுக
         </button>
       </div>
 
+      <div id="sisdcAdmTeamsContainer">
       <!-- Sub-theme Breakdown Stat Cards -->
       <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(200px, 1fr)); gap:10px; margin-bottom:16px;">
         <div style="background:#ffffff; border:1.5px solid #d8b4fe; border-top:4px solid #7c3aed; border-radius:10px; padding:10px 12px;">
@@ -2656,6 +2657,131 @@
           </tbody>
         </table>
       </div>
+      </div><!-- /#sisdcAdmTeamsContainer -->
+
+      <!-- SISDC 2026 JUDGES REGISTRATION & CERTIFICATE PANEL -->
+      <div id="sisdcAdmJudgesContainer" style="display:none;">
+        <div class="admin-panel-box" style="border-top: 4px solid #7c3aed; margin-bottom: 18px; background: linear-gradient(135deg, #faf5ff 0%, #ffffff 100%);">
+          <div class="admin-panel-title" style="color: #4c1d95; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+            <span>🎭 தென்னிந்திய அறிவியல் நாடக விழா 2026 (SISDC) – போட்டி நடுவர் பதிவு & பாராட்டுச் சான்றிதழ் வழங்கல்</span>
+            <div style="display:flex; gap:8px; flex-wrap:wrap;">
+              <button type="button" class="btn-sm" style="background: linear-gradient(135deg, #6d28d9 0%, #9d174d 100%); color: #ffffff; padding: 7px 14px; font-size: 0.82rem; font-weight: 800;" onclick="downloadAllSisdcJudgesCertificatesPdf('bilingual')">
+                📜 அனைத்து நாடக நடுவர்கள் சான்றிதழ்கள் PDF (All Judges)
+              </button>
+              <button type="button" class="btn-sm" style="background: #15803d; color: #ffffff; padding: 7px 12px; font-size: 0.82rem; font-weight: 800;" onclick="exportSisdcJudgesCsv()">
+                📊 நடுவர்கள் பட்டியல் CSV
+              </button>
+            </div>
+          </div>
+
+          <form onsubmit="handleAdminSaveSisdcJudgeSubmit(event)" style="background:#ffffff; border:1.5px solid #d8b4fe; border-radius:10px; padding:14px; margin-bottom:16px;">
+            <input type="hidden" id="sisdcJudgeEditId" value="">
+            <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(220px, 1fr)); gap:12px;">
+              <div>
+                <label style="display:block; font-size:0.78rem; font-weight:800; color:#4c1d95; margin-bottom:4px;">1. நடுவர் பெயர் (தமிழில்) <span class="required">*</span> <span class="phonetic-badge">⌨️ தங்லீஷ் + ஒலியாக்கம்</span></label>
+                <div style="display:flex; gap:6px;">
+                  <select id="sisdcJudgePrefix" class="form-control" style="width:105px; padding:6px; font-weight:800; font-size:0.84rem;">
+                    <option value="திரு.|Mr.">திரு. (Mr.)</option>
+                    <option value="திருமதி.|Mrs.">திருமதி. (Mrs.)</option>
+                    <option value="செல்வி.|Ms.">செல்வி. (Ms.)</option>
+                    <option value="முனைவர்|Dr.">முனைவர் (Dr.)</option>
+                    <option value="பேராசிரியர்|Prof.">பேரா. (Prof.)</option>
+                  </select>
+                  <input type="text" id="sisdcJudgeNameTa" class="form-control tanglish-enabled" data-is-name="true" data-sync-fn="handleSisdcJudgeNameTaInput" oninput="handleSisdcJudgeNameTaInput()" onblur="handleTamilNameBlur('sisdcJudgeNameTa'); handleSisdcJudgeNameTaInput();" placeholder="எ.கா. பூவலிங்கம் கூ" required style="font-weight:700;">
+                </div>
+              </div>
+
+              <div>
+                <label style="display:block; font-size:0.78rem; font-weight:800; color:#1e3a8a; margin-bottom:4px;">2. Judge Name (in English) <span class="required">*</span> <span class="phonetic-badge">🔤 PHONETIC</span></label>
+                <input type="text" id="sisdcJudgeNameEn" class="form-control" oninput="handleSisdcJudgeNameEnInput()" onblur="this.value = formatNameInitialLast(this.value, false).toUpperCase()" placeholder="e.g. POOVALINGAM K" style="text-transform:uppercase; font-weight:800;" required>
+              </div>
+
+              <div>
+                <label style="display:block; font-size:0.78rem; font-weight:800; color:#0f766e; margin-bottom:4px;">3. பதவி / Designation <span class="required">*</span></label>
+                <select id="sisdcJudgeDesigPreset" class="form-control" style="padding:6px 8px; font-weight:700; font-size:0.83rem; background:#f0fdf4; border-color:#86efac;" onchange="onSisdcJudgeDesigPresetChange()">
+                  <option value="முதுகலை ஆசிரியர்|P.G. Assistant">முதுகலை ஆசிரியர் (P.G. Assistant)</option>
+                  <option value="பட்டதாரி ஆசிரியர்|B.T. Assistant">பட்டதாரி ஆசிரியர் (B.T. Assistant)</option>
+                  <option value="நாடகக் கலை மற்றும் அறிவியல் நடுவர்|Science Drama &amp; Theatre Adjudicator">நாடகக் கலை &amp; அறிவியல் நடுவர்</option>
+                  <option value="உதவிப் பேராசிரியர்|Assistant Professor">உதவிப் பேராசிரியர் (Assistant Professor)</option>
+                  <option value="இணைப் பேராசிரியர்|Associate Professor">இணைப் பேராசிரியர் (Associate Professor)</option>
+                  <option value="பேராசிரியர்|Professor">பேராசிரியர் (Professor)</option>
+                  <option value="தலைமையாசிரியர்|Headmaster">தலைமையாசிரியர் (Headmaster)</option>
+                  <option value="பள்ளித் துணை ஆய்வாளர்|Deputy Inspector of Schools">பள்ளித் துணை ஆய்வாளர்</option>
+                  <option value="CUSTOM">-- பிற பதவி (தட்டச்சு செய்க) --</option>
+                </select>
+                <div style="display:grid; grid-template-columns:1fr 1fr; gap:6px; margin-top:5px;">
+                  <input type="text" id="sisdcJudgeDesigTa" class="form-control tanglish-enabled" value="முதுகலை ஆசிரியர்" placeholder="பதவி தமிழில்" required style="padding:5px 7px; font-size:0.8rem; font-weight:700;">
+                  <input type="text" id="sisdcJudgeDesigEn" class="form-control" value="P.G. Assistant" placeholder="Designation in English" required style="padding:5px 7px; font-size:0.8rem; font-weight:700;">
+                </div>
+              </div>
+
+              <div>
+                <label style="display:block; font-size:0.78rem; font-weight:800; color:#9a3412; margin-bottom:4px;">4. மதிப்பீட்டுப் பிரிவு / துணைக்கருப்பொருள்</label>
+                <select id="sisdcJudgeSubTheme" class="form-control" style="padding:6px 8px; font-weight:700; font-size:0.83rem;">
+                  <option value="அனைத்து அறிவியல் நாடகங்கள்|All Science Dramas">அனைத்து அறிவியல் நாடகங்கள் (All Science Dramas)</option>
+                  <option value="இயக்கம், திரைக்கதை மற்றும் நடிப்பு மதிப்பீடு|Direction, Script &amp; Dramatic Performance">இயக்கம், திரைக்கதை &amp; நடிப்பு மதிப்பீடு</option>
+                  <option value="துணைத்தலைப்பு 1: செயற்கை நுண்ணறிவு (AI)|Sub-Theme 1: Artificial Intelligence: Friend, Tool or Threat?">துணைத்தலைப்பு 1: Artificial Intelligence (AI)</option>
+                  <option value="துணைத்தலைப்பு 2: மின்சார வாகனங்கள் (EV)|Sub-Theme 2: EV: Way Forward">துணைத்தலைப்பு 2: EV: Way Forward</option>
+                  <option value="துணைத்தலைப்பு 3: விண்மீன் வாழ்விடங்கள்|Sub-Theme 3: Interstellar Habitats">துணைத்தலைப்பு 3: Interstellar Habitats</option>
+                  <option value="துணைத்தலைப்பு 4: பெருங்கடல்களை மீட்டெடுத்தல்|Sub-Theme 4: Restoring Oceans - Preserving Generations">துணைத்தலைப்பு 4: Restoring Oceans</option>
+                </select>
+                <div style="display:grid; grid-template-columns:1fr 1fr; gap:6px; margin-top:5px;">
+                  <input type="tel" id="sisdcJudgeMobile" class="form-control" maxlength="10" placeholder="கைபேசி எண் (10 இலக்கம்)" style="padding:5px 7px; font-size:0.8rem;" oninput="this.value=this.value.replace(/[^0-9]/g,'').slice(0,10)">
+                  <input type="text" id="sisdcJudgeEventDate" class="form-control" value="04.11.2026" placeholder="நாள்: 04.11.2026" style="padding:5px 7px; font-size:0.8rem; font-weight:800; color:#4c1d95;">
+                </div>
+              </div>
+            </div>
+
+            <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(240px, 1fr)); gap:12px; margin-top:12px; padding-top:10px; border-top:1px dashed #e2e8f0; align-items:end;">
+              <div>
+                <label style="display:block; font-size:0.78rem; font-weight:800; color:#065f46; margin-bottom:4px;">5. பள்ளி / கல்லூரி / அலுவலகம் தேர்வு (U.NO அல்லது பட்டியல்)</label>
+                <div style="display:flex; gap:6px;">
+                  <input type="text" id="sisdcJudgeUnoInp" class="form-control" placeholder="U.NO (எ.கா. 101)" style="width:110px; padding:6px 8px; font-size:0.82rem; font-weight:800;" oninput="onSisdcJudgeUnoInput(this.value)">
+                  <select id="sisdcJudgeSchoolDropdown" class="form-control" style="flex:1; padding:6px 8px; font-size:0.82rem; font-weight:700; background:#ecfdf5; border-color:#10b981;" onchange="onSisdcJudgeSchoolSelect(this.value)">
+                    <option value="">-- பள்ளி / கல்லூரி / அலுவலகத்தைத் தேர்ந்தெடுக்கவும் --</option>
+                  </select>
+                </div>
+              </div>
+              <div>
+                <label style="display:block; font-size:0.78rem; font-weight:800; color:#1e293b; margin-bottom:4px;">பள்ளி / கல்லூரி / அலுவலகப் பெயர் (தமிழில்) <span class="required">*</span></label>
+                <input type="text" id="sisdcJudgeInstTa" class="form-control tanglish-enabled" placeholder="எ.கா. மன்னர் மேல்நிலைப்பள்ளி, சிவகங்கை" required style="padding:6px 8px; font-size:0.84rem; font-weight:700;">
+              </div>
+              <div>
+                <label style="display:block; font-size:0.78rem; font-weight:800; color:#1e293b; margin-bottom:4px;">School / Institution Name (in English) <span class="required">*</span></label>
+                <input type="text" id="sisdcJudgeInstEn" class="form-control" placeholder="e.g. Mannar Higher Secondary School, Sivagangai" required style="padding:6px 8px; font-size:0.84rem; font-weight:700;">
+              </div>
+              <div style="display:flex; gap:8px;">
+                <button type="submit" id="btnSaveSisdcJudge" class="btn-sm" style="background:linear-gradient(135deg, #6d28d9 0%, #4c1d95 100%); color:#ffffff; padding:9px 16px; font-size:0.86rem; font-weight:900; flex:1; justify-content:center;">
+                  💾 நாடக நடுவர் சேமி (Save Judge)
+                </button>
+                <button type="button" class="btn-sm" style="background:#64748b; color:#ffffff; padding:9px 12px; font-size:0.82rem; font-weight:800;" onclick="resetSisdcJudgeForm()">
+                  🔄 மீட்டமை
+                </button>
+              </div>
+            </div>
+          </form>
+
+          <div class="admin-table-wrap">
+            <table class="admin-table">
+              <thead>
+                <tr>
+                  <th style="width:50px;">வ.எண்</th>
+                  <th style="width:115px;">Judge ID</th>
+                  <th>நடுவர் பெயர் (தமிழ் &amp; English)</th>
+                  <th>பதவி (Designation)</th>
+                  <th>பள்ளி / கல்லூரி / அலுவலகம்</th>
+                  <th>மதிப்பீட்டுப் பிரிவு &amp; நாள்</th>
+                  <th style="width:270px;">புதிய நாடக விழா சான்றிதழ் (SISDC Certificate PDF)</th>
+                  <th style="width:95px;">செயல்கள்</th>
+                </tr>
+              </thead>
+              <tbody id="admSisdcJudgesTableBody">
+                <tr><td colspan="8" style="text-align:center; padding:20px; color:#64748b;">இன்னும் அறிவியல் நாடக விழா நடுவர்கள் பதிவு செய்யப்படவில்லை.</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div><!-- /#sisdcAdmJudgesContainer -->
     </div>
 
     <!-- ========================================================================= -->
@@ -6990,6 +7116,7 @@ document.getElementById("regStep1").style.display = "none";
     "m": "ம", "n": "ந", "o": "ஒ", "p": "ப", "q": "க்யூ", "r": "ர",
     "s": "ச", "t": "த", "u": "உ", "v": "வ", "w": "வ", "x": "எக்ஸ்",
     "y": "ய", "z": "இசட்",
+    "koo": "கூ", "ku": "கு", "ka": "க", "su": "சு", "mu": "மு", "ve": "வெ", "se": "செ", "pa": "ப", "pu": "பு", "poo": "பூ",
     "rm": "இராம", "vr": "வீர", "sp": "சுப", "ar": "ஆறு", "pl": "பழ", "ct": "சித", "kr": "கரு"
   };
 
@@ -7226,6 +7353,268 @@ document.getElementById("regStep1").style.display = "none";
     return text.replace(/[A-Za-z]+/g, (engMatch) => {
       return phoneticTransliterateWord(engMatch);
     });
+  }
+
+  // =========================================================================
+  // TAMIL TO ENGLISH PHONETIC TRANSLITERATION (ஒலியாக்கம்: எ.கா. பூவலிங்கம் கூ ➔ POOVALINGAM K)
+  // =========================================================================
+  const TA_INITIALS_TO_EN_MAP = {
+    "அ": "A", "ஆ": "A", "ஏ": "A",
+    "ப": "P", "பா": "B", "பி": "P", "பீ": "P", "பு": "P", "பூ": "P", "பெ": "P", "பே": "P", "பை": "P", "பொ": "P", "போ": "P",
+    "ச": "S", "சா": "S", "சி": "S", "சீ": "S", "சு": "S", "சூ": "S", "செ": "S", "சே": "S", "சை": "S", "சொ": "S", "சோ": "S",
+    "த": "T", "தா": "T", "தி": "T", "தீ": "T", "து": "T", "தூ": "T", "தெ": "T", "தே": "T", "தை": "T", "தொ": "T", "தோ": "T",
+    "டி": "D", "ட": "D", "டீ": "D",
+    "இ": "E", "ஈ": "E", "எ": "E",
+    "எஃப்": "F",
+    "ஜி": "G",
+    "க": "K", "கா": "K", "கி": "K", "கீ": "K", "கு": "K", "கூ": "K", "கெ": "K", "கே": "K", "கை": "K", "கொ": "K", "கோ": "K",
+    "எச்": "H", "ஹெச்": "H", "ஹ": "H",
+    "ஐ": "I",
+    "ஜெ": "J", "ஜே": "J", "ஜ": "J", "ஜா": "J", "ஜோ": "J",
+    "ல": "L", "லா": "L", "லி": "L", "லீ": "L", "லு": "L", "லூ": "L", "லெ": "L", "லே": "L", "லோ": "L", "எல்": "L",
+    "ம": "M", "மா": "M", "மி": "M", "மீ": "M", "மு": "M", "மூ": "M", "மெ": "M", "மே": "M", "மை": "M", "மொ": "M", "மோ": "M", "எம்": "M",
+    "ந": "N", "நா": "N", "நி": "N", "நீ": "N", "நு": "N", "நூ": "N", "நெ": "N", "நே": "N", "நோ": "N", "என்": "N",
+    "ஒ": "O", "ஓ": "O",
+    "க்யூ": "Q",
+    "ர": "R", "ரா": "R", "ரி": "R", "ரீ": "R", "ரு": "R", "ரூ": "R", "ரெ": "R", "ரே": "R", "ரை": "R", "ரோ": "R", "ஆர்": "R", "இரா": "R",
+    "எஸ்": "S",
+    "உ": "U", "ஊ": "U", "யூ": "U",
+    "வ": "V", "வா": "V", "வி": "V", "வீ": "V", "வு": "V", "வூ": "V", "வெ": "V", "வே": "V", "வை": "V",
+    "டபிள்யூ": "W",
+    "எக்ஸ்": "X",
+    "ய": "Y", "யா": "Y", "ஒய்": "Y",
+    "இசட்": "Z",
+    "இராம": "RM", "வீர": "VR", "சுப": "SP", "ஆறு": "AR", "பழ": "PL", "சித": "CT", "கரு": "KR", "பெரி": "PR", "அண்ணா": "AN"
+  };
+
+  const TA_TO_EN_LEXICON = {
+    "பூவலிங்கம்": "POOVALINGAM",
+    "கிஷோர்லிங்கம்": "KISHORELINGAM",
+    "கிஷோர்": "KISHORE",
+    "லிங்கம்": "LINGAM",
+    "இராமலிங்கம்": "RAMALINGAM",
+    "ராமலிங்கம்": "RAMALINGAM",
+    "சொக்கலிங்கம்": "CHOCKALINGAM",
+    "மகாலிங்கம்": "MAHALINGAM",
+    "சுந்தரலிங்கம்": "SUNDARALINGAM",
+    "முத்தழகன்": "MUTHAZHAGAN",
+    "அன்புச்செல்வன்": "ANBUCHELVAN",
+    "வெங்கடேசன்": "VENKATESAN",
+    "வெங்கடேஷ்": "VENKATESH",
+    "முருகன்": "MURUGAN",
+    "கார்த்திக்": "KARTHIK",
+    "கார்த்திகேயன்": "KARTHIKEYAN",
+    "செந்தில்": "SENTHIL",
+    "செந்தில்குமார்": "SENTHILKUMAR",
+    "பிரவீன்": "PRAVEEN",
+    "தினேஷ்": "DINESH",
+    "குமார்": "KUMAR",
+    "சிவகுமார்": "SIVAKUMAR",
+    "சரவணன்": "SARAVANAN",
+    "செல்வம்": "SELVAM",
+    "மணிகண்டன்": "MANIKANDAN",
+    "விஜய்": "VIJAY",
+    "அஜித்": "AJITH",
+    "சிவா": "SIVA",
+    "கணேசன்": "GANESAN",
+    "கவிதா": "KAVITHA",
+    "ராதா": "RADHA",
+    "மீனா": "MEENA",
+    "பிரியா": "PRIYA",
+    "திவ்யா": "DIVYA",
+    "லட்சுமி": "LAKSHMI",
+    "ஆனந்த்": "ANAND",
+    "பாலாஜி": "BALAJI",
+    "ரமேஷ்": "RAMESH",
+    "சுரேஷ்": "SURESH",
+    "ராஜேஷ்": "RAJESH",
+    "மோகன்": "MOHAN",
+    "சதீஷ்": "SATHISH",
+    "சுதாகர்": "SUDHAKAR",
+    "கண்ணன்": "KANNAN",
+    "ஏழுமலை": "ELUMALAI",
+    "பாஸ்கரன்": "BASKARAN",
+    "திருநாவுக்கரசு": "THIRUNAVUKKARASU",
+    "சுப்பிரமணியன்": "SUBRAMANIAN",
+    "அழகப்பன்": "ALAGAPPAN",
+    "பழனி": "PALANI",
+    "பாரதி": "BHARATHI",
+    "இராமநாதன்": "RAMANATHAN",
+    "ராமநாதன்": "RAMANATHAN",
+    "கயல்விழி": "KAYALVIZHI",
+    "கலைச்செல்வி": "KALAICHELVI",
+    "முத்து": "MUTHU",
+    "முத்துக்குமார்": "MUTHUKUMAR",
+    "நாகராஜன்": "NAGARAJAN",
+    "சண்முகம்": "SHANMUGAM",
+    "வேல்முருகன்": "VELMURUGAN",
+    "பாலசுப்பிரமணியன்": "BALASUBRAMANIAN"
+  };
+
+  function isSingleTamilSyllable(tok) {
+    return /^([அ-ஔ]|[க-ஹ][ா-ௌ]?)$/.test(tok);
+  }
+
+  function transliterateTamilWordToEnglish(taWord) {
+    if (!taWord) return "";
+    const clean = String(taWord).trim();
+    if (!clean) return "";
+    if (TA_TO_EN_LEXICON[clean]) return TA_TO_EN_LEXICON[clean];
+    if (isSingleTamilSyllable(clean) && TA_INITIALS_TO_EN_MAP[clean]) {
+      return TA_INITIALS_TO_EN_MAP[clean];
+    }
+
+    // Syllable-aware Tamil Unicode to English phonetic conversion
+    const indepVowels = {
+      "அ": "a", "ஆ": "aa", "இ": "i", "ஈ": "ee", "உ": "u", "ஊ": "oo",
+      "எ": "e", "ஏ": "e", "ஐ": "ai", "ஒ": "o", "ஓ": "o", "ஔ": "au", "ஃ": "k"
+    };
+    const vowelSigns = {
+      "ா": "a", "ி": "i", "ீ": "ee", "ு": "u", "ூ": "oo",
+      "ெ": "e", "ே": "e", "ை": "ai", "ொ": "o", "ோ": "o", "ௌ": "au"
+    };
+    const baseCons = {
+      "க": "k", "ங": "ng", "ச": "s", "ஞ": "nj", "ட": "d", "ண": "n",
+      "த": "th", "ந": "n", "ப": "p", "ம": "m", "ய": "y", "ர": "r",
+      "ல": "l", "வ": "v", "ழ": "zh", "ள": "l", "ற": "r", "ன": "n",
+      "ஜ": "j", "ஷ": "sh", "ஸ": "s", "ஹ": "h"
+    };
+
+    let out = "";
+    const chars = Array.from(clean);
+    let i = 0;
+    while (i < chars.length) {
+      const ch = chars[i];
+      const next1 = chars[i + 1] || "";
+      const next2 = chars[i + 2] || "";
+
+      if (indepVowels[ch]) {
+        // Initial "இரா" in Tamil names is pronounced "ra" (e.g. இராமன் -> Raman)
+        if (ch === "இ" && next1 === "ர" && next2 === "ா") {
+          out += "ra";
+          i += 3;
+          continue;
+        }
+        out += indepVowels[ch];
+        i++;
+        continue;
+      }
+
+      if (baseCons[ch]) {
+        let cSound = baseCons[ch];
+        // Context rules for natural Tamil name pronunciation in English:
+        // 1. Nasal + stop: ங்க -> ng, ஞ்ச -> nj, ண்ட -> nd, ந்த -> nth, ம்ப -> mb, ன்ற -> ndr
+        if (next1 === "்" && baseCons[next2]) {
+          const cluster = ch + next2;
+          if (cluster === "ங்க") { cSound = "ng"; i += 2; }
+          else if (cluster === "ஞ்ச") { cSound = "nj"; i += 2; }
+          else if (cluster === "ண்ட") { cSound = "nd"; i += 2; }
+          else if (cluster === "ந்த") { cSound = "nth"; i += 2; }
+          else if (cluster === "ம்ப") { cSound = "mb"; i += 2; }
+          else if (cluster === "ன்ற") { cSound = "ndr"; i += 2; }
+          else if (cluster === "ற்ற") { cSound = "tr"; i += 2; }
+          else if (cluster === "க்க") { cSound = "kk"; i += 2; }
+          else if (cluster === "ச்ச") { cSound = "ch"; i += 2; }
+          else if (cluster === "ட்ட") { cSound = "tt"; i += 2; }
+          else if (cluster === "த்த") { cSound = "th"; i += 2; }
+          else if (cluster === "ப்ப") { cSound = "pp"; i += 2; }
+          else {
+            // Pure consonant with pulli (e.g., ம் -> m, ர் -> r, ல் -> l)
+            if (ch === "ட") cSound = "t";
+            if (ch === "ச") cSound = "s";
+            out += cSound;
+            i += 2;
+            continue;
+          }
+          // After advancing i by 2 to the second consonant of the cluster, check its vowel sign
+          const vNext = chars[i + 1] || "";
+          if (vNext === "்") {
+            out += cSound;
+            i += 2;
+          } else if (vowelSigns[vNext]) {
+            out += cSound + vowelSigns[vNext];
+            i += 2;
+          } else {
+            out += cSound + "a";
+            i++;
+          }
+          continue;
+        }
+
+        // Single consonant followed by pulli
+        if (next1 === "்") {
+          if (ch === "ட") cSound = "t";
+          out += cSound;
+          i += 2;
+          continue;
+        }
+
+        // Single consonant followed by vowel sign
+        if (vowelSigns[next1]) {
+          // Intervocalic க often sounds like g in names (e.g. முருகன் -> Murugan)
+          if (ch === "க" && i > 0) cSound = "g";
+          let vSound = vowelSigns[next1];
+          if (next1 === "ா" && i === 0) vSound = "a";
+          out += cSound + vSound;
+          i += 2;
+          continue;
+        }
+
+        // Single consonant with inherent 'a'
+        if (ch === "க" && i > 0) cSound = "g";
+        out += cSound + "a";
+        i++;
+        continue;
+      }
+
+      if (/[A-Za-z0-9]/.test(ch)) {
+        out += ch;
+      }
+      i++;
+    }
+    return out.toUpperCase();
+  }
+
+  function transliterateTamilToEnglishName(rawTa) {
+    if (!rawTa) return "";
+    let s = String(rawTa).trim();
+    if (!s) return "";
+    // Remove Tamil honorific prefixes if typed inside name field
+    s = s.replace(/^(திரு\.|திருமதி\.|செல்வி\.|செல்வன்\.|முனைவர்\.?|பேரா\.?)\s*/g, "").trim();
+    // Ensure initial is placed at the end
+    const orderedTa = formatNameInitialLast(s, true);
+    const tokens = orderedTa.replace(/\./g, " ").trim().split(/\s+/).filter(Boolean);
+    if (!tokens.length) return "";
+
+    const engInstallTokens = [];
+    tokens.forEach((tok, idx) => {
+      const isLast = (idx === tokens.length - 1 && tokens.length > 1);
+      // If token is already English letters (e.g., while typing Tanglish):
+      if (/^[A-Za-z]+$/.test(tok)) {
+        const low = tok.toLowerCase();
+        if (isLast && (low.length === 1 || ["koo", "ku", "ka", "ke", "ko", "su", "sa", "si", "mu", "ma", "mi", "ve", "va", "vi", "pa", "pu", "poo"].includes(low))) {
+          engInstallTokens.push(low[0].toUpperCase());
+        } else {
+          engInstallTokens.push(tok.toUpperCase());
+        }
+        return;
+      }
+      // Check if this token is a Tamil initial
+      if (TA_INITIALS_TO_EN_MAP[tok] && (isSingleTamilSyllable(tok) || isLast || tokens.length === 1)) {
+        engInstallTokens.push(TA_INITIALS_TO_EN_MAP[tok]);
+        return;
+      }
+      engInstallTokens.push(transliterateTamilWordToEnglish(tok));
+    });
+
+    return formatNameInitialLast(engInstallTokens.join(" "), false).toUpperCase();
+  }
+
+  function formatNameInitialLastTa(val) {
+    return formatNameInitialLast(val, true);
+  }
+  function formatNameInitialLastEn(val) {
+    return formatNameInitialLast(val, false).toUpperCase();
   }
 
   // =========================================================================
@@ -14232,6 +14621,9 @@ ${n.message}
             <button type="button" class="btn-sm" style="background:#1e40af; color:#fff; padding:5px 8px; font-size:0.75rem; font-weight:800;" onclick="downloadJudgeCertificateById('${j.id}', 'en')" title="English Judge Appreciation Certificate (English Only PDF)">
               📜 EN
             </button>
+            <button type="button" class="btn-sm" style="background:linear-gradient(135deg,#7c3aed,#9d174d); color:#fff; padding:5px 8px; font-size:0.74rem; font-weight:800;" onclick="downloadSisdcJudgeCertificateFromAnyList('${j.id}', 'bilingual')" title="தென்னிந்திய அறிவியல் நாடக விழா 2026 - நடுவர் பாராட்டுச் சான்றிதழ் (SISDC Drama Judge Certificate)">
+              🎭 நாடக விழா சான்றிதழ்
+            </button>
           </div>
         </td>
         <td style="text-align:center;">
@@ -16697,13 +17089,27 @@ ${n.message}
     const bTeams = document.getElementById("sisdcAdmTabBtnTeams");
     const bWin = document.getElementById("sisdcAdmTabBtnWinners");
     const bRep = document.getElementById("sisdcAdmTabBtnReports");
+    const bJud = document.getElementById("sisdcAdmTabBtnJudges");
     if (bTeams) bTeams.classList.toggle("active", tabMode === "teams");
     if (bWin) bWin.classList.toggle("active", tabMode === "winners");
     if (bRep) bRep.classList.toggle("active", tabMode === "reports");
+    if (bJud) bJud.classList.toggle("active", tabMode === "judges");
 
-    const all = getAllSisdcTeamsFromStorage();
+    const teamsCont = document.getElementById("sisdcAdmTeamsContainer");
+    const judgesCont = document.getElementById("sisdcAdmJudgesContainer");
+    if (tabMode === "judges") {
+      if (teamsCont) teamsCont.style.display = "none";
+      if (judgesCont) judgesCont.style.display = "block";
+      populateSisdcJudgeSchoolsDropdown();
+      renderAdminSisdcJudgesTable();
+      try { attachTanglishHandlers(); } catch (e) {}
+      return;
+    }
+
+    if (teamsCont) teamsCont.style.display = "block";
+    if (judgesCont) judgesCont.style.display = "none";
+
     if (tabMode === "winners") {
-      // Filter or highlight winners in the SISDC table
       renderAdminSisdcTeamsTable(true);
     } else if (tabMode === "reports") {
       renderAdminSisdcTeamsTable(false);
@@ -16754,24 +17160,33 @@ ${n.message}
     const enEl = document.getElementById("sisdcTeacherNameEn");
     if (!taEl || !enEl) return;
     clearTimeout(sisdcTranslateTimers.tTa);
-    sisdcTranslateTimers.tTa = setTimeout(async () => {
-      const v = taEl.value.trim();
-      if (!v) return;
-      const tr = await translateTextSmart(v, "ta", "en");
-      if (tr && !enEl.value.trim()) enEl.value = formatNameInitialLast(tr, false);
-    }, 600);
+    const v = taEl.value.trim();
+    if (!v) {
+      if (document.activeElement !== enEl) enEl.value = "";
+      return;
+    }
+    // Instant phonetic transliteration (ஒலியாக்கம்: e.g. பூவலிங்கம் கூ -> POOVALINGAM K)
+    const phoneticEn = transliterateTamilToEnglishName(v);
+    if (phoneticEn && document.activeElement !== enEl) {
+      enEl.value = phoneticEn;
+    }
   }
   function handleSisdcTeacherEnInput() {
     const taEl = document.getElementById("sisdcTeacherNameTa");
     const enEl = document.getElementById("sisdcTeacherNameEn");
     if (!taEl || !enEl) return;
-    clearTimeout(sisdcTranslateTimers.tEn);
-    sisdcTranslateTimers.tEn = setTimeout(async () => {
-      const v = enEl.value.trim();
-      if (!v) return;
-      const tr = await translateTextSmart(v, "en", "ta");
-      if (tr && !taEl.value.trim()) taEl.value = formatNameInitialLast(tr, true);
-    }, 600);
+    if (!enEl.value.trim()) {
+      if (document.activeElement !== taEl) taEl.value = "";
+      return;
+    }
+    handleEnglishNameInput("sisdcTeacherNameEn", "sisdcTeacherNameTa");
+  }
+  function handleSisdcTeacherEnBlur() {
+    const enEl = document.getElementById("sisdcTeacherNameEn");
+    if (enEl && enEl.value.trim()) {
+      enEl.value = formatNameInitialLast(enEl.value, false).toUpperCase();
+    }
+    handleNameBlur("sisdcTeacherNameEn", "sisdcTeacherNameTa");
   }
   function handleSisdcTitleTaInput() {
     const taEl = document.getElementById("sisdcDramaTitleTa");
@@ -17115,11 +17530,11 @@ ${n.message}
                 </div>
                 <span style="background:#dcfce7; color:#166534; border:1px solid #86efac; padding:2px 10px; border-radius:999px; font-size:0.75rem; font-weight:900;">✅ வருகை உறுதி (Present)</span>
               </div>
-              <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(260px, 1fr)); gap:10px;">
+              <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(250px, 1fr)); gap:10px;">
                 <div style="background:#ffffff; border:1px solid #fcd34d; border-radius:8px; padding:10px;">
-                  <div style="font-size:0.8rem; font-weight:900; color:#4c1d95; margin-bottom:6px;">📑 1. அனைத்து உறுப்பினர்கள் &amp; வழிகாட்டி ஆசிரியர் தனித்தனி சான்றிதழ்கள் (${filledMembers.length} மாணவர்கள் + 1 ஆசிரியர் PDF):</div>
+                  <div style="font-size:0.8rem; font-weight:900; color:#4c1d95; margin-bottom:6px;">🎭 1. அனைத்து உறுப்பினர்கள் &amp; வழிகாட்டி ஆசிரியர் தனித்தனி நாடக விழா சான்றிதழ்கள் (${filledMembers.length} மாணவர்கள் + 1 ஆசிரியர் PDF):</div>
                   <div style="display:flex; gap:6px; flex-wrap:wrap;">
-                    <button type="button" class="btn-sm" style="background:linear-gradient(135deg, #4c1d95 0%, #0f766e 100%); color:#fff; font-weight:900; font-size:0.78rem; flex:1;" onclick="downloadCurrentSchoolSisdcCertificates('bilingual', 'all_members')">📜 இருமொழி (All)</button>
+                    <button type="button" class="btn-sm" style="background:linear-gradient(135deg, #6d28d9 0%, #9d174d 100%); color:#fff; font-weight:900; font-size:0.78rem; flex:1;" onclick="downloadCurrentSchoolSisdcCertificates('bilingual', 'all_members')">📜 இருமொழி (All)</button>
                     <button type="button" class="btn-sm" style="background:#059669; color:#fff; font-weight:800; font-size:0.78rem;" onclick="downloadCurrentSchoolSisdcCertificates('ta', 'all_members')">📜 தமிழ்</button>
                     <button type="button" class="btn-sm" style="background:#2563eb; color:#fff; font-weight:800; font-size:0.78rem;" onclick="downloadCurrentSchoolSisdcCertificates('en', 'all_members')">📜 EN</button>
                   </div>
@@ -17130,6 +17545,19 @@ ${n.message}
                     <button type="button" class="btn-sm" style="background:#1e3a8a; color:#fff; font-weight:900; font-size:0.78rem; flex:1;" onclick="downloadCurrentSchoolSisdcCertificates('bilingual', 'team')">📜 இருமொழி (Team)</button>
                     <button type="button" class="btn-sm" style="background:#047857; color:#fff; font-weight:800; font-size:0.78rem;" onclick="downloadCurrentSchoolSisdcCertificates('ta', 'team')">📜 தமிழ்</button>
                     <button type="button" class="btn-sm" style="background:#1d4ed8; color:#fff; font-weight:800; font-size:0.78rem;" onclick="downloadCurrentSchoolSisdcCertificates('en', 'team')">📜 EN</button>
+                  </div>
+                </div>
+                <div style="background:#ffffff; border:1px solid #fcd34d; border-radius:8px; padding:10px;">
+                  <div style="font-size:0.8rem; font-weight:900; color:#9a3412; margin-bottom:6px;">👤 3. தனிப்பட்ட மாணவர் / வழிகாட்டி ஆசிரியர் சான்றிதழ் தேர்வு:</div>
+                  <select id="sisdcSchoolCertMemberSel" class="form-control" style="padding:4px 6px; font-size:0.78rem; font-weight:800; margin-bottom:6px;">
+                    <option value="all_members">📑 அனைத்து உறுப்பினர்கள் + ஆசிரியர் (All)</option>
+                    <option value="teacher">👨‍🏫 வழிகாட்டி ஆசிரியர் மட்டும் (${rec.guideTeacherNameTa || rec.guideTeacherNameEn || "Teacher"})</option>
+                    ${filledMembers.map((m, mi) => `<option value="member_${mi}">🎭 ${m.sno || (mi+1)}. ${m.nameTa || m.nameEn} (${m.studentClass || "-"} - ${m.roleTa || "Artist"})</option>`).join("")}
+                  </select>
+                  <div style="display:flex; gap:6px; flex-wrap:wrap;">
+                    <button type="button" class="btn-sm" style="background:#7c3aed; color:#fff; font-weight:900; font-size:0.76rem; flex:1;" onclick="downloadCurrentSchoolSisdcCertificates('bilingual', document.getElementById('sisdcSchoolCertMemberSel')?.value || 'all_members')">📜 இருமொழி</button>
+                    <button type="button" class="btn-sm" style="background:#059669; color:#fff; font-weight:800; font-size:0.76rem;" onclick="downloadCurrentSchoolSisdcCertificates('ta', document.getElementById('sisdcSchoolCertMemberSel')?.value || 'all_members')">📜 தமிழ்</button>
+                    <button type="button" class="btn-sm" style="background:#2563eb; color:#fff; font-weight:800; font-size:0.76rem;" onclick="downloadCurrentSchoolSisdcCertificates('en', document.getElementById('sisdcSchoolCertMemberSel')?.value || 'all_members')">📜 EN</button>
                   </div>
                 </div>
               </div>
@@ -17626,13 +18054,219 @@ ${n.message}
   // 🎭 SISDC 2026 SCIENCE DRAMA CONTEST CERTIFICATE GENERATOR (300+ DPI A4 PORTRAIT)
   // Matches the exact design, border template, typography & CEO signature of SISF 2026!
   // =========================================================================
+  // =========================================================================
+  // 🎭 DEDICATED SCIENCE DRAMA CONTEST (SISDC 2026) CERTIFICATE TEMPLATE ENGINE
+  // Transforms the outer border & hero banner into a Royal Crimson-Purple-Gold
+  // Theatrical Proscenium theme, preserves the official TN Govt Emblem at top-left,
+  // and draws Golden Theatrical Comedy & Tragedy Masks + Stage Curtains + Laurel Wreath!
+  // =========================================================================
+  function drawTheatricalDramaEmblemOnCtx(ctx, cx, cy, radius, bgCol, goldCol, goldLight, isWatermark) {
+    ctx.save();
+    if (!isWatermark) {
+      ctx.beginPath();
+      ctx.arc(cx, cy, radius, 0, Math.PI * 2);
+      ctx.fillStyle = bgCol;
+      ctx.fill();
+      ctx.lineWidth = Math.max(2, radius * 0.06);
+      ctx.strokeStyle = goldCol;
+      ctx.stroke();
+
+      ctx.beginPath();
+      ctx.arc(cx, cy, radius * 0.86, 0, Math.PI * 2);
+      ctx.lineWidth = Math.max(1.5, radius * 0.03);
+      ctx.strokeStyle = goldLight;
+      ctx.stroke();
+    } else {
+      ctx.beginPath();
+      ctx.arc(cx, cy, radius, 0, Math.PI * 2);
+      ctx.lineWidth = 3;
+      ctx.strokeStyle = goldCol;
+      ctx.stroke();
+
+      ctx.beginPath();
+      ctx.arc(cx, cy, radius * 0.91, 0, Math.PI * 2);
+      ctx.lineWidth = 2;
+      ctx.strokeStyle = goldLight;
+      ctx.stroke();
+
+      // Subtle atomic science ellipses behind the drama masks
+      [-35, 35, 90].forEach(deg => {
+        ctx.save();
+        ctx.translate(cx, cy);
+        ctx.rotate((deg * Math.PI) / 180);
+        ctx.beginPath();
+        ctx.ellipse(0, 0, radius * 0.95, radius * 0.36, 0, 0, Math.PI * 2);
+        ctx.strokeStyle = "rgba(124, 58, 237, 0.065)";
+        ctx.lineWidth = 2.5;
+        ctx.stroke();
+        ctx.restore();
+      });
+    }
+
+    // Stage Proscenium Curtain Swags at top of medallion
+    ctx.beginPath();
+    ctx.arc(cx - radius * 0.39, cy - radius * 0.55, radius * 0.42, 0.15 * Math.PI, 0.82 * Math.PI);
+    ctx.strokeStyle = isWatermark ? goldCol : goldLight;
+    ctx.lineWidth = Math.max(2, radius * 0.045);
+    ctx.stroke();
+
+    ctx.beginPath();
+    ctx.arc(cx + radius * 0.39, cy - radius * 0.55, radius * 0.42, 0.18 * Math.PI, 0.85 * Math.PI);
+    ctx.stroke();
+
+    // Laurel Wreath dots along left & right arcs
+    [-1, 1].forEach(side => {
+      for (let step = 0; step < 5; step++) {
+        const ang = ((135 - step * 18) * Math.PI) / 180;
+        const lx = cx + side * radius * 0.72 * Math.sin(ang);
+        const ly = cy + radius * 0.68 * Math.cos(ang);
+        ctx.beginPath();
+        ctx.arc(lx, ly, Math.max(2, radius * 0.045), 0, Math.PI * 2);
+        ctx.fillStyle = goldCol;
+        ctx.fill();
+      }
+    });
+
+    // Helper for Comedy & Tragedy Theatrical Masks
+    const drawMask = (mcx, mcy, sc, fillC, strokeC, featC, isHappy) => {
+      const mw = radius * 0.33 * sc;
+      const mh = radius * 0.41 * sc;
+      ctx.beginPath();
+      ctx.moveTo(mcx - mw, mcy - mh * 0.62);
+      ctx.quadraticCurveTo(mcx, mcy - mh * 0.45, mcx + mw, mcy - mh * 0.62);
+      ctx.bezierCurveTo(mcx + mw * 1.05, mcy + mh * 0.25, mcx + mw * 0.55, mcy + mh * 0.72, mcx, mcy + mh * 0.75);
+      ctx.bezierCurveTo(mcx - mw * 0.55, mcy + mh * 0.72, mcx - mw * 1.05, mcy + mh * 0.25, mcx - mw, mcy - mh * 0.62);
+      ctx.closePath();
+      ctx.fillStyle = fillC;
+      ctx.fill();
+      ctx.lineWidth = Math.max(1.8, radius * 0.035);
+      ctx.strokeStyle = strokeC;
+      ctx.stroke();
+
+      // Eyes
+      const ew = Math.max(2, mw * 0.22);
+      const eh = Math.max(1.5, mh * 0.12);
+      const ey = mcy - mh * 0.16;
+      ctx.fillStyle = featC;
+      ctx.beginPath();
+      ctx.ellipse(mcx - mw * 0.38, ey, ew, eh, 0, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.beginPath();
+      ctx.ellipse(mcx + mw * 0.38, ey, ew, eh, 0, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Mouth (Smile or Frown)
+      ctx.beginPath();
+      if (isHappy) {
+        ctx.arc(mcx, mcy + mh * 0.14, mw * 0.46, 0.12 * Math.PI, 0.88 * Math.PI);
+      } else {
+        ctx.arc(mcx, mcy + mh * 0.44, mw * 0.46, 1.15 * Math.PI, 1.85 * Math.PI);
+      }
+      ctx.lineWidth = Math.max(1.8, radius * 0.042);
+      ctx.strokeStyle = featC;
+      ctx.stroke();
+    };
+
+    if (isWatermark) {
+      drawMask(cx - radius * 0.23, cy - radius * 0.04, 0.95, "rgba(254, 243, 199, 0.22)", goldCol, goldCol, true);
+      drawMask(cx + radius * 0.24, cy + radius * 0.08, 0.92, "rgba(243, 232, 255, 0.22)", goldLight, goldLight, false);
+    } else {
+      drawMask(cx - radius * 0.23, cy - radius * 0.04, 0.95, goldLight, bgCol, bgCol, true);
+      drawMask(cx + radius * 0.24, cy + radius * 0.08, 0.92, goldCol, bgCol, bgCol, false);
+    }
+
+    // Bottom Sparkle Star
+    const sy = cy + radius * 0.64;
+    const sr = Math.max(3, radius * 0.085);
+    ctx.beginPath();
+    ctx.moveTo(cx, sy - sr);
+    ctx.lineTo(cx + sr * 0.5, sy);
+    ctx.lineTo(cx, sy + sr);
+    ctx.lineTo(cx - sr * 0.5, sy);
+    ctx.closePath();
+    ctx.fillStyle = isWatermark ? goldCol : goldLight;
+    ctx.fill();
+    ctx.restore();
+  }
+
+  function getSisdcCertBgCanvas() {
+    if (window.__sisdcCertBgCanvas) return window.__sisdcCertBgCanvas;
+    const W = 1448, H = 2048;
+    const bgCvs = document.createElement("canvas");
+    bgCvs.width = W;
+    bgCvs.height = H;
+    const bctx = bgCvs.getContext("2d");
+
+    if (typeof sisfCertBgImg !== "undefined" && sisfCertBgImg && sisfCertBgImg.complete && sisfCertBgImg.naturalWidth > 0) {
+      bctx.drawImage(sisfCertBgImg, 0, 0, W, H);
+      try {
+        const imgData = bctx.getImageData(0, 0, W, H);
+        const d = imgData.data;
+        for (let y = 0; y < H; y++) {
+          const dyLeft = y - 274;
+          const inInnerY = (y >= 195 && y <= 1855);
+          const inHeroY = (y >= 350 && y <= 474);
+          const inVenueY = (y >= 475 && y <= 532);
+          for (let x = 0; x < W; x++) {
+            const dxLeft = x - 281;
+            // Protect official Tamil Nadu Govt Emblem at top-left (281, 274, r=72)
+            if (dxLeft * dxLeft + dyLeft * dyLeft <= 5184) continue;
+            const idx = (y * W + x) * 4;
+            const r = d[idx], g = d[idx + 1], b = d[idx + 2];
+            const inInnerCard = inInnerY && (x >= 185 && x <= 1263);
+            const inHeroBanner = inHeroY && (x >= 190 && x <= 1258);
+            const inVenuePill = inVenueY && (x >= 220 && x <= 1228);
+
+            if ((!inInnerCard || inHeroBanner) && (b > r + 10 || g > r + 12)) {
+              d[idx]     = Math.min(255, Math.round(b * 0.78 + g * 0.18 + 14));
+              d[idx + 1] = Math.min(255, Math.round(r * 0.45 + g * 0.12));
+              d[idx + 2] = Math.min(255, Math.round(b * 0.65 + r * 0.22));
+            } else if (inVenuePill && b > r + 4) {
+              d[idx]     = Math.min(255, Math.round(r * 0.98 + 8));
+              d[idx + 1] = Math.min(255, Math.round(g * 0.95));
+              d[idx + 2] = Math.min(255, b);
+            }
+          }
+        }
+        bctx.putImageData(imgData, 0, 0);
+      } catch (e) {}
+    } else {
+      bctx.fillStyle = "#ffffff";
+      bctx.fillRect(0, 0, W, H);
+    }
+
+    // Clear old atom watermark inside the white citation card and draw Science Drama Watermark
+    bctx.fillStyle = "#ffffff";
+    bctx.fillRect(350, 650, 748, 780);
+    drawTheatricalDramaEmblemOnCtx(bctx, 724, 1035, 265, "rgba(255,255,255,0)", "rgba(180, 83, 9, 0.13)", "rgba(109, 40, 217, 0.11)", true);
+
+    // Replace Top-Right Medallion (1170, 277, r=58) with Royal Science Drama Emblem
+    drawTheatricalDramaEmblemOnCtx(bctx, 1170, 277, 58, "#3b0764", "#d97706", "#fde047", false);
+
+    // Replace Bottom Seal Medallion (724, 1695, r=41) with Science Drama Seal
+    drawTheatricalDramaEmblemOnCtx(bctx, 724, 1695, 41, "#4a044e", "#d97706", "#fde047", false);
+
+    window.__sisdcCertBgCanvas = bgCvs;
+    return bgCvs;
+  }
+
+  function parseSisdcClassNumber(rawCls) {
+    const s = String(rawCls || "").trim().toUpperCase();
+    const romanMap = { "VI": "6", "VII": "7", "VIII": "8", "IX": "9", "X": "10", "XI": "11", "XII": "12" };
+    if (romanMap[s]) return romanMap[s];
+    for (const [rom, num] of Object.entries(romanMap)) {
+      if (new RegExp("\b" + rom + "\b").test(s)) return num;
+    }
+    const digits = s.replace(/[^0-9]/g, "");
+    return digits || "9";
+  }
+
   function generateAndDownloadSisdcCertificatesPdf(dramaRec, langMode, scopeMode) {
     if (!dramaRec) return;
     if (dramaRec.attendanceStatus === "ABSENT") {
       showSisfToast("🚫 சான்றிதழ் வழங்க இயலாது! இந்த நாடகக் குழு 'வருகை இல்லை (Absent)' எனப் பதிவு செய்யப்பட்டுள்ளது. வருகை தந்த (Present) மாணவர்களுக்கு மட்டுமே சான்றிதழ் வழங்கப்படும்.");
       return;
     }
-    // Automatically log that this SISDC drama certificate was downloaded!
     try {
       recordCertificateDownloadEvent({
         competition: "SISDC",
@@ -17647,14 +18281,24 @@ ${n.message}
     } catch (e) {}
 
     const mode = langMode || "bilingual"; // 'bilingual', 'ta', or 'en'
-    const scope = scopeMode || "all_members"; // 'all_members' or 'team'
+    const scope = scopeMode || "all_members"; // 'all_members', 'team', 'teacher', or 'member_0'..'member_9'
 
     const runRender = () => {
       const canvases = [];
       const filledMembers = (Array.isArray(dramaRec.members) ? dramaRec.members : []).filter(m => m && (m.nameTa || m.nameEn));
 
-      if (scope === "team" || filledMembers.length === 0) {
+      if (scope === "team" || (filledMembers.length === 0 && scope !== "teacher")) {
         canvases.push(renderSingleSisdcCertificateCanvas(dramaRec, mode, { type: "TEAM" }));
+      } else if (scope === "teacher") {
+        canvases.push(renderSingleSisdcCertificateCanvas(dramaRec, mode, { type: "TEACHER" }));
+      } else if (scope.startsWith("member_")) {
+        const mIdx = parseInt(scope.replace("member_", ""), 10);
+        const targetMem = filledMembers[mIdx] || (dramaRec.members && dramaRec.members[mIdx]);
+        if (targetMem) {
+          canvases.push(renderSingleSisdcCertificateCanvas(dramaRec, mode, { type: "MEMBER", member: targetMem, index: mIdx }));
+        } else {
+          canvases.push(renderSingleSisdcCertificateCanvas(dramaRec, mode, { type: "TEAM" }));
+        }
       } else {
         // Generate an individual A4 Portrait Certificate for EACH filled student member (up to 10)
         filledMembers.forEach((mem, idx) => {
@@ -17669,7 +18313,7 @@ ${n.message}
       const uNoClean = String(dramaRec.uNo || dramaRec.teamNo || "School").replace(/[^a-zA-Z0-9_-]/g, "");
       const fName = `SISDC_2026_Certificate_${mode}_${scope}_${uNoClean}.pdf`;
       buildMultiPagePdfFromCanvasesAndDownload(canvases, fName, false);
-      showSisfToast(`📜 அறிவியல் நாடக விழா சான்றிதழ் (${canvases.length} பக்கம் PDF) வெற்றிகரமாகப் பதிவிறக்கம் செய்யப்பட்டது!`);
+      showSisfToast(`🎭 தென்னிந்திய அறிவியல் நாடக விழா சான்றிதழ் (${canvases.length} பக்கம் PDF) வெற்றிகரமாகப் பதிவிறக்கம் செய்யப்பட்டது!`);
     };
 
     if (typeof sisfCertBgImg !== "undefined" && sisfCertBgImg && !sisfCertBgImg.complete) {
@@ -17698,9 +18342,10 @@ ${n.message}
     ctx.imageSmoothingQuality = "high";
     ctx.scale(SCALE, SCALE);
 
-    // 1. Draw the High-Resolution Portrait Certificate Background Template
-    if (typeof sisfCertBgImg !== "undefined" && sisfCertBgImg && sisfCertBgImg.complete && sisfCertBgImg.naturalWidth > 0) {
-      ctx.drawImage(sisfCertBgImg, 0, 0, LOGICAL_W, LOGICAL_H);
+    // 1. Draw the Dedicated Science Drama Contest Portrait Certificate Background Template
+    const dramaBg = getSisdcCertBgCanvas();
+    if (dramaBg) {
+      ctx.drawImage(dramaBg, 0, 0, LOGICAL_W, LOGICAL_H);
     } else {
       ctx.fillStyle = "#ffffff";
       ctx.fillRect(0, 0, LOGICAL_W, LOGICAL_H);
@@ -17767,18 +18412,19 @@ ${n.message}
       rankCleanTextEn = "SPECIAL PRIZE";
     }
 
-    // Member / Role extraction
+    // Member / Role extraction (accurately converts Roman numerals VI..X to 6..10)
     let memNameTa = "", memNameEn = "", memClassTa = "", memClassEn = "", roleTaClean = "", roleEnClean = "";
     if (spec.type === "MEMBER" && spec.member) {
       const m = spec.member;
       memNameTa = m.nameTa || m.nameEn || "-";
-      memNameEn = m.nameEn || m.nameTa || "-";
-      const rawCls = String(m.studentClass || "9").replace(/[^0-9]/g, "") || "9";
-      memClassTa = `${rawCls}-ஆம் வகுப்பு`;
-      memClassEn = formatClassInEnglish(rawCls);
+      memNameEn = (m.nameEn || transliterateTamilToEnglishName(memNameTa) || memNameTa || "-").toUpperCase();
+      const clsNum = parseSisdcClassNumber(m.studentClass);
+      memClassTa = `${clsNum}-ஆம் வகுப்பு`;
+      memClassEn = formatClassInEnglish(clsNum);
       roleTaClean = (m.roleTa || "மேடை நடிகர்").replace(/\d+/g, "").trim();
       roleEnClean = (m.roleEn || "Artist").replace(/[()]/g, "").trim();
-      if (roleEnClean === "Artist") roleEnClean = "Stage Actor / Artist";
+      if (roleEnClean === "Artist") roleEnClean = "Stage Artist";
+      else if (roleEnClean === "Director") roleEnClean = "Drama Director";
     }
 
     // -----------------------------------------------------------------------
@@ -18091,6 +18737,618 @@ ${n.message}
     return cvs;
   }
 
+  // =========================================================================
+  // ⚖️ SISDC 2026 SCIENCE DRAMA JUDGES MANAGEMENT & CERTIFICATE GENERATOR
+  // =========================================================================
+  const DEFAULT_SISDC_JUDGES_2026 = [
+    {
+      id: "SISDC-JDG-01",
+      prefixRaw: "திரு.|Mr.",
+      prefixTa: "திரு.",
+      prefixEn: "Mr.",
+      nameTa: "பூவலிங்கம் கூ",
+      nameEn: "POOVALINGAM K",
+      designationTa: "பள்ளித் துணை ஆய்வாளர்",
+      designationEn: "Deputy Inspector of Schools",
+      uNo: "CEO-SVG",
+      instTa: "முதன்மைக்கல்வி அலுவலகம், சிவகங்கை",
+      instEn: "Chief Educational Office, Sivagangai",
+      subThemeRaw: "அனைத்து அறிவியல் நாடகங்கள்|All Science Dramas",
+      subThemeTa: "அனைத்து அறிவியல் நாடகங்கள்",
+      subThemeEn: "All Science Dramas",
+      mobile: "9626471035",
+      eventDate: "04.11.2026",
+      timestamp: "04.11.2026"
+    }
+  ];
+
+  function getAllSisdcJudgesFromStorage() {
+    try {
+      const raw = localStorage.getItem("SISDC_JUDGES_2026") || sessionStorage.getItem("SISDC_JUDGES_2026");
+      if (raw) {
+        const parsed = JSON.parse(raw);
+        if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+      }
+    } catch (e) {}
+    return DEFAULT_SISDC_JUDGES_2026.slice();
+  }
+
+  function saveAllSisdcJudgesToStorage(list) {
+    const clean = Array.isArray(list) ? list : [];
+    try { localStorage.setItem("SISDC_JUDGES_2026", JSON.stringify(clean)); } catch (e) {}
+    try { sessionStorage.setItem("SISDC_JUDGES_2026", JSON.stringify(clean)); } catch (e) {}
+  }
+
+  function populateSisdcJudgeSchoolsDropdown() {
+    const sel = document.getElementById("sisdcJudgeSchoolDropdown");
+    if (!sel) return;
+    const prev = sel.value;
+    const allInst = (typeof getAllCombinedInstitutionsForJudge === "function")
+      ? getAllCombinedInstitutionsForJudge()
+      : ((typeof MASTER_SCHOOLS !== "undefined" && Array.isArray(MASTER_SCHOOLS)) ? MASTER_SCHOOLS : []);
+    sel.innerHTML = `<option value="">-- பள்ளி / கல்லூரி / அலுவலகத்தைத் தேர்ந்தெடுக்கவும் (${allInst.length}) --</option>` +
+      allInst.map(s => `<option value="${s.uNo}">${s.uNo} | ${s.nameTa || s.nameEn}</option>`).join("");
+    if (prev) sel.value = prev;
+  }
+
+  function handleSisdcJudgeNameTaInput() {
+    const taEl = document.getElementById("sisdcJudgeNameTa");
+    const enEl = document.getElementById("sisdcJudgeNameEn");
+    if (!taEl || !enEl) return;
+    const v = taEl.value.trim();
+    if (!v) {
+      if (document.activeElement !== enEl) enEl.value = "";
+      return;
+    }
+    const phoneticEn = transliterateTamilToEnglishName(v);
+    if (phoneticEn && document.activeElement !== enEl) {
+      enEl.value = phoneticEn;
+    }
+  }
+
+  function handleSisdcJudgeNameEnInput() {
+    const taEl = document.getElementById("sisdcJudgeNameTa");
+    const enEl = document.getElementById("sisdcJudgeNameEn");
+    if (!taEl || !enEl) return;
+    if (!enEl.value.trim()) {
+      if (document.activeElement !== taEl) taEl.value = "";
+      return;
+    }
+    handleEnglishNameInput("sisdcJudgeNameEn", "sisdcJudgeNameTa");
+  }
+
+  function onSisdcJudgeDesigPresetChange() {
+    const sel = document.getElementById("sisdcJudgeDesigPreset");
+    const taEl = document.getElementById("sisdcJudgeDesigTa");
+    const enEl = document.getElementById("sisdcJudgeDesigEn");
+    if (!sel || !taEl || !enEl) return;
+    if (sel.value === "CUSTOM") {
+      taEl.value = "";
+      enEl.value = "";
+      taEl.focus();
+      return;
+    }
+    const [dTa, dEn] = sel.value.split("|");
+    if (dTa) taEl.value = dTa;
+    if (dEn) enEl.value = dEn;
+  }
+
+  function onSisdcJudgeUnoInput(rawVal) {
+    const q = String(rawVal || "").trim().replace(/^0+/, "");
+    if (!q) return;
+    const allInst = (typeof getAllCombinedInstitutionsForJudge === "function") ? getAllCombinedInstitutionsForJudge() : (MASTER_SCHOOLS || []);
+    const found = allInst.find(s => String(s.uNo).toLowerCase() === q.toLowerCase() || String(s.udiseNo || "").toLowerCase() === q.toLowerCase());
+    if (found) {
+      const sel = document.getElementById("sisdcJudgeSchoolDropdown");
+      if (sel) sel.value = found.uNo;
+      const taEl = document.getElementById("sisdcJudgeInstTa");
+      const enEl = document.getElementById("sisdcJudgeInstEn");
+      if (taEl) taEl.value = found.nameTa || "";
+      if (enEl) enEl.value = cleanSchoolNameEnForCert(found.nameEn || "");
+    }
+  }
+
+  function onSisdcJudgeSchoolSelect(uNoVal) {
+    if (!uNoVal) return;
+    const allInst = (typeof getAllCombinedInstitutionsForJudge === "function") ? getAllCombinedInstitutionsForJudge() : (MASTER_SCHOOLS || []);
+    const found = allInst.find(s => String(s.uNo) === String(uNoVal));
+    if (!found) return;
+    const uInp = document.getElementById("sisdcJudgeUnoInp");
+    if (uInp) uInp.value = found.uNo;
+    const taEl = document.getElementById("sisdcJudgeInstTa");
+    const enEl = document.getElementById("sisdcJudgeInstEn");
+    if (taEl) taEl.value = found.nameTa || "";
+    if (enEl) enEl.value = cleanSchoolNameEnForCert(found.nameEn || "");
+  }
+
+  function resetSisdcJudgeForm() {
+    const setV = (id, v) => { const el = document.getElementById(id); if (el) el.value = v; };
+    setV("sisdcJudgeEditId", "");
+    setV("sisdcJudgePrefix", "திரு.|Mr.");
+    setV("sisdcJudgeNameTa", "");
+    setV("sisdcJudgeNameEn", "");
+    setV("sisdcJudgeDesigPreset", "முதுகலை ஆசிரியர்|P.G. Assistant");
+    setV("sisdcJudgeDesigTa", "முதுகலை ஆசிரியர்");
+    setV("sisdcJudgeDesigEn", "P.G. Assistant");
+    setV("sisdcJudgeSubTheme", "அனைத்து அறிவியல் நாடகங்கள்|All Science Dramas");
+    setV("sisdcJudgeMobile", "");
+    setV("sisdcJudgeEventDate", "04.11.2026");
+    setV("sisdcJudgeUnoInp", "");
+    setV("sisdcJudgeSchoolDropdown", "");
+    setV("sisdcJudgeInstTa", "");
+    setV("sisdcJudgeInstEn", "");
+    const btn = document.getElementById("btnSaveSisdcJudge");
+    if (btn) btn.innerHTML = "💾 நாடக நடுவர் சேமி (Save Judge)";
+  }
+
+  function handleAdminSaveSisdcJudgeSubmit(event) {
+    if (event && typeof event.preventDefault === "function") event.preventDefault();
+    const list = getAllSisdcJudgesFromStorage();
+    const editId = (document.getElementById("sisdcJudgeEditId")?.value || "").trim();
+    const prefixRaw = document.getElementById("sisdcJudgePrefix")?.value || "திரு.|Mr.";
+    const [prefixTa, prefixEn] = prefixRaw.split("|");
+
+    let nameTa = formatNameInitialLast((document.getElementById("sisdcJudgeNameTa")?.value || "").trim(), true);
+    let nameEn = formatNameInitialLast((document.getElementById("sisdcJudgeNameEn")?.value || "").trim(), false).toUpperCase();
+    if (!nameEn && nameTa) nameEn = transliterateTamilToEnglishName(nameTa);
+    if (!nameTa && nameEn) nameTa = transliterateEnglishToTamilName(nameEn);
+
+    const desigTa = (document.getElementById("sisdcJudgeDesigTa")?.value || "முதுகலை ஆசிரியர்").trim();
+    const desigEn = (document.getElementById("sisdcJudgeDesigEn")?.value || "P.G. Assistant").trim();
+    const subThemeRaw = document.getElementById("sisdcJudgeSubTheme")?.value || "அனைத்து அறிவியல் நாடகங்கள்|All Science Dramas";
+    const [subThemeTa, subThemeEn] = subThemeRaw.split("|");
+    const mobile = (document.getElementById("sisdcJudgeMobile")?.value || "").trim();
+    const eventDate = (document.getElementById("sisdcJudgeEventDate")?.value || "04.11.2026").trim();
+    const uNo = (document.getElementById("sisdcJudgeUnoInp")?.value || document.getElementById("sisdcJudgeSchoolDropdown")?.value || "").trim();
+    const instTa = (document.getElementById("sisdcJudgeInstTa")?.value || "").trim();
+    const instEn = (document.getElementById("sisdcJudgeInstEn")?.value || instTa).trim();
+
+    let judgeId = editId;
+    if (!judgeId) {
+      let nextNum = list.length + 1;
+      judgeId = "SISDC-JDG-" + String(nextNum).padStart(2, "0");
+      while (list.some(j => j.id === judgeId)) {
+        nextNum++;
+        judgeId = "SISDC-JDG-" + String(nextNum).padStart(2, "0");
+      }
+    }
+
+    const rec = {
+      id: judgeId,
+      prefixRaw,
+      prefixTa: prefixTa || "திரு.",
+      prefixEn: prefixEn || "Mr.",
+      nameTa,
+      nameEn,
+      designationTa: desigTa,
+      designationEn: desigEn,
+      uNo,
+      instTa,
+      instEn,
+      subThemeRaw,
+      subThemeTa: subThemeTa || "அனைத்து அறிவியல் நாடகங்கள்",
+      subThemeEn: subThemeEn || "All Science Dramas",
+      mobile,
+      eventDate: eventDate || "04.11.2026",
+      timestamp: new Date().toLocaleString("en-IN", { dateStyle: "short", timeStyle: "short" })
+    };
+
+    const idx = list.findIndex(j => j.id === judgeId);
+    if (idx >= 0) list[idx] = rec;
+    else list.push(rec);
+
+    saveAllSisdcJudgesToStorage(list);
+    renderAdminSisdcJudgesTable();
+    resetSisdcJudgeForm();
+    try {
+      sendToScriptReliably(Object.assign({
+        action: "admin_save_sisdc_judge",
+        moduleId: "SISDC",
+        targetSheetId: "1jRcTIcA346IWHzGBmMRQ5499i8kwIuj523XyN160CCg"
+      }, rec));
+    } catch (e) {}
+    showSisfToast(`✅ அறிவியல் நாடக விழா நடுவர் ${rec.prefixTa} ${rec.nameTa} (${rec.id}) விவரம் சேமிக்கப்பட்டது!`);
+  }
+
+  function editSisdcJudgeRecord(judgeId) {
+    const list = getAllSisdcJudgesFromStorage();
+    const j = list.find(x => x.id === judgeId);
+    if (!j) return;
+    populateSisdcJudgeSchoolsDropdown();
+    const setV = (id, v) => { const el = document.getElementById(id); if (el) el.value = v; };
+    setV("sisdcJudgeEditId", j.id);
+    setV("sisdcJudgePrefix", j.prefixRaw || `${j.prefixTa || "திரு."}|${j.prefixEn || "Mr."}`);
+    setV("sisdcJudgeNameTa", j.nameTa || "");
+    setV("sisdcJudgeNameEn", j.nameEn || "");
+    setV("sisdcJudgeDesigTa", j.designationTa || "முதுகலை ஆசிரியர்");
+    setV("sisdcJudgeDesigEn", j.designationEn || "P.G. Assistant");
+    setV("sisdcJudgeSubTheme", j.subThemeRaw || "அனைத்து அறிவியல் நாடகங்கள்|All Science Dramas");
+    setV("sisdcJudgeMobile", j.mobile || "");
+    setV("sisdcJudgeEventDate", j.eventDate || "04.11.2026");
+    setV("sisdcJudgeUnoInp", j.uNo || "");
+    setV("sisdcJudgeSchoolDropdown", j.uNo || "");
+    setV("sisdcJudgeInstTa", j.instTa || "");
+    setV("sisdcJudgeInstEn", j.instEn || "");
+    const btn = document.getElementById("btnSaveSisdcJudge");
+    if (btn) btn.innerHTML = `💾 மாற்றத்தைச் சேமி (${j.id})`;
+  }
+
+  function deleteSisdcJudgeRecord(judgeId) {
+    const list = getAllSisdcJudgesFromStorage();
+    const j = list.find(x => x.id === judgeId);
+    if (!j) return;
+    openAdminDeleteConfirmModal(
+      "⚠️ நாடக விழா நடுவர் பதிவை அழிக்க உறுதிப்படுத்தவும்",
+      `<div><strong>நடுவர் எண்:</strong> ${j.id}</div><div><strong>பெயர்:</strong> ${j.prefixTa || ""} ${j.nameTa} / ${j.nameEn}</div><div><strong>பள்ளி / அலுவலகம்:</strong> ${j.instTa}</div>`,
+      () => {
+        const rem = list.filter(x => x.id !== judgeId);
+        saveAllSisdcJudgesToStorage(rem);
+        renderAdminSisdcJudgesTable();
+        showSisfToast(`🗑️ நாடக விழா நடுவர் பதிவு (${judgeId}) நீக்கப்பட்டது.`);
+      }
+    );
+  }
+
+  function renderAdminSisdcJudgesTable() {
+    const tbody = document.getElementById("admSisdcJudgesTableBody");
+    if (!tbody) return;
+    const list = getAllSisdcJudgesFromStorage();
+    if (list.length === 0) {
+      tbody.innerHTML = `<tr><td colspan="8" style="text-align:center; padding:20px; color:#64748b;">இன்னும் அறிவியல் நாடக விழா நடுவர்கள் பதிவு செய்யப்படவில்லை.</td></tr>`;
+      return;
+    }
+    tbody.innerHTML = list.map((j, idx) => `
+      <tr>
+        <td style="text-align:center; font-weight:800;">${idx + 1}</td>
+        <td><span style="background:#f3e8ff; color:#6b21a8; border:1px solid #d8b4fe; padding:3px 8px; border-radius:6px; font-weight:900; font-size:0.8rem;">${j.id}</span></td>
+        <td>
+          <div style="font-weight:900; color:#4c1d95; font-size:0.92rem;">🇮🇳 ${j.prefixTa || ""} ${j.nameTa || "-"}</div>
+          <div style="font-size:0.82rem; color:#1e293b; font-weight:800; margin-top:2px;">🔤 ${j.prefixEn || ""} ${j.nameEn || "-"}</div>
+        </td>
+        <td>
+          <div style="font-weight:800; color:#0f766e; font-size:0.86rem;">${j.designationTa || "-"}</div>
+          <div style="font-size:0.78rem; color:#475569; font-weight:700;">${j.designationEn || "-"}</div>
+        </td>
+        <td>
+          ${j.uNo ? `<span style="background:#dcfce7; color:#166534; font-size:0.72rem; font-weight:800; padding:1px 6px; border-radius:4px; display:inline-block; margin-bottom:2px;">U.NO: ${j.uNo}</span>` : ""}
+          <div style="font-weight:800; color:#0f172a; font-size:0.86rem;">🏫 ${j.instTa || "-"}</div>
+          <div style="font-size:0.78rem; color:#475569;">${j.instEn || "-"}</div>
+        </td>
+        <td>
+          <div style="font-weight:800; color:#9a3412; font-size:0.82rem;">🎭 ${j.subThemeTa || "அனைத்து அறிவியல் நாடகங்கள்"}</div>
+          <div style="font-size:0.76rem; color:#334155; font-weight:700; margin-top:2px;">📞 ${j.mobile || "-"} &nbsp;|&nbsp; 📅 ${j.eventDate || "04.11.2026"}</div>
+        </td>
+        <td>
+          <div style="display:flex; gap:5px; flex-wrap:wrap;">
+            <button type="button" class="btn-sm" style="background:linear-gradient(135deg,#6d28d9,#9d174d); color:#fff; padding:5px 9px; font-size:0.76rem; font-weight:900;" onclick="downloadSisdcJudgeCertificateById('${j.id}', 'bilingual')">
+              📜 இருமொழி (Bilingual)
+            </button>
+            <button type="button" class="btn-sm" style="background:#059669; color:#fff; padding:5px 8px; font-size:0.75rem; font-weight:800;" onclick="downloadSisdcJudgeCertificateById('${j.id}', 'ta')">
+              📜 தமிழ்
+            </button>
+            <button type="button" class="btn-sm" style="background:#1d4ed8; color:#fff; padding:5px 8px; font-size:0.75rem; font-weight:800;" onclick="downloadSisdcJudgeCertificateById('${j.id}', 'en')">
+              📜 EN
+            </button>
+          </div>
+        </td>
+        <td style="text-align:center;">
+          <div style="display:flex; gap:5px; justify-content:center;">
+            <button type="button" class="btn-sm" style="background:#2563eb; padding:5px 9px; font-size:0.76rem;" onclick="editSisdcJudgeRecord('${j.id}')" title="திருத்து">✏️</button>
+            <button type="button" class="btn-sm" style="background:#dc2626; padding:5px 9px; font-size:0.76rem;" onclick="deleteSisdcJudgeRecord('${j.id}')" title="அழி">🗑️</button>
+          </div>
+        </td>
+      </tr>
+    `).join("");
+  }
+
+  function exportSisdcJudgesCsv() {
+    const list = getAllSisdcJudgesFromStorage();
+    if (!list.length) {
+      showSisfToast("⚠️ பதிவிறக்கம் செய்ய நாடக விழா நடுவர்கள் விவரம் ஏதுமில்லை.");
+      return;
+    }
+    const headers = ["S.No", "Judge ID", "Prefix (Ta)", "Judge Name (Ta)", "Prefix (En)", "Judge Name (En)", "Designation (Ta)", "Designation (En)", "U.NO", "Institution (Ta)", "Institution (En)", "Evaluated Sub-Theme", "Mobile", "Event Date"];
+    const esc = v => `"${String(v || "").replace(/"/g, '""')}"`;
+    const rows = list.map((j, i) => [
+      i + 1, j.id, j.prefixTa, j.nameTa, j.prefixEn, j.nameEn, j.designationTa, j.designationEn, j.uNo || "", j.instTa, j.instEn, j.subThemeTa, j.mobile, j.eventDate
+    ].map(esc).join(","));
+    const csv = "\uFEFF" + [headers.map(esc).join(","), ...rows].join("\r\n");
+    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = "SISDC_2026_Science_Drama_Judges_List.csv";
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+  }
+
+  function downloadSisdcJudgeCertificateById(judgeId, langMode) {
+    const list = getAllSisdcJudgesFromStorage();
+    const judgeRec = list.find(j => j.id === judgeId);
+    if (!judgeRec) {
+      showSisfToast("⚠️ நடுவர் விவரம் காணப்படவில்லை.");
+      return;
+    }
+    const mode = langMode || "bilingual";
+    const go = () => {
+      const cvs = renderSisdcJudgeCertificateCanvas(judgeRec, mode);
+      const cleanId = String(judgeRec.id || "SISDC_Judge").replace(/[^a-zA-Z0-9_-]/g, "_");
+      buildMultiPagePdfFromCanvasesAndDownload([cvs], `SISDC_2026_Judge_Certificate_${mode}_${cleanId}.pdf`, false);
+      showSisfToast(`🎭 நாடக விழா நடுவர் சான்றிதழ் (${judgeRec.nameTa}) பதிவிறக்கம் செய்யப்பட்டது!`);
+    };
+    if (typeof sisfCertBgImg !== "undefined" && sisfCertBgImg && !sisfCertBgImg.complete) {
+      let done = false;
+      const run = () => { if (!done) { done = true; go(); } };
+      sisfCertBgImg.onload = run;
+      sisfCertBgImg.onerror = run;
+      setTimeout(run, 400);
+      return;
+    }
+    go();
+  }
+
+  function downloadSisdcJudgeCertificateFromAnyList(judgeId, langMode) {
+    const sisdcList = getAllSisdcJudgesFromStorage();
+    let j = sisdcList.find(x => x.id === judgeId);
+    if (!j && typeof adminJudgesList !== "undefined") {
+      loadJudgesListIntoMemory();
+      const foundSisf = adminJudgesList.find(x => x.id === judgeId);
+      if (foundSisf) {
+        j = Object.assign({}, foundSisf, {
+          id: foundSisf.id.replace("SISF-", "SISDC-"),
+          subThemeTa: "அனைத்து அறிவியல் நாடகங்கள்",
+          subThemeEn: "All Science Dramas",
+          eventDate: "04.11.2026"
+        });
+      }
+    }
+    if (!j) {
+      showSisfToast("⚠️ நடுவர் விவரம் காணப்படவில்லை.");
+      return;
+    }
+    const mode = langMode || "bilingual";
+    const cvs = renderSisdcJudgeCertificateCanvas(j, mode);
+    const cleanId = String(j.id || "SISDC_Judge").replace(/[^a-zA-Z0-9_-]/g, "_");
+    buildMultiPagePdfFromCanvasesAndDownload([cvs], `SISDC_2026_Judge_Certificate_${mode}_${cleanId}.pdf`, false);
+    showSisfToast(`🎭 தென்னிந்திய அறிவியல் நாடக விழா நடுவர் சான்றிதழ் (${j.nameTa}) பதிவிறக்கம் செய்யப்பட்டது!`);
+  }
+
+  function downloadAllSisdcJudgesCertificatesPdf(langMode) {
+    const list = getAllSisdcJudgesFromStorage();
+    if (!list.length) {
+      showSisfToast("⚠️ நடுவர்கள் விவரம் ஏதுமில்லை.");
+      return;
+    }
+    const mode = langMode || "bilingual";
+    const canvases = list.map(j => renderSisdcJudgeCertificateCanvas(j, mode));
+    buildMultiPagePdfFromCanvasesAndDownload(canvases, `SISDC_2026_All_Judges_Certificates_${mode}.pdf`, false);
+    showSisfToast(`📜 ${canvases.length} நாடக விழா நடுவர்களின் பாராட்டுச் சான்றிதழ்கள் PDF பதிவிறக்கம் செய்யப்பட்டது!`);
+  }
+
+  function renderSisdcJudgeCertificateCanvas(judgeRec, langMode) {
+    const mode = langMode || "bilingual";
+    const cvs = document.createElement("canvas");
+    const SCALE = 1.5;
+    const LOGICAL_W = 1448;
+    const LOGICAL_H = 2048;
+    cvs.width = Math.round(LOGICAL_W * SCALE);
+    cvs.height = Math.round(LOGICAL_H * SCALE);
+    const ctx = cvs.getContext("2d");
+    ctx.imageSmoothingEnabled = true;
+    ctx.imageSmoothingQuality = "high";
+    ctx.scale(SCALE, SCALE);
+
+    // 1. Draw the Dedicated Science Drama Contest Background Template
+    const dramaBg = getSisdcCertBgCanvas();
+    if (dramaBg) {
+      ctx.drawImage(dramaBg, 0, 0, LOGICAL_W, LOGICAL_H);
+    } else {
+      ctx.fillStyle = "#ffffff";
+      ctx.fillRect(0, 0, LOGICAL_W, LOGICAL_H);
+    }
+
+    const judgeId = judgeRec.id || "SISDC-JDG-01";
+    const prefixTa = judgeRec.prefixTa || "திரு.";
+    const prefixEn = judgeRec.prefixEn || "Mr.";
+    const nameTa = judgeRec.nameTa || "-";
+    const nameEn = (judgeRec.nameEn || transliterateTamilToEnglishName(nameTa) || nameTa).toUpperCase();
+    const desigTa = judgeRec.designationTa || "முதுகலை ஆசிரியர்";
+    const desigEn = judgeRec.designationEn || "P.G. Assistant";
+    const rawInstTa = judgeRec.instTa || "அரசு மேல்நிலைப்பள்ளி, சிவகங்கை";
+    const formattedInstTa = formatJudgeInstitutionForCertTa(rawInstTa);
+    const instEn = cleanSchoolNameEnForCert(judgeRec.instEn || rawInstTa);
+    const eventDate = judgeRec.eventDate || "04.11.2026";
+    const subThemeTa = judgeRec.subThemeTa || "அனைத்து அறிவியல் நாடகங்கள்";
+    const subThemeEn = judgeRec.subThemeEn || "All Science Dramas";
+
+    const centerX = 724;
+    ctx.textAlign = "center";
+
+    ctx.fillStyle = "#0f172a";
+    ctx.font = "900 28px 'Mukta Malar', 'Noto Sans Tamil', sans-serif";
+    ctx.fillText("பள்ளிக்கல்வித்துறை – சிவகங்கை மாவட்டம்", centerX, 264, 700);
+
+    ctx.fillStyle = "#4c1d95";
+    ctx.font = "bold 18px sans-serif";
+    ctx.fillText("DEPARTMENT OF SCHOOL EDUCATION – SIVAGANGAI DISTRICT", centerX, 306, 700);
+
+    ctx.fillStyle = "#fde047";
+    ctx.font = "900 28.5px 'Mukta Malar', 'Noto Sans Tamil', sans-serif";
+    ctx.fillText("மாவட்ட அளவிலான தென்னிந்திய அறிவியல் நாடக விழா – 2026", centerX, 406, 990);
+
+    ctx.fillStyle = "#ffffff";
+    ctx.font = "bold 18.5px sans-serif";
+    ctx.fillText("DISTRICT LEVEL SOUTHERN INDIA SCIENCE DRAMA CONTEST (SISDC 2026 – 2027)", centerX, 442, 990);
+
+    ctx.fillStyle = "#4c1d95";
+    if (mode === "en") {
+      ctx.font = "900 19.5px sans-serif";
+      ctx.fillText(`✦ Venue : Mannar Hr. Sec. School, Sivagangai   |   Date : ${eventDate} ✦`, centerX, 510, 960);
+    } else if (mode === "ta") {
+      ctx.font = "900 20.5px 'Mukta Malar', 'Noto Sans Tamil', sans-serif";
+      ctx.fillText(`✦ இடம் : மன்னர் மேல்நிலைப்பள்ளி, சிவகங்கை   |   நாள் : ${eventDate} ✦`, centerX, 511, 960);
+    } else {
+      ctx.font = "900 19.5px 'Mukta Malar', 'Noto Sans Tamil', sans-serif";
+      ctx.fillText("✦ இடம் : மன்னர் மேல்நிலைப்பள்ளி, சிவகங்கை  |  Venue : Mannar Hr. Sec. School, Sivagangai ✦", centerX, 511, 960);
+    }
+
+    ctx.fillStyle = "#991b1b";
+    if (mode === "en") {
+      ctx.font = "900 23px sans-serif";
+      ctx.fillText("CERTIFICATE OF APPRECIATION  (DRAMA ADJUDICATOR / JUDGE)", centerX, 577, 860);
+    } else if (mode === "ta") {
+      ctx.font = "900 26.5px 'Mukta Malar', 'Noto Sans Tamil', sans-serif";
+      ctx.fillText("நடுவர் பாராட்டுச் சான்றிதழ்", centerX, 578, 860);
+    } else {
+      ctx.font = "900 23.5px 'Mukta Malar', 'Noto Sans Tamil', sans-serif";
+      ctx.fillText("நடுவர் பாராட்டுச் சான்றிதழ்  |  CERTIFICATE OF APPRECIATION", centerX, 578, 860);
+    }
+
+    const maxLineW = 1020;
+
+    const buildJudgeTaLines = (szReg, szKey) => [
+      [
+        { text: "சிவகங்கை மாவட்டம்,  ", size: szReg, color: "#1e293b", weight: "bold" },
+        { text: formattedInstTa, size: szKey, color: "#4c1d95", weight: "900", underline: true, underlineColor: "#d8b4fe" }
+      ],
+      [
+        { text: "பணியாற்றும்  ", size: szReg, color: "#1e293b", weight: "bold" },
+        { text: desigTa, size: szKey, color: "#0f766e", weight: "900", underline: true, underlineColor: "#6ee7b7" },
+        { text: `  ${prefixTa}  `, size: szReg, color: "#1e293b", weight: "bold" },
+        { text: nameTa, size: szKey, color: "#1e3a8a", weight: "900", underline: true, underlineColor: "#93c5fd" },
+        { text: "  அவர்கள்,", size: szReg, color: "#1e293b", weight: "bold" }
+      ],
+      [
+        { text: `${eventDate} அன்று சிவகங்கை மன்னர் மேல்நிலைப்பள்ளியில் நடைபெற்ற`, size: szReg, color: "#1e293b", weight: "bold" }
+      ],
+      [
+        { text: "மாவட்ட அளவிலான தென்னிந்திய அறிவியல் நாடக விழாவில்  ", size: szReg, color: "#1e293b", weight: "bold" },
+        { text: `(${subThemeTa})`, size: szKey, color: "#047857", weight: "900", underline: true, underlineColor: "#6ee7b7" }
+      ],
+      [
+        { text: "நடுவராகப் (Adjudicator / Judge)", size: szKey, color: "#b91c1c", weight: "900", underline: true, underlineColor: "#fca5a5" },
+        { text: "  பணியாற்றி, மாணவர்களின் அறிவியல் நாடகப் படைப்புகளைச்", size: szReg, color: "#1e293b", weight: "bold" }
+      ],
+      [
+        { text: "சிறப்பாக மதிப்பீடு செய்தமைக்காகப் பாராட்டி நற்சான்றிதழ் வழங்கப்படுகிறது.", size: szReg, color: "#1e293b", weight: "bold" }
+      ]
+    ];
+
+    const buildJudgeEnLines = (szReg, szKey) => [
+      [
+        { text: "This is to proudly certify that  ", size: szReg, color: "#1e293b", weight: "bold", family: "sans-serif" },
+        { text: `${prefixEn} ${nameEn}`, size: szKey, color: "#1e3a8a", weight: "900", family: "sans-serif", underline: true, underlineColor: "#93c5fd" },
+        { text: ",  ", size: szReg, color: "#1e293b", weight: "bold", family: "sans-serif" },
+        { text: desigEn, size: szKey, color: "#0f766e", weight: "900", family: "sans-serif", underline: true, underlineColor: "#6ee7b7" },
+        { text: ",", size: szReg, color: "#1e293b", weight: "bold", family: "sans-serif" }
+      ],
+      [
+        { text: "of  ", size: szReg, color: "#1e293b", weight: "bold", family: "sans-serif" },
+        { text: instEn, size: szKey, color: "#4c1d95", weight: "900", family: "sans-serif", underline: true, underlineColor: "#d8b4fe" },
+        { text: ",", size: szReg, color: "#1e293b", weight: "bold", family: "sans-serif" }
+      ],
+      [
+        { text: "has rendered commendable service as an  ", size: szReg, color: "#1e293b", weight: "bold", family: "sans-serif" },
+        { text: "ADJUDICATOR / JUDGE", size: szKey, color: "#b91c1c", weight: "900", family: "sans-serif", underline: true, underlineColor: "#fca5a5" }
+      ],
+      [
+        { text: "for  ", size: szReg, color: "#1e293b", weight: "bold", family: "sans-serif" },
+        { text: subThemeEn, size: szKey, color: "#047857", weight: "900", family: "sans-serif", underline: true, underlineColor: "#6ee7b7" },
+        { text: "  at the District Level", size: szReg, color: "#1e293b", weight: "bold", family: "sans-serif" }
+      ],
+      [
+        { text: `Southern India Science Drama Contest (SISDC 2026 – 2027) held on ${eventDate} at Mannar Hr. Sec. School, Sivagangai,`, size: szReg, color: "#1e293b", weight: "bold", family: "sans-serif" }
+      ],
+      [
+        { text: "and is awarded this Certificate of Appreciation in recognition of their dramatic & scientific evaluation expertise.", size: szReg, color: "#1e293b", weight: "bold", family: "sans-serif" }
+      ]
+    ];
+
+    if (mode === "bilingual") {
+      const taLines = buildJudgeTaLines(22.5, 23.5);
+      const taStep = 60;
+      const taStartY = Math.round(848 - ((taLines.length - 1) * taStep) / 2);
+      taLines.forEach((segs, idx) => drawRichCenteredLineOnCert(ctx, segs, centerX, taStartY + idx * taStep, maxLineW));
+
+      ctx.save();
+      ctx.strokeStyle = "#d97706";
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.moveTo(250, 1068);
+      ctx.lineTo(620, 1068);
+      ctx.moveTo(828, 1068);
+      ctx.lineTo(1198, 1068);
+      ctx.stroke();
+      ctx.textAlign = "center";
+      ctx.fillStyle = "#b45309";
+      ctx.font = "bold 18px sans-serif";
+      ctx.fillText("✦   •   ❖   •   ✦", centerX, 1074);
+      ctx.restore();
+
+      const enLines = buildJudgeEnLines(22.5, 24.5);
+      const enStep = 62;
+      const enStartY = Math.round(1322 - ((enLines.length - 1) * enStep) / 2);
+      enLines.forEach((segs, idx) => drawRichCenteredLineOnCert(ctx, segs, centerX, enStartY + idx * enStep, maxLineW));
+    } else if (mode === "ta") {
+      const taFullLines = buildJudgeTaLines(24.5, 26);
+      const tfStep = 98;
+      const tfStartY = Math.round(1088 - ((taFullLines.length - 1) * tfStep) / 2);
+      taFullLines.forEach((segs, idx) => drawRichCenteredLineOnCert(ctx, segs, centerX, tfStartY + idx * tfStep, maxLineW));
+    } else {
+      const enFullLines = buildJudgeEnLines(25, 27.5);
+      const efStep = 96;
+      const efStartY = Math.round(1088 - ((enFullLines.length - 1) * efStep) / 2);
+      enFullLines.forEach((segs, idx) => drawRichCenteredLineOnCert(ctx, segs, centerX, efStartY + idx * efStep, maxLineW));
+    }
+
+    ctx.textAlign = "left";
+    if (mode === "en") {
+      ctx.fillStyle = "#4c1d95";
+      ctx.font = "900 21.5px sans-serif";
+      ctx.fillText(`Judge ID : ${judgeId}`, 205, 1656);
+      ctx.fillStyle = "#0f172a";
+      ctx.font = "900 21.5px sans-serif";
+      ctx.fillText(`Date : ${eventDate}`, 205, 1698);
+      ctx.fillStyle = "#1e293b";
+      ctx.font = "bold 20.5px sans-serif";
+      ctx.fillText("Place : Sivagangai District", 205, 1740);
+    } else {
+      ctx.fillStyle = "#4c1d95";
+      ctx.font = "900 22px 'Mukta Malar', 'Noto Sans Tamil', sans-serif";
+      ctx.fillText(`நடுவர் எண் / Judge ID : ${judgeId}`, 205, 1656);
+      ctx.fillStyle = "#0f172a";
+      ctx.font = "900 22px 'Mukta Malar', 'Noto Sans Tamil', sans-serif";
+      ctx.fillText(`நாள் : ${eventDate}`, 205, 1698);
+      ctx.fillStyle = "#1e293b";
+      ctx.font = "bold 21px 'Mukta Malar', 'Noto Sans Tamil', sans-serif";
+      ctx.fillText("இடம் : சிவகங்கை மாவட்டம்", 205, 1740);
+    }
+
+    drawNaturalCeoSignature(ctx, 1055, 1636);
+
+    const ceoColor = "#1e3a8a";
+    ctx.textAlign = "center";
+    if (mode === "en") {
+      ctx.fillStyle = ceoColor;
+      ctx.font = "900 22.5px sans-serif";
+      ctx.fillText("Chief Educational Officer,", 1055, 1694);
+      ctx.fillText("Sivagangai.", 1055, 1730);
+    } else if (mode === "ta") {
+      ctx.fillStyle = ceoColor;
+      ctx.font = "900 24.5px 'Mukta Malar', 'Noto Sans Tamil', sans-serif";
+      ctx.fillText("முதன்மைக்கல்வி அலுவலர்,", 1055, 1694);
+      ctx.fillText("சிவகங்கை.", 1055, 1732);
+    } else {
+      ctx.fillStyle = ceoColor;
+      ctx.font = "900 23.5px 'Mukta Malar', 'Noto Sans Tamil', sans-serif";
+      ctx.fillText("முதன்மைக்கல்வி அலுவலர்,", 1055, 1688);
+      ctx.fillText("சிவகங்கை.", 1055, 1722);
+      ctx.font = "900 18px sans-serif";
+      ctx.fillText("Chief Educational Officer, Sivagangai", 1055, 1752);
+    }
+
+    return cvs;
+  }
 
   // =========================================================================
   // ADMIN DEDICATED MODULE BOX SWITCHER & SISDC ADMIN MANAGEMENT FUNCTIONS
