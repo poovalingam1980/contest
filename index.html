@@ -17396,15 +17396,10 @@ ${n.message}
     triggerSisdcAutoSave();
   }
   function handleSisdcTeacherEnInput() {
-    const taEl = document.getElementById("sisdcTeacherNameTa");
-    const enEl = document.getElementById("sisdcTeacherNameEn");
-    if (!taEl || !enEl) return;
-    if (!enEl.value.trim()) {
-      if (document.activeElement !== taEl) taEl.value = "";
-      triggerSisdcAutoSave();
-      return;
+    // Manual edits to the English guide teacher name must NEVER overwrite or clear the Tamil name (#sisdcTeacherNameTa)
+    if (typeof nameTranslitTimers !== "undefined" && nameTranslitTimers["sisdcTeacherNameEn"]) {
+      clearTimeout(nameTranslitTimers["sisdcTeacherNameEn"]);
     }
-    handleEnglishNameInput("sisdcTeacherNameEn", "sisdcTeacherNameTa");
     triggerSisdcAutoSave();
   }
   function handleSisdcTeacherEnBlur() {
@@ -17412,7 +17407,6 @@ ${n.message}
     if (enEl && enEl.value.trim()) {
       enEl.value = formatNameInitialLast(enEl.value, false).toUpperCase();
     }
-    handleNameBlur("sisdcTeacherNameEn", "sisdcTeacherNameTa");
     triggerSisdcAutoSave();
   }
   function handleSisdcTitleTaInput() {
@@ -19918,14 +19912,10 @@ ${n.message}
   }
 
   function handleSisdcJudgeNameEnInput() {
-    const taEl = document.getElementById("sisdcJudgeNameTa");
-    const enEl = document.getElementById("sisdcJudgeNameEn");
-    if (!taEl || !enEl) return;
-    if (!enEl.value.trim()) {
-      if (document.activeElement !== taEl) taEl.value = "";
-      return;
+    // Manual edits to the English judge name must NEVER overwrite or clear the Tamil judge name (#sisdcJudgeNameTa)
+    if (typeof nameTranslitTimers !== "undefined" && nameTranslitTimers["sisdcJudgeNameEn"]) {
+      clearTimeout(nameTranslitTimers["sisdcJudgeNameEn"]);
     }
-    handleEnglishNameInput("sisdcJudgeNameEn", "sisdcJudgeNameTa");
   }
 
   function onSisdcJudgeDesigPresetChange() {
