@@ -1896,15 +1896,40 @@
         <div id="sisdcSubmittedSummaryDetails" style="font-size:0.9rem; color:#1e293b; line-height:1.6;"></div>
       </div>
 
+      <!-- MULTI-TEAM SWITCHER BAR (Allows a school to register more than one drama team!) -->
+      <div id="sisdcMultiTeamBar" style="background:linear-gradient(135deg, #f5f3ff 0%, #ede9fe 100%); border:2px solid #8b5cf6; border-radius:12px; padding:12px 16px; margin-bottom:14px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
+        <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+          <span style="font-size:0.88rem; font-weight:900; color:#4c1d95;">🎭 உங்கள் பள்ளியின் நாடகக் குழுக்கள் (School Drama Teams):</span>
+          <div id="sisdcSchoolTeamsPillsContainer" style="display:flex; gap:6px; flex-wrap:wrap;"></div>
+        </div>
+        <div style="display:flex; gap:8px; flex-wrap:wrap;">
+          <button type="button" class="btn-sm" style="background:#059669; color:#ffffff; padding:7px 14px; font-weight:900; font-size:0.82rem; border:1px solid #a7f3d0;" onclick="startNewSchoolSisdcTeam()">
+            ➕ புதிய (மற்றொரு) நாடகக் குழு சேர்க்க (Add New Drama Team)
+          </button>
+          <button type="button" class="btn-sm" style="background:#0284c7; color:#ffffff; padding:7px 12px; font-weight:800; font-size:0.8rem;" onclick="verifyAndSyncSisdcGoogleSheet(true)">
+            ☁️ Google Sheet பதிவு சரிபார்
+          </button>
+        </div>
+      </div>
+
       <!-- OFFICIAL SISDC REGISTRATION FORM (Exact Fields from SISDC Registration Format.pdf) -->
       <form id="sisdcTeamRegistrationForm" onsubmit="handleSisdcFormSubmit(event)" style="background:#ffffff; border:2px solid #cbd5e1; border-radius:12px; padding:18px;">
+        <input type="hidden" id="sisdcActiveTeamNoHidden" value="">
         <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; border-bottom:2px solid #e2e8f0; padding-bottom:12px; margin-bottom:16px;">
           <div>
             <div style="font-size:1.2rem; font-weight:900; color:#0f2942;">தென்னிந்திய அறிவியல் நாடக விழா 2026</div>
             <div style="font-size:0.95rem; font-weight:800; color:#1e293b;">மாவட்ட அளவிலான போட்டி – குழு பதிவுப் படிவம் (Official Team Registration Form)</div>
             <div style="font-size:0.82rem; color:#475569; font-weight:700;">மன்னர் மேல்நிலைப் பள்ளி, சிவகங்கை | நாள்: 04.11.2026</div>
+            <div style="display:flex; gap:8px; flex-wrap:wrap; margin-top:6px;">
+              <span id="sisdcAutoSaveStatusBadge" style="background:#ecfdf5; color:#047857; border:1px solid #6ee7b7; padding:2px 10px; border-radius:999px; font-size:0.75rem; font-weight:800;">
+                💾 தானியங்கி சேமிப்பு (Auto-Save): தயார் — பகுதியாகப் பதிவு செய்தாலும் தானாகச் சேமிக்கப்படும்
+              </span>
+              <span id="sisdcCloudSyncStatusBadge" style="background:#eff6ff; color:#1d4ed8; border:1px solid #93c5fd; padding:2px 10px; border-radius:999px; font-size:0.75rem; font-weight:800;">
+                ☁️ Google Sheet: இணைக்கப்பட்டுள்ளது ✅
+              </span>
+            </div>
           </div>
-          <div style="border:2.5px solid #1e3a8a; border-radius:8px; width:120px; padding:6px 10px; text-align:center; background:#f8fafc;">
+          <div style="border:2.5px solid #1e3a8a; border-radius:8px; min-width:130px; padding:6px 10px; text-align:center; background:#f8fafc;">
             <div style="font-size:0.75rem; font-weight:900; color:#1e3a8a; text-transform:uppercase;">Team No</div>
             <div id="sisdcFormTeamNoDisp" style="font-size:1.05rem; font-weight:900; color:#b91c1c; margin-top:4px;">Auto</div>
           </div>
@@ -2013,7 +2038,7 @@
           <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px; margin-bottom:10px;">
             <h3 class="section-title" style="margin:0; color:#0f2942;"><span class="section-num" style="background:#047857;">3</span> குழு உறுப்பினர்கள் விவரம் (TEAM MEMBERS LIST – MAXIMUM 10 MEMBERS)</h3>
             <span style="font-size:0.78rem; font-weight:800; color:#047857; background:#ecfdf5; border:1px solid #6ee7b7; padding:3px 10px; border-radius:999px;">
-              ⌨️ 2-வது நெடுவரிசையில் ஆங்கிலத்தில் தட்டச்சு செய்தால் 3-வது நெடுவரிசையில் தமிழில் தானாகப் பதிவாகும் (தங்லீஷ் முறையில் திருத்தலாம்)
+              🆔 2-வது நெடுவரிசையில் 8 இலக்க EMIS எண் | 🔤 3-வது நெடுவரிசையில் ஆங்கிலப் பெயர் ➔ 4-வது நெடுவரிசையில் தமிழ் (தங்லீஷ் திருத்தம்)
             </span>
           </div>
 
@@ -2021,11 +2046,12 @@
             <table class="sisdc-members-table">
               <thead>
                 <tr>
-                  <th style="width:55px;">வ.எண்</th>
+                  <th style="width:50px;">வ.எண்</th>
+                  <th style="width:150px;">மாணவர் 8 இலக்க EMIS எண் <span style="font-size:0.72rem; color:#fde047;">(8-Digit EMIS ID)</span></th>
                   <th>Student Name (in English) <span style="font-size:0.72rem; color:#fde047;">(ஆங்கிலத்தில்)</span></th>
                   <th>மாணவர் பெயர் (தமிழில்) <span style="font-size:0.72rem; color:#fde047;">(தானியங்கி + தங்லீஷ்)</span></th>
-                  <th style="width:120px;">வகுப்பு (Class)</th>
-                  <th style="width:210px;">குழுவில் பங்கு (Role)</th>
+                  <th style="width:115px;">வகுப்பு (Class)</th>
+                  <th style="width:200px;">குழுவில் பங்கு (Role)</th>
                 </tr>
               </thead>
               <tbody id="sisdcMembersTableBody">
@@ -2658,6 +2684,144 @@
         </table>
       </div>
       </div><!-- /#sisdcAdmTeamsContainer -->
+
+      <!-- SISDC 2026 WINNERS SELECTION & CERTIFICATE REVOCATION PANEL (Like SISF #admSubTabWinners) -->
+      <div id="sisdcAdmWinnersContainer" style="display:none;">
+        <div class="admin-panel-box" style="border: 2px solid #f59e0b; background: #fffbeb; margin-bottom: 18px;">
+          <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom:12px;">
+            <h3 style="color: #92400e; font-size: 1.08rem; margin: 0; display: flex; align-items: center; gap: 8px;">
+              🏆 தென்னிந்திய அறிவியல் நாடக விழா 2026 – வெற்றியாளர்கள் &amp; பங்கேற்பாளர்களைத் தேர்வு செய்க (Record / Update SISDC Winners)
+            </h3>
+            <span id="sisdcAdmCloudVerifyBadge" style="background:#dcfce7; color:#166534; border:1px solid #86efac; padding:3px 10px; border-radius:999px; font-size:0.78rem; font-weight:800;">
+              ☁️ SISDC_2026_Database Google Sheet இணைப்பு தயார்
+            </span>
+          </div>
+          <form onsubmit="handleAdminSaveSisdcWinnerFormSubmit(event)" style="background:#ffffff; border:1.5px solid #fcd34d; border-radius:10px; padding:14px;">
+            <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(230px, 1fr)); gap:12px; margin-bottom:12px;">
+              <div>
+                <label class="form-label">1. விண்ணப்பித்த நாடகக் குழுவிலிருந்து தேர்வு செய்க (Auto-Fill) <span class="required">*</span></label>
+                <select id="sisdcWinSelectTeam" class="form-control" style="font-weight:800; background:#f5f3ff; border-color:#8b5cf6; color:#4c1d95;" onchange="fillSisdcWinnerFromSubmittedTeam()">
+                  <option value="">-- பதிவு செய்யப்பட்ட நாடகக் குழுவைத் தேர்ந்தெடுக்கவும் --</option>
+                </select>
+              </div>
+              <div>
+                <label class="form-label">2. பரிசு / வெற்றி நிலை (Prize / Place) <span class="required">*</span></label>
+                <select id="sisdcWinPrizeRank" class="form-control" style="font-weight:800; color:#b91c1c;" required>
+                  <option value="🥇 முதலிடம் (மாநில அளவிலான போட்டிக்கு தேர்வு)">🥇 முதலிடம் (மாநில அளவிலான போட்டிக்கு தேர்வு)</option>
+                  <option value="🥈 இரண்டாமிடம்">🥈 இரண்டாமிடம் (2nd Place)</option>
+                  <option value="🥉 மூன்றாமிடம்">🥉 மூன்றாமிடம் (3rd Place)</option>
+                  <option value="🌟 சிறப்பிடம்">🌟 சிறப்பிடம் (Special Prize)</option>
+                  <option value="🎖️ பங்கேற்பாளர்">🎖️ பங்கேற்பாளர் (Participant)</option>
+                </select>
+              </div>
+              <div>
+                <label class="form-label">3. பள்ளி U.NO அல்லது குழு எண் (Team No) <span class="required">*</span></label>
+                <div style="display:flex; gap:6px;">
+                  <input type="text" id="sisdcWinUno" class="form-control" placeholder="U.NO (எ.கா. 101)" required style="width:110px; font-weight:800;">
+                  <input type="text" id="sisdcWinTeamNo" class="form-control" placeholder="Team No (T-101-1)" required style="flex:1; font-weight:900; color:#1e3a8a;">
+                  <button type="button" class="btn-sm" style="background:#4c1d95; color:#fff; white-space:nowrap;" onclick="lookupSchoolForSisdcWinnerForm()">🔍 நிரப்பு</button>
+                </div>
+              </div>
+            </div>
+
+            <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(220px, 1fr)); gap:12px; margin-bottom:12px;">
+              <div>
+                <label class="form-label">பள்ளியின் பெயர் (School Name) <span class="required">*</span></label>
+                <input type="text" id="sisdcWinSchoolName" class="form-control" placeholder="பள்ளியின் பெயர்" required>
+              </div>
+              <div>
+                <label class="form-label">நாடகத்தின் தலைப்பு (Drama Title) <span class="required">*</span></label>
+                <input type="text" id="sisdcWinDramaTitle" class="form-control" placeholder="நாடகத்தின் தலைப்பு" required>
+              </div>
+              <div>
+                <label class="form-label">துணைக்கருப்பொருள் (Official Sub-Theme)</label>
+                <select id="sisdcWinSubTheme" class="form-control">
+                  <option value="துணைத்தலைப்பு 1: Artificial Intelligence: Friend, Tool or Threat?">துணைத்தலைப்பு 1: Artificial Intelligence: Friend, Tool or Threat?</option>
+                  <option value="துணைத்தலைப்பு 2: EV: Way Forward">துணைத்தலைப்பு 2: EV: Way Forward</option>
+                  <option value="துணைத்தலைப்பு 3: Interstellar Habitats">துணைத்தலைப்பு 3: Interstellar Habitats</option>
+                  <option value="துணைத்தலைப்பு 4: Restoring Oceans - Preserving Generations">துணைத்தலைப்பு 4: Restoring Oceans - Preserving Generations</option>
+                </select>
+              </div>
+              <div>
+                <label class="form-label">வழிகாட்டி ஆசிரியர் &amp; கைபேசி</label>
+                <input type="text" id="sisdcWinTeacher" class="form-control" placeholder="ஆசிரியர் பெயர் - கைபேசி எண்">
+              </div>
+            </div>
+
+            <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
+              <button type="submit" class="btn-sm" style="background:#d97706; color:#ffffff; padding:10px 22px; font-size:0.92rem; font-weight:900;">
+                🏆 நாடக வெற்றியாளர் விவரத்தைச் சேமிக்க (Save Drama Winner &amp; Enable Certificate)
+              </button>
+              <button type="button" class="btn-sm" style="background:#64748b; color:#ffffff; padding:10px 16px; font-size:0.86rem;" onclick="resetSisdcWinnerForm()">
+                🔄 மீட்டமை (Clear)
+              </button>
+              <span id="sisdcWinSaveMsg" style="font-weight:800; font-size:0.88rem; color:#15803d;"></span>
+            </div>
+          </form>
+        </div>
+
+        <div class="admin-panel-box">
+          <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom:12px;">
+            <h3 style="color:#4c1d95; font-size:1.05rem; margin:0;">
+              🏅 தேர்வு செய்யப்பட்ட நாடக விழா வெற்றியாளர்கள் &amp; சான்றிதழ் மேலாண்மை (SISDC Winners, Certificates &amp; Revocation)
+            </h3>
+            <div style="display:flex; gap:8px; flex-wrap:wrap;">
+              <button type="button" class="btn-sm" style="background:#0d9488; color:#fff; padding:7px 12px; font-weight:800;" onclick="adminBulkAssignSisdcParticipantRank()">
+                🎖️ மீதமுள்ள நாடகக் குழுக்களுக்கு 'பங்கேற்பாளர்' வழங்குக
+              </button>
+              <button type="button" class="btn-sm" style="background:#dc2626; color:#fff; padding:7px 12px; font-weight:800;" onclick="adminResetAllSisdcWinners()">
+                🚫 அனைத்து வெற்றிச் சான்றிதழ்களையும் ரத்து செய் (Revoke All)
+              </button>
+              <button type="button" class="btn-sm" style="background:#15803d; color:#fff; padding:7px 14px; font-weight:800;" onclick="exportAdminSisdcTeamsCsv()">
+                📊 வெற்றியாளர் பட்டியல் CSV
+              </button>
+            </div>
+          </div>
+
+          <div id="admSisdcWinRankFilterBar" style="display:flex; gap:8px; flex-wrap:wrap; margin-bottom:14px;">
+            <button type="button" class="cat-filter-pill active" data-sisdcrank="ALL" onclick="filterAdminSisdcWinnersByRank('ALL')">அனைத்தும் (<span id="cntSisdcWinAll">0</span>)</button>
+            <button type="button" class="cat-filter-pill" data-sisdcrank="முதலிடம்" onclick="filterAdminSisdcWinnersByRank('முதலிடம்')">🥇 முதலிடம் (<span id="cntSisdcWin1st">0</span>)</button>
+            <button type="button" class="cat-filter-pill" data-sisdcrank="இரண்டாமிடம்" onclick="filterAdminSisdcWinnersByRank('இரண்டாமிடம்')">🥈 இரண்டாமிடம் (<span id="cntSisdcWin2nd">0</span>)</button>
+            <button type="button" class="cat-filter-pill" data-sisdcrank="மூன்றாமிடம்" onclick="filterAdminSisdcWinnersByRank('மூன்றாமிடம்')">🥉 மூன்றாமிடம் (<span id="cntSisdcWin3rd">0</span>)</button>
+            <button type="button" class="cat-filter-pill" data-sisdcrank="சிறப்பிடம்" onclick="filterAdminSisdcWinnersByRank('சிறப்பிடம்')">🌟 சிறப்பிடம் (<span id="cntSisdcWinSpec">0</span>)</button>
+            <button type="button" class="cat-filter-pill" data-sisdcrank="பங்கேற்பாளர்" onclick="filterAdminSisdcWinnersByRank('பங்கேற்பாளர்')">🎖️ பங்கேற்பாளர் (<span id="cntSisdcWinPart">0</span>)</button>
+          </div>
+
+          <div class="admin-table-wrap">
+            <table class="admin-table">
+              <thead>
+                <tr>
+                  <th style="width:45px;">வ.எண்</th>
+                  <th>Team No &amp; துணைத்தலைப்பு</th>
+                  <th>பரிசு நிலை (Rank)</th>
+                  <th>U.NO &amp; பள்ளி</th>
+                  <th>நாடகத்தின் தலைப்பு &amp; மாணவர்கள் (EMIS ID)</th>
+                  <th>வழிகாட்டி ஆசிரியர்</th>
+                  <th style="width:230px;">சான்றிதழ் பதிவிறக்கம்</th>
+                  <th style="width:185px;">சான்றிதழ் ரத்து / செயல்கள்</th>
+                </tr>
+              </thead>
+              <tbody id="admSisdcWinnersTableBody">
+                <tr><td colspan="8" style="text-align:center; padding:18px; color:#64748b;">இன்னும் நாடக விழா வெற்றியாளர்கள் தேர்வு செய்யப்படவில்லை.</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div><!-- /#sisdcAdmWinnersContainer -->
+
+      <!-- MODAL: INDIVIDUAL STUDENT CERTIFICATE REVOCATION / RESTORATION FOR A DRAMA TEAM -->
+      <div id="sisdcStudentCertRevokeModal" class="modal-backdrop" style="display:none; position:fixed; inset:0; background:rgba(15, 23, 42, 0.75); z-index:99998; align-items:center; justify-content:center; padding:16px;">
+        <div style="background:#ffffff; border:2.5px solid #dc2626; border-radius:14px; max-width:780px; width:100%; max-height:88vh; overflow-y:auto; padding:20px; box-shadow:0 24px 48px rgba(0,0,0,0.35);">
+          <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:2px solid #fee2e2; padding-bottom:10px; margin-bottom:12px;">
+            <div>
+              <div style="font-size:1.05rem; font-weight:900; color:#991b1b;">🚫 மாணவர் வாரியாக வெற்றி / பங்கேற்புச் சான்றிதழ் ரத்து &amp; மேலாண்மை</div>
+              <div id="sisdcRevokeModalSubTitle" style="font-size:0.82rem; color:#475569; font-weight:700; margin-top:2px;"></div>
+            </div>
+            <button type="button" onclick="closeSisdcStudentCertRevokeModal()" style="background:#64748b; color:#fff; border:none; border-radius:8px; padding:6px 12px; font-weight:800; cursor:pointer;">✕ மூடுக</button>
+          </div>
+          <div id="sisdcRevokeModalBody"></div>
+        </div>
+      </div>
 
       <!-- SISDC 2026 JUDGES REGISTRATION & CERTIFICATE PANEL -->
       <div id="sisdcAdmJudgesContainer" style="display:none;">
@@ -6747,21 +6911,26 @@ document.getElementById("regStep1").style.display = "none";
       `;
     }).join("");
 
-    // Also append SISDC 2026 Science Drama Certificate card if the school submitted a drama team!
+    // Also append SISDC 2026 Science Drama Certificate cards for ALL drama teams submitted by this school!
     try {
-      const sisdcRec = getSchoolSisdcRecord(loggedInSchool.udiseNo, loggedInSchool.uNo);
-      if (sisdcRec && (sisdcRec.dramaTitleTa || sisdcRec.dramaTitleEn)) {
+      const sisdcTeams = (typeof getSchoolSisdcTeamsList === "function")
+        ? getSchoolSisdcTeamsList(loggedInSchool.udiseNo, loggedInSchool.uNo)
+        : [getSchoolSisdcRecord(loggedInSchool.udiseNo, loggedInSchool.uNo)].filter(Boolean);
+      sisdcTeams.forEach((sisdcRec, tIdx) => {
+        if (!sisdcRec) return;
         const isSisdcPresent = (sisdcRec.attendanceStatus !== "ABSENT");
-        const hasSisdcAdminRank = Boolean(sisdcRec.prizeRank && String(sisdcRec.prizeRank).trim());
+        const isRevoked = Boolean(sisdcRec.certRevoked);
+        const hasSisdcAdminRank = !isRevoked && Boolean(sisdcRec.prizeRank && String(sisdcRec.prizeRank).trim());
         const memCnt = (sisdcRec.members || []).filter(m => m && (m.nameTa || m.nameEn)).length;
         const sisdcRank = hasSisdcAdminRank ? sisdcRec.prizeRank : "";
+        const tNoKey = sisdcRec.teamNo || ("T-" + (sisdcRec.uNo || "01"));
         if (isSisdcPresent && hasSisdcAdminRank) eligibleCount++;
         const sisdcCardHtml = `
-          <div style="background: #faf5ff; border: 2px solid ${isSisdcPresent ? (hasSisdcAdminRank ? '#7c3aed' : '#d97706') : '#ef4444'}; border-radius: 12px; padding: 14px; display: flex; flex-direction: column; justify-content: space-between; box-shadow: 0 4px 12px rgba(124,58,237,0.1);">
+          <div style="background: #faf5ff; border: 2px solid ${(!isSisdcPresent || isRevoked) ? '#ef4444' : (hasSisdcAdminRank ? '#7c3aed' : '#d97706')}; border-radius: 12px; padding: 14px; display: flex; flex-direction: column; justify-content: space-between; box-shadow: 0 4px 12px rgba(124,58,237,0.1);">
             <div>
               <div style="display: flex; justify-content: space-between; align-items: center; gap: 6px; margin-bottom: 6px;">
-                <span style="font-size: 0.84rem; font-weight: 900; color: #5b21b6;">🎭 அறிவியல் நாடக விழா (SISDC 2026)</span>
-                <span style="background: #ede9fe; color: #5b21b6; font-weight: 900; font-size: 0.74rem; padding: 2px 8px; border-radius: 6px;">${sisdcRec.teamNo || "T-" + (sisdcRec.uNo || "01")}</span>
+                <span style="font-size: 0.84rem; font-weight: 900; color: #5b21b6;">🎭 அறிவியல் நாடக விழா (குழு ${tIdx + 1})</span>
+                <span style="background: #ede9fe; color: #5b21b6; font-weight: 900; font-size: 0.74rem; padding: 2px 8px; border-radius: 6px;">${tNoKey}</span>
               </div>
               <div style="font-size: 0.85rem; font-weight: 800; color: #7c2d12; margin-bottom: 6px;">
                 🎬 ${sisdcRec.dramaTitleTa || "-"} ${sisdcRec.dramaTitleEn ? " / " + sisdcRec.dramaTitleEn : ""}
@@ -6775,6 +6944,10 @@ document.getElementById("regStep1").style.display = "none";
               <div style="background: #fef2f2; border: 1.5px solid #ef4444; border-radius: 8px; padding: 8px 10px; color: #991b1b; font-weight: 800; font-size: 0.78rem; text-align: center;">
                 🚫 வருகைப்பதிவு: வருகை இல்லை (Absent)
               </div>
+            ` : (isRevoked ? `
+              <div style="background: #fef2f2; border: 1.5px solid #dc2626; border-radius: 8px; padding: 8px 10px; color: #991b1b; font-weight: 800; font-size: 0.78rem; text-align: center;">
+                🚫 சான்றிதழ் நிர்வாகியால் ரத்து செய்யப்பட்டுள்ளது (Certificate Revoked by Admin)
+              </div>
             ` : (!hasSisdcAdminRank ? `
               <div style="background: #fffbeb; border: 1.5px dashed #d97706; border-radius: 8px; padding: 10px 12px; color: #92400e; font-weight: 800; font-size: 0.78rem; text-align: center;">
                 ⏳ சான்றிதழ் நிலுவையில் (Pending Admin Selection)<br>
@@ -6786,27 +6959,27 @@ document.getElementById("regStep1").style.display = "none";
                   ✅ வருகை உறுதி &nbsp;|&nbsp; ${sisdcRank}
                 </div>
                 <div style="display: flex; flex-direction: column; gap: 6px;">
-                  <button type="button" onclick="downloadCurrentSchoolSisdcCertificates('bilingual', 'all_members')" style="width: 100%; background: linear-gradient(135deg, #4c1d95 0%, #0f766e 60%, #b45309 100%); color: #ffffff; border: none; border-radius: 7px; padding: 8px 10px; font-weight: 900; font-size: 0.8rem; cursor: pointer; font-family: inherit;">
+                  <button type="button" onclick="downloadCurrentSchoolSisdcCertificates('bilingual', 'all_members', '${tNoKey}')" style="width: 100%; background: linear-gradient(135deg, #4c1d95 0%, #0f766e 60%, #b45309 100%); color: #ffffff; border: none; border-radius: 7px; padding: 8px 10px; font-weight: 900; font-size: 0.8rem; cursor: pointer; font-family: inherit;">
                     📑 அனைத்து உறுப்பினர்கள் சான்றிதழ்கள் (இருமொழி PDF)
                   </button>
                   <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 5px;">
-                    <button type="button" onclick="downloadCurrentSchoolSisdcCertificates('ta', 'all_members')" style="background: #059669; color: #ffffff; border: none; border-radius: 6px; padding: 6px 6px; font-weight: 800; font-size: 0.74rem; cursor: pointer; font-family: inherit;">
+                    <button type="button" onclick="downloadCurrentSchoolSisdcCertificates('ta', 'all_members', '${tNoKey}')" style="background: #059669; color: #ffffff; border: none; border-radius: 6px; padding: 6px 6px; font-weight: 800; font-size: 0.74rem; cursor: pointer; font-family: inherit;">
                       📑 தமிழ் (All)
                     </button>
-                    <button type="button" onclick="downloadCurrentSchoolSisdcCertificates('en', 'all_members')" style="background: #2563eb; color: #ffffff; border: none; border-radius: 6px; padding: 6px 6px; font-weight: 800; font-size: 0.74rem; cursor: pointer; font-family: inherit;">
+                    <button type="button" onclick="downloadCurrentSchoolSisdcCertificates('en', 'all_members', '${tNoKey}')" style="background: #2563eb; color: #ffffff; border: none; border-radius: 6px; padding: 6px 6px; font-weight: 800; font-size: 0.74rem; cursor: pointer; font-family: inherit;">
                       📑 EN (All)
                     </button>
-                    <button type="button" onclick="downloadCurrentSchoolSisdcCertificates('bilingual', 'team')" style="background: #7c3aed; color: #ffffff; border: none; border-radius: 6px; padding: 6px 6px; font-weight: 800; font-size: 0.74rem; cursor: pointer; font-family: inherit;">
+                    <button type="button" onclick="downloadCurrentSchoolSisdcCertificates('bilingual', 'team', '${tNoKey}')" style="background: #7c3aed; color: #ffffff; border: none; border-radius: 6px; padding: 6px 6px; font-weight: 800; font-size: 0.74rem; cursor: pointer; font-family: inherit;">
                       📜 குழு PDF
                     </button>
                   </div>
                 </div>
               </div>
-            `)}
+            `))}
           </div>
         `;
         grid.innerHTML += sisdcCardHtml;
-      }
+      });
     } catch (e) {}
 
     if (badge) {
@@ -17097,6 +17270,11 @@ ${n.message}
     showSisfToast("🛡️ மீண்டும் மாவட்ட நிர்வாகி கட்டுப்பாட்டு மையத்திற்குத் திரும்பினீர்கள்.");
   }
 
+  let activeSchoolSisdcTeamNo = "";
+  let sisdcAutoSaveTimer = null;
+  let sisdcCloudAutoSyncTimer = null;
+  let activeSisdcWinRankFilter = "ALL";
+
   function switchSisdcAdminSubTab(tabMode) {
     const bTeams = document.getElementById("sisdcAdmTabBtnTeams");
     const bWin = document.getElementById("sisdcAdmTabBtnWinners");
@@ -17108,9 +17286,12 @@ ${n.message}
     if (bJud) bJud.classList.toggle("active", tabMode === "judges");
 
     const teamsCont = document.getElementById("sisdcAdmTeamsContainer");
+    const winCont = document.getElementById("sisdcAdmWinnersContainer");
     const judgesCont = document.getElementById("sisdcAdmJudgesContainer");
+
     if (tabMode === "judges") {
       if (teamsCont) teamsCont.style.display = "none";
+      if (winCont) winCont.style.display = "none";
       if (judgesCont) judgesCont.style.display = "block";
       populateSisdcJudgeSchoolsDropdown();
       renderAdminSisdcJudgesTable();
@@ -17118,12 +17299,20 @@ ${n.message}
       return;
     }
 
+    if (tabMode === "winners") {
+      if (teamsCont) teamsCont.style.display = "none";
+      if (judgesCont) judgesCont.style.display = "none";
+      if (winCont) winCont.style.display = "block";
+      populateSisdcWinnerTeamsDropdown();
+      renderAdminSisdcWinnersTable();
+      return;
+    }
+
     if (teamsCont) teamsCont.style.display = "block";
+    if (winCont) winCont.style.display = "none";
     if (judgesCont) judgesCont.style.display = "none";
 
-    if (tabMode === "winners") {
-      renderAdminSisdcTeamsTable(true);
-    } else if (tabMode === "reports") {
+    if (tabMode === "reports") {
       renderAdminSisdcTeamsTable(false);
       showSisfToast("📋 நாடகக் குழுக்கள் அறிக்கை: மேலேயுள்ள 'Excel / CSV' அல்லது 'அனைத்து நாடகக் குழுக்கள் அறிக்கை PDF' பொத்தானைச் சொடுக்கிப் பதிவிறக்கம் செய்யலாம்.");
     } else {
@@ -17131,12 +17320,22 @@ ${n.message}
     }
   }
 
+  function handleSisdcMemberEmisInput(idx) {
+    const el = document.getElementById("sisdcMemEmis_" + idx);
+    if (!el) return;
+    const digits = String(el.value || "").replace(/[^0-9]/g, "").slice(0, 8);
+    if (el.value !== digits) el.value = digits;
+    el.style.borderColor = (digits.length === 8) ? "#16a34a" : (digits.length > 0 ? "#d97706" : "#cbd5e1");
+    el.style.background = (digits.length === 8) ? "#f0fdf4" : "#ffffff";
+    triggerSisdcAutoSave();
+  }
+
   function initSisdcMembersTableRows() {
     const tbody = document.getElementById("sisdcMembersTableBody");
     if (!tbody) return;
     tbody.innerHTML = SISDC_ROLES.map((r, idx) => {
       const i = idx + 1;
-      const classCellHtml = `<select id="sisdcMemClass_${i}" class="form-control" style="padding:5px 6px; font-weight:700; font-size:0.84rem; text-align:center;">
+      const classCellHtml = `<select id="sisdcMemClass_${i}" class="form-control" onchange="triggerSisdcAutoSave()" style="padding:5px 6px; font-weight:700; font-size:0.84rem; text-align:center;">
              <option value="">- வகுப்பு -</option>
              <option value="VI">VI (6)</option>
              <option value="VII">VII (7)</option>
@@ -17149,10 +17348,13 @@ ${n.message}
         <tr>
           <td style="text-align:center; font-weight:900; color:#1e3a8a;">${i}</td>
           <td>
-            <input type="text" id="sisdcMemNameEn_${i}" class="form-control" oninput="handleSisdcMemberEnInput(${i})" onblur="handleNameBlur('sisdcMemNameEn_${i}', 'sisdcMemNameTa_${i}')" placeholder="Student / Member Name in English (வ.எண் ${i})" ${i === 1 ? "required" : ""} style="padding:6px 8px; font-size:0.86rem;">
+            <input type="text" id="sisdcMemEmis_${i}" class="form-control" maxlength="8" pattern="[0-9]{8}" inputmode="numeric" oninput="handleSisdcMemberEmisInput(${i})" placeholder="8 இலக்க EMIS எண்" title="மாணவரின் 8 இலக்க EMIS எண் (8-Digit EMIS ID)" style="padding:6px 8px; font-size:0.86rem; font-weight:800; text-align:center; letter-spacing:0.6px; color:#1e3a8a;">
           </td>
           <td>
-            <input type="text" id="sisdcMemNameTa_${i}" class="form-control tanglish-enabled" data-is-name="true" oninput="handleSisdcMemberTaInput(${i})" onblur="handleTamilNameBlur('sisdcMemNameTa_${i}')" placeholder="பெயர் தமிழில் (தானியங்கி / தங்லீஷ் திருத்தம்)" ${i === 1 ? "required" : ""} style="padding:6px 8px; font-size:0.86rem;">
+            <input type="text" id="sisdcMemNameEn_${i}" class="form-control" oninput="handleSisdcMemberEnInput(${i})" onblur="handleNameBlur('sisdcMemNameEn_${i}', 'sisdcMemNameTa_${i}'); triggerSisdcAutoSave();" placeholder="Student Name in English (வ.எண் ${i})" ${i === 1 ? "required" : ""} style="padding:6px 8px; font-size:0.86rem;">
+          </td>
+          <td>
+            <input type="text" id="sisdcMemNameTa_${i}" class="form-control tanglish-enabled" data-is-name="true" oninput="handleSisdcMemberTaInput(${i})" onblur="handleTamilNameBlur('sisdcMemNameTa_${i}'); triggerSisdcAutoSave();" placeholder="பெயர் தமிழில் (தானியங்கி / தங்லீஷ் திருத்தம்)" ${i === 1 ? "required" : ""} style="padding:6px 8px; font-size:0.86rem;">
           </td>
           <td style="text-align:center;">${classCellHtml}</td>
           <td style="font-weight:800; color:#0f2942; background:#f1f5f9;">
@@ -17164,6 +17366,15 @@ ${n.message}
     }).join("");
 
     try { attachTanglishHandlers(); } catch (e) {}
+    initSisdcFormAutoSaveListeners();
+  }
+
+  function initSisdcFormAutoSaveListeners() {
+    const form = document.getElementById("sisdcTeamRegistrationForm");
+    if (!form || form.dataset.autoSaveBound === "true") return;
+    form.dataset.autoSaveBound = "true";
+    form.addEventListener("input", () => triggerSisdcAutoSave());
+    form.addEventListener("change", () => triggerSisdcAutoSave());
   }
 
   let sisdcTranslateTimers = {};
@@ -17175,13 +17386,14 @@ ${n.message}
     const v = taEl.value.trim();
     if (!v) {
       if (document.activeElement !== enEl) enEl.value = "";
+      triggerSisdcAutoSave();
       return;
     }
-    // Instant phonetic transliteration (ஒலியாக்கம்: e.g. பூவலிங்கம் கூ -> POOVALINGAM K)
     const phoneticEn = transliterateTamilToEnglishName(v);
     if (phoneticEn && document.activeElement !== enEl) {
       enEl.value = phoneticEn;
     }
+    triggerSisdcAutoSave();
   }
   function handleSisdcTeacherEnInput() {
     const taEl = document.getElementById("sisdcTeacherNameTa");
@@ -17189,9 +17401,11 @@ ${n.message}
     if (!taEl || !enEl) return;
     if (!enEl.value.trim()) {
       if (document.activeElement !== taEl) taEl.value = "";
+      triggerSisdcAutoSave();
       return;
     }
     handleEnglishNameInput("sisdcTeacherNameEn", "sisdcTeacherNameTa");
+    triggerSisdcAutoSave();
   }
   function handleSisdcTeacherEnBlur() {
     const enEl = document.getElementById("sisdcTeacherNameEn");
@@ -17199,36 +17413,46 @@ ${n.message}
       enEl.value = formatNameInitialLast(enEl.value, false).toUpperCase();
     }
     handleNameBlur("sisdcTeacherNameEn", "sisdcTeacherNameTa");
+    triggerSisdcAutoSave();
   }
   function handleSisdcTitleTaInput() {
     const taEl = document.getElementById("sisdcDramaTitleTa");
     const enEl = document.getElementById("sisdcDramaTitleEn");
     if (!taEl || !enEl) return;
+    triggerSisdcAutoSave();
     clearTimeout(sisdcTranslateTimers.titTa);
     sisdcTranslateTimers.titTa = setTimeout(async () => {
       const v = taEl.value.trim();
       if (!v) return;
       const tr = await translateTextSmart(v, "ta", "en");
-      if (tr) enEl.value = tr;
+      if (tr) {
+        enEl.value = tr;
+        triggerSisdcAutoSave();
+      }
     }, 600);
   }
   function handleSisdcTitleEnInput() {
     const taEl = document.getElementById("sisdcDramaTitleTa");
     const enEl = document.getElementById("sisdcDramaTitleEn");
     if (!taEl || !enEl) return;
+    triggerSisdcAutoSave();
     clearTimeout(sisdcTranslateTimers.titEn);
     sisdcTranslateTimers.titEn = setTimeout(async () => {
       const v = enEl.value.trim();
       if (!v) return;
       const tr = await translateTextSmart(v, "en", "ta");
-      if (tr) taEl.value = tr;
+      if (tr) {
+        taEl.value = tr;
+        triggerSisdcAutoSave();
+      }
     }, 600);
   }
   function handleSisdcMemberTaInput(idx) {
-    // Manual or Tanglish edits in Column 3 (Tamil) must NOT modify Column 2 (English)
+    // Manual or Tanglish edits in Tamil column must NOT modify English column
     clearTimeout(nameTranslitTimers["sisdcMemNameEn_" + idx]);
     clearTimeout(sisdcTranslateTimers["mEn_" + idx]);
     clearTimeout(sisdcTranslateTimers["mTa_" + idx]);
+    triggerSisdcAutoSave();
   }
   function handleSisdcMemberEnInput(idx) {
     const enId = "sisdcMemNameEn_" + idx;
@@ -17240,12 +17464,16 @@ ${n.message}
       clearTimeout(nameTranslitTimers[enId]);
       clearTimeout(sisdcTranslateTimers["mEn_" + idx]);
       taEl.value = "";
+      triggerSisdcAutoSave();
       return;
     }
-    // Automatically populate Tamil name in Column 3 from English input in Column 2
     handleEnglishNameInput(enId, taId);
+    triggerSisdcAutoSave();
   }
 
+  // =========================================================================
+  // MULTI-TEAM STORAGE ENGINE FOR SISDC 2026 (Supports multiple drama teams per school)
+  // =========================================================================
   function getAllSisdcTeamsFromStorage() {
     let list = [];
     try {
@@ -17259,39 +17487,308 @@ ${n.message}
   }
 
   function saveAllSisdcTeamsToStorage(list) {
+    const clean = Array.isArray(list) ? list : [];
     try {
-      localStorage.setItem("SISDC_ALL_TEAMS_2026", JSON.stringify(list || []));
+      localStorage.setItem("SISDC_ALL_TEAMS_2026", JSON.stringify(clean));
     } catch (e) {}
   }
 
-  function getSchoolSisdcRecord(udise, uno) {
+  function getSchoolSisdcTeamsList(udise, uno) {
     const cleanUno = String(uno || "").replace(/^0+/, "").trim();
     const cleanUdise = String(udise || "").trim();
-    try {
-      const directRaw = (cleanUdise && localStorage.getItem("SISDC_SCHOOL_TEAM_" + cleanUdise)) ||
-                        (cleanUno && localStorage.getItem("SISDC_SCHOOL_TEAM_" + cleanUno));
-      if (directRaw) {
-        return JSON.parse(directRaw);
-      }
-    } catch (e) {}
     const all = getAllSisdcTeamsFromStorage();
-    return all.find(t => (cleanUdise && String(t.udiseNo || "") === cleanUdise) || (cleanUno && String(t.uNo || "").replace(/^0+/, "") === cleanUno)) || null;
+    let schoolTeams = all.filter(t =>
+      t && ((cleanUdise && String(t.udiseNo || "").trim() === cleanUdise) ||
+            (cleanUno && String(t.uNo || "").replace(/^0+/, "").trim() === cleanUno))
+    );
+
+    // Migrate any legacy single-team record if not yet in SISDC_ALL_TEAMS_2026
+    if (schoolTeams.length === 0) {
+      try {
+        const directRaw = (cleanUdise && localStorage.getItem("SISDC_SCHOOL_TEAM_" + cleanUdise)) ||
+                          (cleanUno && localStorage.getItem("SISDC_SCHOOL_TEAM_" + cleanUno));
+        if (directRaw) {
+          const parsed = JSON.parse(directRaw);
+          if (parsed && typeof parsed === "object") {
+            if (!parsed.teamNo) parsed.teamNo = "T-" + (cleanUno || "101") + "-1";
+            schoolTeams = [parsed];
+            all.push(parsed);
+            saveAllSisdcTeamsToStorage(all);
+          }
+        }
+      } catch (e) {}
+    }
+    return schoolTeams;
+  }
+
+  function generateNextSisdcTeamNoForSchool(udise, uno) {
+    const cleanUno = String(uno || "101").replace(/^0+/, "").trim() || "101";
+    const existingTeams = getSchoolSisdcTeamsList(udise, uno);
+    let idx = existingTeams.length + 1;
+    let candidate = `T-${cleanUno}-${idx}`;
+    const all = getAllSisdcTeamsFromStorage();
+    while (all.some(t => String(t.teamNo || "").trim().toUpperCase() === candidate.toUpperCase())) {
+      idx++;
+      candidate = `T-${cleanUno}-${idx}`;
+    }
+    return candidate;
+  }
+
+  function getSchoolSisdcRecord(udise, uno, specificTeamNo) {
+    const teams = getSchoolSisdcTeamsList(udise, uno);
+    if (teams.length === 0) return null;
+    const targetTno = String(specificTeamNo || activeSchoolSisdcTeamNo || "").trim();
+    if (targetTno) {
+      const matched = teams.find(t => String(t.teamNo || "").trim() === targetTno);
+      if (matched) return matched;
+    }
+    return teams[0];
   }
 
   function saveSchoolSisdcRecord(record) {
     if (!record) return;
     const cleanUno = String(record.uNo || "").replace(/^0+/, "").trim();
     const cleanUdise = String(record.udiseNo || "").trim();
+    if (!record.teamNo) {
+      record.teamNo = generateNextSisdcTeamNoForSchool(cleanUdise, cleanUno);
+    }
+    activeSchoolSisdcTeamNo = record.teamNo;
+    const hid = document.getElementById("sisdcActiveTeamNoHidden");
+    if (hid) hid.value = record.teamNo;
+
     try {
       if (cleanUdise) localStorage.setItem("SISDC_SCHOOL_TEAM_" + cleanUdise, JSON.stringify(record));
       if (cleanUno) localStorage.setItem("SISDC_SCHOOL_TEAM_" + cleanUno, JSON.stringify(record));
     } catch (e) {}
 
     const all = getAllSisdcTeamsFromStorage();
-    const idx = all.findIndex(t => (cleanUdise && String(t.udiseNo || "") === cleanUdise) || (cleanUno && String(t.uNo || "").replace(/^0+/, "") === cleanUno));
-    if (idx >= 0) all[idx] = record;
-    else all.push(record);
+    // Upsert by teamNo so multiple drama teams from the same school are stored as separate records!
+    const idx = all.findIndex(t => String(t.teamNo || "").trim() === String(record.teamNo).trim());
+    if (idx >= 0) {
+      all[idx] = Object.assign({}, all[idx], record);
+    } else {
+      all.push(record);
+    }
     saveAllSisdcTeamsToStorage(all);
+  }
+
+  function findSisdcTeamByKey(keyId) {
+    const q = String(keyId || "").trim();
+    if (!q) return null;
+    const all = getAllSisdcTeamsFromStorage();
+    return all.find(t =>
+      String(t.teamNo || "").trim() === q ||
+      String(t.uNo || "").replace(/^0+/, "").trim() === q.replace(/^0+/, "") ||
+      String(t.udiseNo || "").trim() === q
+    ) || null;
+  }
+
+  // =========================================================================
+  // REAL-TIME AUTO-SAVE & GOOGLE SHEET CLOUD VERIFICATION FOR SISDC 2026
+  // =========================================================================
+  function triggerSisdcAutoSave() {
+    if (!loggedInSchool || activeSchoolDedicatedBox !== "SISDC") return;
+    if (sisdcAutoSaveTimer) clearTimeout(sisdcAutoSaveTimer);
+    sisdcAutoSaveTimer = setTimeout(() => {
+      performSisdcAutoSave();
+    }, 350);
+  }
+
+  function performSisdcAutoSave() {
+    if (!loggedInSchool) return;
+    const rec = collectCurrentSisdcFormObject({ isPartialAutoSave: true });
+    // Check if at least one meaningful field was typed by the user
+    const hasAnyInput = Boolean(
+      rec.guideTeacherNameTa || rec.guideTeacherNameEn || rec.guideTeacherMobile ||
+      rec.dramaTitleTa || rec.dramaTitleEn ||
+      (rec.members && rec.members.some(m => m.emisId || m.nameEn || m.nameTa || (m.studentClass && m.studentClass !== "-")))
+    );
+    if (!hasAnyInput) return;
+
+    rec.isPartialDraft = !Boolean(rec.dramaTitleTa && rec.guideTeacherNameTa && rec.members.some(m => m.nameEn || m.nameTa));
+    saveSchoolSisdcRecord(rec);
+    renderSchoolSisdcTeamsSwitcherBar();
+    updateDedicatedModuleBoxBadges();
+
+    const nowTime = new Date().toLocaleTimeString("en-IN", { hour: "2-digit", minute: "2-digit", second: "2-digit" });
+    const badge = document.getElementById("sisdcAutoSaveStatusBadge");
+    if (badge) {
+      badge.innerHTML = `💾 தானியங்கி சேமிப்பு: <strong>${rec.teamNo}</strong> விவரங்கள் தானாகச் சேமிக்கப்பட்டன (${nowTime}) ✅`;
+      badge.style.background = "#dcfce7";
+      badge.style.color = "#166534";
+    }
+
+    // Debounced background cloud sync to Google Sheet (SISDC_2026_Database)
+    if (sisdcCloudAutoSyncTimer) clearTimeout(sisdcCloudAutoSyncTimer);
+    sisdcCloudAutoSyncTimer = setTimeout(() => {
+      sendSisdcToCloudSheet(rec, true);
+    }, 2200);
+  }
+
+  async function sendSisdcToCloudSheet(rec, isAutoSave) {
+    if (!rec) return;
+    const syncBadge = document.getElementById("sisdcCloudSyncStatusBadge");
+    if (syncBadge) {
+      syncBadge.innerHTML = `☁️ Google Sheet: <strong>${rec.teamNo}</strong> பதிவேற்றப்படுகிறது... ⏳`;
+      syncBadge.style.background = "#fef9c3";
+      syncBadge.style.color = "#854d0e";
+    }
+
+    const payload = Object.assign({}, rec, {
+      action: "save_sisdc_application",
+      moduleId: "SISDC",
+      targetSheetId: "1jRcTIcA346IWHzGBmMRQ5499i8kwIuj523XyN160CCg",
+      masterSheetId: "1Z3a6HTgNgMwSvse_fIswOlveUZdIi20YY00v2_8tiKc",
+      membersJson: JSON.stringify(rec.members || []),
+      isAutoSave: isAutoSave ? "true" : "false"
+    });
+
+    let ok = false;
+    try {
+      const res = await sendToScriptReliably(payload);
+      if (res && (res.status === "success" || res.mode === "no-cors")) ok = true;
+    } catch (e) {}
+
+    // Also dispatch via GET JSONP fallback so even strict CORS browsers record the row in Google Sheet
+    if (sisdcScriptUrl && sisdcScriptUrl.startsWith("http")) {
+      try {
+        const qObj = {
+          action: "save_sisdc_application",
+          teamNo: rec.teamNo || "",
+          uNo: rec.uNo || "",
+          udiseNo: rec.udiseNo || "",
+          block: rec.block || "சிவகங்கை",
+          schoolNameTa: rec.schoolNameTa || "",
+          schoolNameEn: rec.schoolNameEn || "",
+          guideTeacherNameTa: rec.guideTeacherNameTa || "",
+          guideTeacherNameEn: rec.guideTeacherNameEn || "",
+          guideTeacherMobile: rec.guideTeacherMobile || "",
+          dramaTitleTa: rec.dramaTitleTa || "",
+          dramaTitleEn: rec.dramaTitleEn || "",
+          language: rec.language || "தமிழ்",
+          durationMins: String(rec.durationMins || 30),
+          subTheme: rec.subTheme || "",
+          prizeRank: rec.prizeRank || "",
+          membersJson: JSON.stringify(rec.members || [])
+        };
+        const qs = new URLSearchParams(qObj).toString();
+        if (qs.length < 7500) {
+          fetchJsonp(sisdcScriptUrl + "?" + qs, 6500).then(jRes => {
+            if (jRes && jRes.status === "success") {
+              if (syncBadge) {
+                syncBadge.innerHTML = `☁️ Google Sheet: <strong>${rec.teamNo}</strong> நேரடியாகப் பதிவானது ✅`;
+                syncBadge.style.background = "#dcfce7";
+                syncBadge.style.color = "#166534";
+              }
+            }
+          }).catch(() => {});
+        }
+      } catch (e) {}
+    }
+
+    if (syncBadge) {
+      const tStr = new Date().toLocaleTimeString("en-IN", { hour: "2-digit", minute: "2-digit" });
+      syncBadge.innerHTML = ok
+        ? `☁️ Google Sheet: <strong>${rec.teamNo}</strong> ஒத்திசைக்கப்பட்டது (${tStr}) ✅`
+        : `☁️ உள்ளூர் & கிளவுட் காப்பு சேமிக்கப்பட்டது (${tStr}) ✅`;
+      syncBadge.style.background = "#dcfce7";
+      syncBadge.style.color = "#166534";
+    }
+  }
+
+  function verifyAndSyncSisdcGoogleSheet(showToastFeedback) {
+    if (showToastFeedback) {
+      showSisfToast("☁️ SISDC_2026_Database Google Sheet-உடன் இணைப்பு மற்றும் பதிவுகள் சரிபார்க்கப்படுகின்றன...");
+    }
+    // Push any local teams to Google Sheet first so nothing is missing in Cloud
+    const localTeams = getAllSisdcTeamsFromStorage();
+    localTeams.forEach(t => {
+      if (t && (t.dramaTitleTa || t.dramaTitleEn || t.guideTeacherNameTa)) {
+        sendSisdcToCloudSheet(t, true);
+      }
+    });
+    // Then pull from Google Sheet
+    syncSisdcFromCloudSheet(showToastFeedback);
+  }
+
+  function renderSchoolSisdcTeamsSwitcherBar() {
+    if (!loggedInSchool) return;
+    const cont = document.getElementById("sisdcSchoolTeamsPillsContainer");
+    if (!cont) return;
+    const teams = getSchoolSisdcTeamsList(loggedInSchool.udiseNo, loggedInSchool.uNo);
+    const curTno = activeSchoolSisdcTeamNo || (teams[0] && teams[0].teamNo) || `T-${String(loggedInSchool.uNo || "101").replace(/^0+/, "")}-1`;
+
+    if (teams.length === 0) {
+      cont.innerHTML = `<span style="background:#ffffff; color:#4c1d95; border:1.5px solid #8b5cf6; padding:4px 12px; border-radius:999px; font-size:0.8rem; font-weight:900;">🆕 குழு 1 (${curTno} - புதிய பதிவு)</span>`;
+      return;
+    }
+
+    cont.innerHTML = teams.map((t, idx) => {
+      const isAct = (String(t.teamNo) === String(curTno));
+      const titleShort = (t.dramaTitleTa || t.dramaTitleEn || "பகுதிப் பதிவு").slice(0, 20);
+      return `
+        <button type="button" onclick="selectSchoolSisdcTeam('${t.teamNo}')" style="background:${isAct ? '#6d28d9' : '#ffffff'}; color:${isAct ? '#ffffff' : '#4c1d95'}; border:1.5px solid #6d28d9; padding:5px 12px; border-radius:999px; font-size:0.8rem; font-weight:900; cursor:pointer; font-family:inherit; box-shadow:${isAct ? '0 3px 8px rgba(109,40,217,0.3)' : 'none'};">
+          🎭 குழு ${idx + 1}: ${t.teamNo} (${titleShort})
+        </button>
+      `;
+    }).join("");
+  }
+
+  function selectSchoolSisdcTeam(teamNo) {
+    if (!loggedInSchool || !teamNo) return;
+    activeSchoolSisdcTeamNo = String(teamNo).trim();
+    const hid = document.getElementById("sisdcActiveTeamNoHidden");
+    if (hid) hid.value = activeSchoolSisdcTeamNo;
+    populateSchoolSisdcFormAndSummary();
+    showSisfToast(`🎭 நாடகக் குழு '${activeSchoolSisdcTeamNo}' தேர்ந்தெடுக்கப்பட்டது.`);
+  }
+
+  function startNewSchoolSisdcTeam() {
+    if (!loggedInSchool) {
+      showSisfToast("⚠️ முதலில் உங்கள் பள்ளியின் கணக்கில் உள்நுழையவும்.");
+      return;
+    }
+    const newTeamNo = generateNextSisdcTeamNoForSchool(loggedInSchool.udiseNo, loggedInSchool.uNo);
+    activeSchoolSisdcTeamNo = newTeamNo;
+    const hid = document.getElementById("sisdcActiveTeamNoHidden");
+    if (hid) hid.value = newTeamNo;
+    const formTno = document.getElementById("sisdcFormTeamNoDisp");
+    if (formTno) formTno.innerText = newTeamNo;
+
+    // Clear drama-specific & member fields for the new team while keeping school details
+    const setV = (id, v) => { const el = document.getElementById(id); if (el) el.value = v; };
+    setV("sisdcDramaTitleTa", "");
+    setV("sisdcDramaTitleEn", "");
+    setV("sisdcDurationMins", "30");
+    for (let i = 1; i <= 10; i++) {
+      setV("sisdcMemEmis_" + i, "");
+      setV("sisdcMemNameEn_" + i, "");
+      setV("sisdcMemNameTa_" + i, "");
+      setV("sisdcMemClass_" + i, "");
+      const emEl = document.getElementById("sisdcMemEmis_" + i);
+      if (emEl) { emEl.style.borderColor = "#cbd5e1"; emEl.style.background = "#ffffff"; }
+    }
+
+    renderSchoolSisdcTeamsSwitcherBar();
+    const cont = document.getElementById("sisdcSchoolTeamsPillsContainer");
+    if (cont) {
+      cont.innerHTML += `<span style="background:#059669; color:#ffffff; padding:5px 12px; border-radius:999px; font-size:0.8rem; font-weight:900;">➕ புதிய குழு: ${newTeamNo}</span>`;
+    }
+    scrollToSisdcForm();
+    showSisfToast(`➕ புதிய நாடகக் குழு (${newTeamNo}) படிவம் திறக்கப்பட்டது! விவரங்களை உள்ளிடும்போது தானாகச் சேமிக்கப்படும்.`);
+  }
+
+  function deleteSchoolSisdcTeam(teamNo) {
+    if (!loggedInSchool || !teamNo) return;
+    const all = getAllSisdcTeamsFromStorage();
+    const remaining = all.filter(t => String(t.teamNo || "").trim() !== String(teamNo).trim());
+    saveAllSisdcTeamsToStorage(remaining);
+    const schoolLeft = getSchoolSisdcTeamsList(loggedInSchool.udiseNo, loggedInSchool.uNo);
+    activeSchoolSisdcTeamNo = (schoolLeft[0] && schoolLeft[0].teamNo) || "";
+    populateSchoolSisdcFormAndSummary();
+    updateDedicatedModuleBoxBadges();
+    try { renderSchoolCertificatesDownloadCenter(); } catch (e) {}
+    showSisfToast(`🗑️ நாடகக் குழு (${teamNo}) நீக்கப்பட்டது.`);
   }
 
   function switchSchoolModuleBox(boxType) {
@@ -17303,7 +17800,6 @@ ${n.message}
     const wSisdc = document.getElementById("schoolSisdcDedicatedWorkspace");
     const topVenue = document.getElementById("topVenueBanner");
 
-    // Hide the 2-box home screen and open the selected competition as a separate page!
     if (homeBoxes) homeBoxes.style.display = "none";
     if (topVenue) topVenue.style.display = "flex";
     if (bSisf) bSisf.classList.toggle("active", activeSchoolDedicatedBox === "SISF");
@@ -17316,7 +17812,6 @@ ${n.message}
     if (sisfInfo) sisfInfo.innerText = (activeSchoolDedicatedBox === "SISF") ? "✓ தற்போது திறக்கப்பட்டுள்ளது" : "கிளிக் செய்து திறக்கவும்";
     if (sisdcInfo) sisdcInfo.innerText = (activeSchoolDedicatedBox === "SISDC") ? "✓ தற்போது திறக்கப்பட்டுள்ளது" : "கிளிக் செய்து திறக்கவும்";
 
-    // Also update top header title to reflect active module when inside dashboard
     const hTa = document.getElementById("headerTitleTa");
     const hEn = document.getElementById("headerTitleEn");
     const topMain = document.getElementById("topVenueMainPill");
@@ -17325,7 +17820,7 @@ ${n.message}
       if (hTa) hTa.innerText = "✨ தென்னிந்திய அறிவியல் நாடக விழா (SISDC - 2026) ✨";
       if (hEn) hEn.innerText = "SOUTHERN INDIA SCIENCE DRAMA CONTEST (SISDC 2026) – DISTRICT LEVEL";
       if (topMain) topMain.innerText = "🏛️ தென்னிந்திய அறிவியல் நாடக விழா 2026 மன்னர் மேல்நிலைப் பள்ளி, சிவகங்கையில் 04.11.2026 அன்று நடைபெறும்";
-      if (topSub) topSub.innerHTML = "📍 Venue: Mannar Higher Secondary School, Sivagangai &nbsp;|&nbsp; 📅 04.11.2026 &nbsp;|&nbsp; 🎭 குழு உறுப்பினர்கள்: அதிகபட்சம் 10 நபர்கள்";
+      if (topSub) topSub.innerHTML = "📍 Venue: Mannar Higher Secondary School, Sivagangai &nbsp;|&nbsp; 📅 04.11.2026 &nbsp;|&nbsp; 🎭 ஒரு பள்ளி ஒன்றுக்கும் மேற்பட்ட நாடகக் குழுக்களைப் பதிவு செய்யலாம்";
       populateSchoolSisdcFormAndSummary();
     } else {
       if (hTa) hTa.innerText = "✨ மாவட்ட அளவிலான தென்னிந்திய அறிவியல் கண்காட்சி (SISF - 2026) ✨";
@@ -17350,11 +17845,11 @@ ${n.message}
         b1.style.color = sisfCnt > 0 ? "#166534" : "#475569";
       }
 
-      const sisdcRec = getSchoolSisdcRecord(loggedInSchool.udiseNo, loggedInSchool.uNo);
+      const sisdcTeams = getSchoolSisdcTeamsList(loggedInSchool.udiseNo, loggedInSchool.uNo);
       const b2 = document.getElementById("schoolBoxSisdcStatusBadge");
       if (b2) {
-        if (sisdcRec) {
-          b2.innerText = `✅ சமர்ப்பிக்கப்பட்டது (${sisdcRec.teamNo || "SISDC"})`;
+        if (sisdcTeams.length > 0) {
+          b2.innerText = `✅ ${sisdcTeams.length} நாடகக் குழு(க்கள்) பதிவு (${sisdcTeams.map(t => t.teamNo).join(", ")})`;
           b2.style.background = "#dcfce7";
           b2.style.color = "#166534";
           b2.style.borderColor = "#86efac";
@@ -17367,7 +17862,6 @@ ${n.message}
       }
     }
 
-    // Update Admin Box Badges as well
     const setTxt = (id, v) => { const el = document.getElementById(id); if (el) el.innerText = v; };
     const indCount = (typeof adminAllApps !== "undefined" ? adminAllApps : []).filter(a => a.categoryOfEntry === "Individual").length;
     const grpCount = (typeof adminAllApps !== "undefined" ? adminAllApps : []).filter(a => a.categoryOfEntry === "Group").length;
@@ -17389,7 +17883,7 @@ ${n.message}
       totalMem += mList.length;
       if (t.language === "English") enCnt++;
       else taCnt++;
-      if (t.prizeRank) winCnt++;
+      if (t.prizeRank && !t.certRevoked) winCnt++;
     });
     setTxt("admBoxSisdcCountBadge", `${allSisdc.length} நாடகக் குழுக்கள்`);
     setTxt("admBoxSisdcTeams", allSisdc.length);
@@ -17397,7 +17891,6 @@ ${n.message}
     setTxt("admBoxSisdcTaEn", `${taCnt} / ${enCnt}`);
     setTxt("admBoxSisdcWin", winCnt);
 
-    // Calculate Applied vs Unregistered Schools & Certificate Status counts for both competitions
     try {
       const totalMaster = (typeof MASTER_SCHOOLS !== "undefined" && MASTER_SCHOOLS.length > 0) ? MASTER_SCHOOLS.length : 308;
       const sisfAppliedSet = new Set();
@@ -17432,7 +17925,7 @@ ${n.message}
       allSisdc.forEach(t => {
         const u = String(t.uNo || "").replace(/^0+/, "").trim();
         if (u) sisdcAppliedSet.add(u);
-        if (t.prizeRank && t.attendanceStatus !== "ABSENT") sisdcCertDone++;
+        if (t.prizeRank && !t.certRevoked && t.attendanceStatus !== "ABSENT") sisdcCertDone++;
         else sisdcCertPend++;
       });
       const sisdcAppliedCnt = sisdcAppliedSet.size;
@@ -17443,7 +17936,6 @@ ${n.message}
       setTxt("admBoxSisdcCertDone", sisdcCertDone);
       setTxt("admBoxSisdcCertPend", sisdcCertPend);
 
-      // Update Certificate Downloaded vs Not Downloaded counts on the 2 Admin Home Boxes
       if (typeof getCertificateDownloadLogMap === "function") {
         let sisfDlDone = 0;
         let sisfDlPend = 0;
@@ -17478,19 +17970,25 @@ ${n.message}
     const sNameTa = document.getElementById("sisdcSchoolNameTa");
     const sNameEn = document.getElementById("sisdcSchoolNameEn");
     const rawTa = (loggedInSchool.nameTa || loggedInSchool.schoolAddress || "").replace(/\s*\([^)]*\)/g, "").trim();
-    if (sNameTa && !sNameTa.value) sNameTa.value = rawTa;
-    if (sNameEn && !sNameEn.value) sNameEn.value = loggedInSchool.nameEn || rawTa;
+    if (sNameTa) sNameTa.value = rawTa;
+    if (sNameEn) sNameEn.value = loggedInSchool.nameEn || rawTa;
 
-    const rec = getSchoolSisdcRecord(loggedInSchool.udiseNo, loggedInSchool.uNo);
+    const allSchoolTeams = getSchoolSisdcTeamsList(loggedInSchool.udiseNo, loggedInSchool.uNo);
+    const rec = getSchoolSisdcRecord(loggedInSchool.udiseNo, loggedInSchool.uNo, activeSchoolSisdcTeamNo);
     const sumBox = document.getElementById("sisdcSubmittedSummaryBox");
     const sumDet = document.getElementById("sisdcSubmittedSummaryDetails");
     const sumTno = document.getElementById("sisdcSummaryTeamNo");
     const formTno = document.getElementById("sisdcFormTeamNoDisp");
+    const hidTno = document.getElementById("sisdcActiveTeamNoHidden");
+
+    renderSchoolSisdcTeamsSwitcherBar();
 
     if (rec) {
+      activeSchoolSisdcTeamNo = rec.teamNo;
+      if (hidTno) hidTno.value = rec.teamNo;
       if (sumBox) sumBox.style.display = "block";
-      if (sumTno) sumTno.innerText = `Team No: ${rec.teamNo || "T-" + (rec.uNo || "01")}`;
-      if (formTno) formTno.innerText = rec.teamNo || ("T-" + (rec.uNo || "01"));
+      if (sumTno) sumTno.innerText = `Team No: ${rec.teamNo} (மொத்த குழுக்கள்: ${allSchoolTeams.length})`;
+      if (formTno) formTno.innerText = rec.teamNo;
       if (sNameTa) sNameTa.value = rec.schoolNameTa || rawTa;
       if (sNameEn) sNameEn.value = rec.schoolNameEn || loggedInSchool.nameEn || "";
       const tTa = document.getElementById("sisdcTeacherNameTa"); if (tTa) tTa.value = rec.guideTeacherNameTa || "";
@@ -17507,84 +18005,119 @@ ${n.message}
         if (rec.subTheme && r.value.includes(rec.subTheme.slice(0, 16))) r.checked = true;
       });
 
-      if (Array.isArray(rec.members)) {
-        rec.members.forEach((m, idx) => {
-          const i = idx + 1;
-          const mTa = document.getElementById("sisdcMemNameTa_" + i);
-          const mEn = document.getElementById("sisdcMemNameEn_" + i);
-          const mCl = document.getElementById("sisdcMemClass_" + i);
-          if (mTa) mTa.value = m.nameTa || "";
-          if (mEn) mEn.value = m.nameEn || "";
-          if (mCl) mCl.value = (m.studentClass && m.studentClass !== "-") ? m.studentClass : "";
-        });
+      for (let i = 1; i <= 10; i++) {
+        const m = (Array.isArray(rec.members) && rec.members[i - 1]) ? rec.members[i - 1] : {};
+        const mEm = document.getElementById("sisdcMemEmis_" + i);
+        const mTa = document.getElementById("sisdcMemNameTa_" + i);
+        const mEn = document.getElementById("sisdcMemNameEn_" + i);
+        const mCl = document.getElementById("sisdcMemClass_" + i);
+        if (mEm) {
+          mEm.value = m.emisId || "";
+          mEm.style.borderColor = (mEm.value.length === 8) ? "#16a34a" : "#cbd5e1";
+          mEm.style.background = (mEm.value.length === 8) ? "#f0fdf4" : "#ffffff";
+        }
+        if (mTa) mTa.value = m.nameTa || "";
+        if (mEn) mEn.value = m.nameEn || "";
+        if (mCl) mCl.value = (m.studentClass && m.studentClass !== "-") ? m.studentClass : "";
       }
 
-      const filledMembers = (rec.members || []).filter(m => m && (m.nameTa || m.nameEn));
       if (sumDet) {
-        sumDet.innerHTML = `
-          <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(240px, 1fr)); gap:8px;">
-            <div><strong>🎭 நாடகத்தின் தலைப்பு:</strong> ${rec.dramaTitleTa || "-"} ${rec.dramaTitleEn ? " / " + rec.dramaTitleEn : ""}</div>
-            <div><strong>🗣️ மொழி & கால அளவு:</strong> ${rec.language || "தமிழ்"} (${rec.durationMins || 30} நிமிடம்)</div>
-            <div><strong>🎯 துணைக்கருப்பொருள்:</strong> ${rec.subTheme || "-"}</div>
-            <div><strong>👨‍🏫 வழிகாட்டி ஆசிரியர்:</strong> ${rec.guideTeacherNameTa || "-"} (${rec.guideTeacherMobile || "-"})</div>
-            <div><strong>👥 பதிவு செய்யப்பட்ட குழு உறுப்பினர்கள்:</strong> ${filledMembers.length} / 10 நபர்கள்</div>
-            <div><strong>🕒 சமர்ப்பித்த நேரம்:</strong> ${rec.timestamp || "-"}</div>
-          </div>
-          ${rec.attendanceStatus === "ABSENT" ? `
-            <div style="margin-top:10px; background:#fef2f2; border:1.5px solid #ef4444; border-radius:8px; padding:8px 12px; color:#991b1b; font-weight:800;">
-              🚫 வருகைப்பதிவு: வருகை இல்லை (Absent) — போட்டியில் நேரில் வருகை தந்த நாடகக் குழுவிற்கு மட்டுமே சான்றிதழ் வழங்கப்படும்.
-            </div>
-          ` : (!rec.prizeRank || !String(rec.prizeRank).trim() ? `
-            <div style="margin-top:12px; background:#faf5ff; border:1.5px dashed #9333ea; border-radius:10px; padding:12px 14px; color:#581c87; font-weight:800; font-size:0.86rem;">
-              ⏳ <strong>சான்றிதழ் பதிவிறக்கம் நிலுவையில் (Awaiting Admin Result Selection):</strong><br>
-              <span style="font-size:0.8rem; font-weight:700; color:#475569;">மாவட்ட நிர்வாகி தங்கள் பள்ளியின் நாடகக் குழுவிற்கான வெற்றி / பங்கேற்பு நிலையைத் (🥇 முதலிடம் / 🥈 இரண்டாமிடம் / 🥉 மூன்றாமிடம் / 🌟 சிறப்பிடம் / 🎖️ பங்கேற்பாளர்) தேர்ந்தெடுத்தப் பின்னரே இங்கே சான்றிதழ் பதிவிறக்கம் செய்யும் வசதி தோன்றும்.</span>
-            </div>
-          ` : `
-            <div style="margin-top:12px; background:linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%); border:1.5px solid #d97706; border-radius:10px; padding:12px 14px;">
-              <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px; margin-bottom:8px;">
-                <div style="font-weight:900; color:#92400e; font-size:0.92rem;">
-                  🎓 தென்னிந்திய அறிவியல் நாடக விழா 2026 – பாராட்டுச் சான்றிதழ்கள் (நிலை: <span style="color:#b91c1c;">${rec.prizeRank || "🎖️ பங்கேற்பாளர்"}</span>)
+        // Render summary cards for ALL registered drama teams of this school!
+        sumDet.innerHTML = allSchoolTeams.map((tItem, tIdx) => {
+          const filledMembers = (tItem.members || []).filter(m => m && (m.nameTa || m.nameEn));
+          const activeEligibleMembers = filledMembers.filter(m => !m.certRevoked);
+          const isRevokedTeam = Boolean(tItem.certRevoked);
+          const hasRank = !isRevokedTeam && Boolean(tItem.prizeRank && String(tItem.prizeRank).trim());
+          const tKey = tItem.teamNo || ("T-" + (tItem.uNo || "101"));
+          const isCurrentEditing = (String(tKey) === String(activeSchoolSisdcTeamNo));
+
+          return `
+            <div style="background:${isCurrentEditing ? '#ffffff' : '#f8fafc'}; border:2px solid ${isCurrentEditing ? '#7c3aed' : '#cbd5e1'}; border-radius:10px; padding:12px 14px; margin-bottom:${tIdx < allSchoolTeams.length - 1 ? '12px' : '0'};">
+              <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px; border-bottom:1px solid #e2e8f0; padding-bottom:8px; margin-bottom:8px;">
+                <div>
+                  <span style="background:#6d28d9; color:#fff; padding:3px 10px; border-radius:6px; font-weight:900; font-size:0.8rem;">🎭 நாடகக் குழு ${tIdx + 1}: ${tKey}</span>
+                  <strong style="color:#0f172a; margin-left:8px; font-size:0.95rem;">${tItem.dramaTitleTa || "பகுதியாகச் சேமிக்கப்பட்ட குழு"} ${tItem.dramaTitleEn ? " / " + tItem.dramaTitleEn : ""}</strong>
+                  ${tItem.isPartialDraft ? `<span style="background:#fef3c7; color:#b45309; border:1px solid #fcd34d; padding:2px 8px; border-radius:999px; font-size:0.72rem; font-weight:800; margin-left:6px;">💾 தானியங்கி வரைவு (Auto-Saved)</span>` : ""}
                 </div>
-                <span style="background:#dcfce7; color:#166534; border:1px solid #86efac; padding:2px 10px; border-radius:999px; font-size:0.75rem; font-weight:900;">✅ வருகை உறுதி (Present)</span>
-              </div>
-              <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(250px, 1fr)); gap:10px;">
-                <div style="background:#ffffff; border:1px solid #fcd34d; border-radius:8px; padding:10px;">
-                  <div style="font-size:0.8rem; font-weight:900; color:#4c1d95; margin-bottom:6px;">🎭 1. அனைத்து உறுப்பினர்கள் &amp; வழிகாட்டி ஆசிரியர் தனித்தனி நாடக விழா சான்றிதழ்கள் (${filledMembers.length} மாணவர்கள் + 1 ஆசிரியர் PDF):</div>
-                  <div style="display:flex; gap:6px; flex-wrap:wrap;">
-                    <button type="button" class="btn-sm" style="background:linear-gradient(135deg, #6d28d9 0%, #9d174d 100%); color:#fff; font-weight:900; font-size:0.78rem; flex:1;" onclick="downloadCurrentSchoolSisdcCertificates('bilingual', 'all_members')">📜 இருமொழி (All)</button>
-                    <button type="button" class="btn-sm" style="background:#059669; color:#fff; font-weight:800; font-size:0.78rem;" onclick="downloadCurrentSchoolSisdcCertificates('ta', 'all_members')">📜 தமிழ்</button>
-                    <button type="button" class="btn-sm" style="background:#2563eb; color:#fff; font-weight:800; font-size:0.78rem;" onclick="downloadCurrentSchoolSisdcCertificates('en', 'all_members')">📜 EN</button>
-                  </div>
-                </div>
-                <div style="background:#ffffff; border:1px solid #fcd34d; border-radius:8px; padding:10px;">
-                  <div style="font-size:0.8rem; font-weight:900; color:#1e3a8a; margin-bottom:6px;">🏆 2. பள்ளி நாடகக் குழு ஒருங்கிணைந்த சான்றிதழ் (Single-Page Team Certificate PDF):</div>
-                  <div style="display:flex; gap:6px; flex-wrap:wrap;">
-                    <button type="button" class="btn-sm" style="background:#1e3a8a; color:#fff; font-weight:900; font-size:0.78rem; flex:1;" onclick="downloadCurrentSchoolSisdcCertificates('bilingual', 'team')">📜 இருமொழி (Team)</button>
-                    <button type="button" class="btn-sm" style="background:#047857; color:#fff; font-weight:800; font-size:0.78rem;" onclick="downloadCurrentSchoolSisdcCertificates('ta', 'team')">📜 தமிழ்</button>
-                    <button type="button" class="btn-sm" style="background:#1d4ed8; color:#fff; font-weight:800; font-size:0.78rem;" onclick="downloadCurrentSchoolSisdcCertificates('en', 'team')">📜 EN</button>
-                  </div>
-                </div>
-                <div style="background:#ffffff; border:1px solid #fcd34d; border-radius:8px; padding:10px;">
-                  <div style="font-size:0.8rem; font-weight:900; color:#9a3412; margin-bottom:6px;">👤 3. தனிப்பட்ட மாணவர் / வழிகாட்டி ஆசிரியர் சான்றிதழ் தேர்வு:</div>
-                  <select id="sisdcSchoolCertMemberSel" class="form-control" style="padding:4px 6px; font-size:0.78rem; font-weight:800; margin-bottom:6px;">
-                    <option value="all_members">📑 அனைத்து உறுப்பினர்கள் + ஆசிரியர் (All)</option>
-                    <option value="teacher">👨‍🏫 வழிகாட்டி ஆசிரியர் மட்டும் (${rec.guideTeacherNameTa || rec.guideTeacherNameEn || "Teacher"})</option>
-                    ${filledMembers.map((m, mi) => `<option value="member_${mi}">🎭 ${m.sno || (mi+1)}. ${m.nameTa || m.nameEn} (${m.studentClass || "-"} - ${m.roleTa || "Artist"})</option>`).join("")}
-                  </select>
-                  <div style="display:flex; gap:6px; flex-wrap:wrap;">
-                    <button type="button" class="btn-sm" style="background:#7c3aed; color:#fff; font-weight:900; font-size:0.76rem; flex:1;" onclick="downloadCurrentSchoolSisdcCertificates('bilingual', document.getElementById('sisdcSchoolCertMemberSel')?.value || 'all_members')">📜 இருமொழி</button>
-                    <button type="button" class="btn-sm" style="background:#059669; color:#fff; font-weight:800; font-size:0.76rem;" onclick="downloadCurrentSchoolSisdcCertificates('ta', document.getElementById('sisdcSchoolCertMemberSel')?.value || 'all_members')">📜 தமிழ்</button>
-                    <button type="button" class="btn-sm" style="background:#2563eb; color:#fff; font-weight:800; font-size:0.76rem;" onclick="downloadCurrentSchoolSisdcCertificates('en', document.getElementById('sisdcSchoolCertMemberSel')?.value || 'all_members')">📜 EN</button>
-                  </div>
+                <div style="display:flex; gap:6px; flex-wrap:wrap;">
+                  <button type="button" class="btn-sm" style="background:#4c1d95; color:#fff; padding:5px 10px; font-size:0.76rem; font-weight:800;" onclick="selectSchoolSisdcTeam('${tKey}'); scrollToSisdcForm();">✏️ இக்குழுவைத் திருத்து</button>
+                  <button type="button" class="btn-sm" style="background:#0f766e; color:#fff; padding:5px 10px; font-size:0.76rem; font-weight:800;" onclick="downloadCurrentSchoolSisdcPdf('${tKey}')">📥 படிவம் PDF</button>
+                  ${allSchoolTeams.length > 1 ? `<button type="button" class="btn-sm" style="background:#dc2626; color:#fff; padding:5px 10px; font-size:0.76rem; font-weight:800;" onclick="deleteSchoolSisdcTeam('${tKey}')">🗑️ நீக்கு</button>` : ""}
                 </div>
               </div>
+              <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(220px, 1fr)); gap:6px; font-size:0.84rem;">
+                <div><strong>🗣️ மொழி &amp; கால அளவு:</strong> ${tItem.language || "தமிழ்"} (${tItem.durationMins || 30} நிமிடம்)</div>
+                <div><strong>🎯 துணைக்கருப்பொருள்:</strong> ${tItem.subTheme || "-"}</div>
+                <div><strong>👨‍🏫 வழிகாட்டி ஆசிரியர்:</strong> ${tItem.guideTeacherNameTa || "-"} (${tItem.guideTeacherMobile || "-"})</div>
+                <div><strong>👥 குழு உறுப்பினர்கள்:</strong> ${filledMembers.length} / 10 நபர்கள் | <strong>🕒 நேரம்:</strong> ${tItem.timestamp || "-"}</div>
+              </div>
+              ${tItem.attendanceStatus === "ABSENT" ? `
+                <div style="margin-top:10px; background:#fef2f2; border:1.5px solid #ef4444; border-radius:8px; padding:8px 12px; color:#991b1b; font-weight:800; font-size:0.82rem;">
+                  🚫 வருகைப்பதிவு: வருகை இல்லை (Absent) — போட்டியில் நேரில் வருகை தந்த நாடகக் குழுவிற்கு மட்டுமே சான்றிதழ் வழங்கப்படும்.
+                </div>
+              ` : (isRevokedTeam ? `
+                <div style="margin-top:10px; background:#fef2f2; border:1.5px solid #dc2626; border-radius:8px; padding:10px 12px; color:#991b1b; font-weight:800; font-size:0.84rem;">
+                  🚫 <strong>சான்றிதழ் ரத்து செய்யப்பட்டுள்ளது (Certificate Revoked by Admin):</strong> மாவட்ட நிர்வாகியால் இக்குழுவின் சான்றிதழ் நிறுத்தி வைக்கப்பட்டுள்ளது.
+                </div>
+              ` : (!hasRank ? `
+                <div style="margin-top:10px; background:#faf5ff; border:1.5px dashed #9333ea; border-radius:10px; padding:10px 14px; color:#581c87; font-weight:800; font-size:0.83rem;">
+                  ⏳ <strong>சான்றிதழ் பதிவிறக்கம் நிலுவையில் (Awaiting Admin Result Selection):</strong><br>
+                  <span style="font-size:0.78rem; font-weight:700; color:#475569;">மாவட்ட நிர்வாகி தங்கள் நாடகக் குழுவிற்கான வெற்றி / பங்கேற்பு நிலையைத் தேர்ந்தெடுத்தப் பின்னரே இங்கே சான்றிதழ் பதிவிறக்கம் செய்யும் வசதி தோன்றும்.</span>
+                </div>
+              ` : `
+                <div style="margin-top:10px; background:linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%); border:1.5px solid #d97706; border-radius:10px; padding:12px 14px;">
+                  <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px; margin-bottom:8px;">
+                    <div style="font-weight:900; color:#92400e; font-size:0.9rem;">
+                      🎓 தென்னிந்திய அறிவியல் நாடக விழா 2026 – பாராட்டுச் சான்றிதழ்கள் (${tKey} நிலை: <span style="color:#b91c1c;">${tItem.prizeRank}</span>)
+                    </div>
+                    <span style="background:#dcfce7; color:#166534; border:1px solid #86efac; padding:2px 10px; border-radius:999px; font-size:0.75rem; font-weight:900;">✅ சான்றிதழ் தயார் (${activeEligibleMembers.length} மாணவர்கள்)</span>
+                  </div>
+                  <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(240px, 1fr)); gap:10px;">
+                    <div style="background:#ffffff; border:1px solid #fcd34d; border-radius:8px; padding:10px;">
+                      <div style="font-size:0.79rem; font-weight:900; color:#4c1d95; margin-bottom:6px;">🎭 1. அனைத்து உறுப்பினர்கள் &amp; ஆசிரியர் சான்றிதழ்கள் (${activeEligibleMembers.length} மாணவர்கள் PDF):</div>
+                      <div style="display:flex; gap:6px; flex-wrap:wrap;">
+                        <button type="button" class="btn-sm" style="background:linear-gradient(135deg, #6d28d9 0%, #9d174d 100%); color:#fff; font-weight:900; font-size:0.76rem; flex:1;" onclick="downloadCurrentSchoolSisdcCertificates('bilingual', 'all_members', '${tKey}')">📜 இருமொழி (All)</button>
+                        <button type="button" class="btn-sm" style="background:#059669; color:#fff; font-weight:800; font-size:0.76rem;" onclick="downloadCurrentSchoolSisdcCertificates('ta', 'all_members', '${tKey}')">📜 தமிழ்</button>
+                        <button type="button" class="btn-sm" style="background:#2563eb; color:#fff; font-weight:800; font-size:0.76rem;" onclick="downloadCurrentSchoolSisdcCertificates('en', 'all_members', '${tKey}')">📜 EN</button>
+                      </div>
+                    </div>
+                    <div style="background:#ffffff; border:1px solid #fcd34d; border-radius:8px; padding:10px;">
+                      <div style="font-size:0.79rem; font-weight:900; color:#1e3a8a; margin-bottom:6px;">🏆 2. பள்ளி நாடகக் குழு ஒருங்கிணைந்த சான்றிதழ் (Team PDF):</div>
+                      <div style="display:flex; gap:6px; flex-wrap:wrap;">
+                        <button type="button" class="btn-sm" style="background:#1e3a8a; color:#fff; font-weight:900; font-size:0.76rem; flex:1;" onclick="downloadCurrentSchoolSisdcCertificates('bilingual', 'team', '${tKey}')">📜 இருமொழி (Team)</button>
+                        <button type="button" class="btn-sm" style="background:#047857; color:#fff; font-weight:800; font-size:0.76rem;" onclick="downloadCurrentSchoolSisdcCertificates('ta', 'team', '${tKey}')">📜 தமிழ்</button>
+                        <button type="button" class="btn-sm" style="background:#1d4ed8; color:#fff; font-weight:800; font-size:0.76rem;" onclick="downloadCurrentSchoolSisdcCertificates('en', 'team', '${tKey}')">📜 EN</button>
+                      </div>
+                    </div>
+                    <div style="background:#ffffff; border:1px solid #fcd34d; border-radius:8px; padding:10px;">
+                      <div style="font-size:0.79rem; font-weight:900; color:#9a3412; margin-bottom:6px;">👤 3. தனிப்பட்ட மாணவர் / ஆசிரியர் சான்றிதழ் தேர்வு:</div>
+                      <select id="sisdcSchoolCertMemberSel_${tKey}" class="form-control" style="padding:4px 6px; font-size:0.76rem; font-weight:800; margin-bottom:6px;">
+                        <option value="all_members">📑 அனைத்து உறுப்பினர்கள் + ஆசிரியர் (All)</option>
+                        ${!tItem.teacherCertRevoked ? `<option value="teacher">👨‍🏫 வழிகாட்டி ஆசிரியர் (${tItem.guideTeacherNameTa || tItem.guideTeacherNameEn || "Teacher"})</option>` : `<option value="teacher" disabled>🚫 வழிகாட்டி ஆசிரியர் (சான்றிதழ் ரத்து)</option>`}
+                        ${filledMembers.map((m, mi) => m.certRevoked
+                          ? `<option value="member_${mi}" disabled>🚫 ${m.sno || (mi+1)}. ${m.nameTa || m.nameEn} (சான்றிதழ் ரத்து செய்யப்பட்டது)</option>`
+                          : `<option value="member_${mi}">🎭 ${m.sno || (mi+1)}. ${m.nameTa || m.nameEn} ${m.emisId ? '[EMIS: ' + m.emisId + ']' : ''} (${m.studentClass || "-"} - ${m.roleTa || "Artist"})</option>`
+                        ).join("")}
+                      </select>
+                      <div style="display:flex; gap:6px; flex-wrap:wrap;">
+                        <button type="button" class="btn-sm" style="background:#7c3aed; color:#fff; font-weight:900; font-size:0.75rem; flex:1;" onclick="downloadCurrentSchoolSisdcCertificates('bilingual', document.getElementById('sisdcSchoolCertMemberSel_${tKey}')?.value || 'all_members', '${tKey}')">📜 இருமொழி</button>
+                        <button type="button" class="btn-sm" style="background:#059669; color:#fff; font-weight:800; font-size:0.75rem;" onclick="downloadCurrentSchoolSisdcCertificates('ta', document.getElementById('sisdcSchoolCertMemberSel_${tKey}')?.value || 'all_members', '${tKey}')">📜 தமிழ்</button>
+                        <button type="button" class="btn-sm" style="background:#2563eb; color:#fff; font-weight:800; font-size:0.75rem;" onclick="downloadCurrentSchoolSisdcCertificates('en', document.getElementById('sisdcSchoolCertMemberSel_${tKey}')?.value || 'all_members', '${tKey}')">📜 EN</button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              `))}
             </div>
-          `)}
-        `;
+          `;
+        }).join("");
       }
     } else {
       if (sumBox) sumBox.style.display = "none";
-      if (formTno) formTno.innerText = "T-" + (loggedInSchool.uNo || "Auto");
+      const defaultFirstTno = `T-${String(loggedInSchool.uNo || "101").replace(/^0+/, "")}-1`;
+      activeSchoolSisdcTeamNo = defaultFirstTno;
+      if (hidTno) hidTno.value = defaultFirstTno;
+      if (formTno) formTno.innerText = defaultFirstTno;
     }
   }
 
@@ -17593,16 +18126,17 @@ ${n.message}
     if (f) f.scrollIntoView({ behavior: "smooth", block: "start" });
   }
 
-  function collectCurrentSisdcFormObject() {
+  function collectCurrentSisdcFormObject(opts) {
     const uNo = (loggedInSchool && loggedInSchool.uNo) ? String(loggedInSchool.uNo).replace(/^0+/, "") : "101";
     const udiseNo = (loggedInSchool && loggedInSchool.udiseNo) ? String(loggedInSchool.udiseNo) : "";
-    const existing = loggedInSchool ? getSchoolSisdcRecord(udiseNo, uNo) : null;
-    const teamNo = (existing && existing.teamNo) ? existing.teamNo : ("T-" + uNo);
+    const hidTno = (document.getElementById("sisdcActiveTeamNoHidden")?.value || activeSchoolSisdcTeamNo || "").trim();
+    const existing = loggedInSchool ? getSchoolSisdcRecord(udiseNo, uNo, hidTno) : null;
+    const teamNo = hidTno || (existing && existing.teamNo) || `T-${uNo}-1`;
 
     const schoolNameTa = (document.getElementById("sisdcSchoolNameTa")?.value || (loggedInSchool && loggedInSchool.nameTa) || "").trim();
     const schoolNameEn = (document.getElementById("sisdcSchoolNameEn")?.value || (loggedInSchool && loggedInSchool.nameEn) || "").trim();
     const guideTeacherNameTa = formatNameInitialLast((document.getElementById("sisdcTeacherNameTa")?.value || "").trim(), true);
-    const guideTeacherNameEn = formatNameInitialLast((document.getElementById("sisdcTeacherNameEn")?.value || "").trim(), false);
+    const guideTeacherNameEn = formatNameInitialLast((document.getElementById("sisdcTeacherNameEn")?.value || "").trim(), false).toUpperCase();
     const guideTeacherMobile = (document.getElementById("sisdcTeacherMobile")?.value || "").trim();
     const dramaTitleTa = (document.getElementById("sisdcDramaTitleTa")?.value || "").trim();
     const dramaTitleEn = (document.getElementById("sisdcDramaTitleEn")?.value || "").trim();
@@ -17612,19 +18146,24 @@ ${n.message}
     const subEl = document.querySelector('input[name="sisdcSubTheme"]:checked');
     const subTheme = subEl ? subEl.value : "துணைத்தலைப்பு 1: Artificial Intelligence: Friend, Tool or Threat?";
 
+    const prevMembers = (existing && Array.isArray(existing.members)) ? existing.members : [];
     const members = SISDC_ROLES.map((r, idx) => {
       const i = idx + 1;
+      const emisId = String(document.getElementById("sisdcMemEmis_" + i)?.value || "").replace(/[^0-9]/g, "").slice(0, 8);
       const nTa = formatNameInitialLast((document.getElementById("sisdcMemNameTa_" + i)?.value || "").trim(), true);
       const nEn = formatNameInitialLast((document.getElementById("sisdcMemNameEn_" + i)?.value || "").trim(), false);
       const cl = (document.getElementById("sisdcMemClass_" + i)?.value || (r.hasClass ? "" : "-")).trim();
+      const prevMem = prevMembers[idx] || {};
       return {
         sno: i,
+        emisId: emisId,
         nameTa: nTa,
         nameEn: nEn,
         studentClass: cl || (r.hasClass ? "-" : "-"),
         roleTa: r.roleTa,
         roleEn: r.roleEn,
-        fullRole: r.fullRole
+        fullRole: r.fullRole,
+        certRevoked: Boolean(prevMem.certRevoked)
       };
     });
 
@@ -17652,6 +18191,9 @@ ${n.message}
       subTheme,
       members,
       prizeRank: (existing && existing.prizeRank) || "",
+      certRevoked: Boolean(existing && existing.certRevoked),
+      teacherCertRevoked: Boolean(existing && existing.teacherCertRevoked),
+      attendanceStatus: (existing && existing.attendanceStatus) || "PRESENT",
       timestamp: new Date().toLocaleString("en-IN")
     };
   }
@@ -17663,37 +18205,47 @@ ${n.message}
       return;
     }
     const rec = collectCurrentSisdcFormObject();
-    const hasAtLeastOneMember = rec.members.some(m => m.nameTa || m.nameEn);
-    if (!hasAtLeastOneMember) {
+    const filledMems = rec.members.filter(m => m.nameTa || m.nameEn);
+    if (filledMems.length === 0) {
       showSisfToast("⚠️ குழு உறுப்பினர்கள் பட்டியலில் குறைந்தது ஒரு மாணவர் பெயரையாவது உள்ளிடவும்.");
       return;
     }
+    // Check 8-digit EMIS ID for filled student rows if entered partially
+    const invalidEmisRow = filledMems.find(m => m.emisId && m.emisId.length !== 8);
+    if (invalidEmisRow) {
+      showSisfToast(`⚠️ வ.எண் ${invalidEmisRow.sno} (${invalidEmisRow.nameTa || invalidEmisRow.nameEn}) மாணவரின் EMIS எண் சரியாக 8 இலக்கங்கள் இருக்க வேண்டும்.`);
+      return;
+    }
 
+    rec.isPartialDraft = false;
     saveSchoolSisdcRecord(rec);
     populateSchoolSisdcFormAndSummary();
     updateDedicatedModuleBoxBadges();
+    try { renderSchoolCertificatesDownloadCenter(); } catch (e) {}
 
     try {
       if (loggedInSchool && loggedInSchool.schoolEmail) {
         rec.schoolEmail = loggedInSchool.schoolEmail;
       }
-      sendToScriptReliably(rec);
+      sendSisdcToCloudSheet(rec, false);
     } catch (e) {}
 
-    showSisfToast("✅ தென்னிந்திய அறிவியல் நாடக விழா (SISDC 2026) குழு விண்ணப்பம் வெற்றிகரமாகச் சேமிக்கப்பட்டது! இப்போது அதிகாரப்பூர்வ படிவத்தை PDF ஆகப் பதிவிறக்கம் செய்யலாம்.");
+    showSisfToast(`✅ தென்னிந்திய அறிவியல் நாடக விழா குழு (${rec.teamNo}) விண்ணப்பம் வெற்றிகரமாகச் சேமிக்கப்பட்டு Google Sheet-க்கு அனுப்பப்பட்டது! மேலும் மற்றொரு குழுவைச் சேர்க்க '➕ புதிய நாடகக் குழு சேர்க்க' பொத்தானைப் பயன்படுத்தலாம்.`);
     const sumBox = document.getElementById("sisdcSubmittedSummaryBox");
     if (sumBox) sumBox.scrollIntoView({ behavior: "smooth", block: "center" });
   }
 
-  function downloadCurrentSchoolSisdcPdf() {
-    let rec = loggedInSchool ? getSchoolSisdcRecord(loggedInSchool.udiseNo, loggedInSchool.uNo) : null;
-    const formTitle = document.getElementById("sisdcDramaTitleTa")?.value?.trim();
-    if (formTitle) {
-      rec = collectCurrentSisdcFormObject();
+  function downloadCurrentSchoolSisdcPdf(specificTeamNo) {
+    let rec = null;
+    if (specificTeamNo && loggedInSchool) {
+      rec = getSchoolSisdcRecord(loggedInSchool.udiseNo, loggedInSchool.uNo, specificTeamNo);
     }
     if (!rec) {
-      rec = collectCurrentSisdcFormObject();
+      const formTitle = document.getElementById("sisdcDramaTitleTa")?.value?.trim();
+      if (formTitle) rec = collectCurrentSisdcFormObject();
+      else if (loggedInSchool) rec = getSchoolSisdcRecord(loggedInSchool.udiseNo, loggedInSchool.uNo);
     }
+    if (!rec) rec = collectCurrentSisdcFormObject();
     generateAndDownloadSisdcPdf(rec);
   }
 
@@ -17920,8 +18472,8 @@ ${n.message}
     // =========================================================================
     curY = drawSisdcSectionBanner(curY, "3. குழு உறுப்பினர்கள் விவரம் (TEAM MEMBERS LIST – MAXIMUM 10 MEMBERS)");
 
-    // 6 Columns: வ.எண் (68) | மாணவர் பெயர் (தமிழில்) (278) | Student Name (in English) (278) | வகுப்பு (88) | குழுவில் பங்கு (Role) (224) | கையொப்பம் (160) = 1096
-    const colWidths = [68, 278, 278, 88, 224, 160];
+    // 7 Columns: வ.எண் (52) | 8 இலக்க EMIS எண் (142) | Student Name (En) (235) | மாணவர் பெயர் (தமிழில்) (235) | வகுப்பு (76) | குழுவில் பங்கு (Role) (206) | கையொப்பம் (150) = 1096
+    const colWidths = [52, 142, 235, 235, 76, 206, 150];
     const colX = [leftX];
     for (let i = 0; i < colWidths.length; i++) {
       colX.push(colX[i] + colWidths[i]);
@@ -17938,15 +18490,18 @@ ${n.message}
 
     ctx.fillStyle = "#ffffff";
     ctx.textAlign = "center";
-    ctx.font = "bold 16px 'Mukta Malar', 'Noto Sans Tamil', sans-serif";
+    ctx.font = "bold 15px 'Mukta Malar', 'Noto Sans Tamil', sans-serif";
     ctx.fillText("வ.எண்", colX[0] + colWidths[0] / 2, curY + 33);
-    ctx.fillText("மாணவர் பெயர்", colX[1] + colWidths[1] / 2, curY + 23);
-    ctx.fillText("(தமிழில்)", colX[1] + colWidths[1] / 2, curY + 44);
-    ctx.fillText("Student Name (in English)", colX[2] + colWidths[2] / 2, curY + 33);
-    ctx.fillText("வகுப்பு", colX[3] + colWidths[3] / 2, curY + 33);
-    ctx.fillText("குழுவில் பங்கு", colX[4] + colWidths[4] / 2, curY + 23);
-    ctx.fillText("(Role)", colX[4] + colWidths[4] / 2, curY + 44);
-    ctx.fillText("கையொப்பம்", colX[5] + colWidths[5] / 2, curY + 33);
+    ctx.fillText("8 இலக்க", colX[1] + colWidths[1] / 2, curY + 23);
+    ctx.fillText("EMIS எண்", colX[1] + colWidths[1] / 2, curY + 44);
+    ctx.fillText("Student Name", colX[2] + colWidths[2] / 2, curY + 23);
+    ctx.fillText("(in English)", colX[2] + colWidths[2] / 2, curY + 44);
+    ctx.fillText("மாணவர் பெயர்", colX[3] + colWidths[3] / 2, curY + 23);
+    ctx.fillText("(தமிழில்)", colX[3] + colWidths[3] / 2, curY + 44);
+    ctx.fillText("வகுப்பு", colX[4] + colWidths[4] / 2, curY + 33);
+    ctx.fillText("குழுவில் பங்கு", colX[5] + colWidths[5] / 2, curY + 23);
+    ctx.fillText("(Role)", colX[5] + colWidths[5] / 2, curY + 44);
+    ctx.fillText("கையொப்பம்", colX[6] + colWidths[6] / 2, curY + 33);
 
     curY += thH;
 
@@ -17958,9 +18513,8 @@ ${n.message}
       const mem = membersArr[idx] || {};
       const rH = (idx === 9) ? 78 : memRowH;
 
-      // Fill role column background as in PDF
       ctx.fillStyle = "#f8fafc";
-      ctx.fillRect(colX[4], curY, colWidths[4], rH);
+      ctx.fillRect(colX[5], curY, colWidths[5], rH);
 
       ctx.strokeStyle = "#94a3b8";
       ctx.lineWidth = 1.2;
@@ -17971,39 +18525,44 @@ ${n.message}
       // Col 0: S.No
       ctx.textAlign = "center";
       ctx.fillStyle = "#0f172a";
-      ctx.font = "16px sans-serif";
+      ctx.font = "bold 15px sans-serif";
       ctx.fillText(String(idx + 1), colX[0] + colWidths[0] / 2, curY + rH / 2 + 6);
 
-      // Col 1: Student Name (Tamil)
-      ctx.textAlign = "left";
-      ctx.fillStyle = "#0f172a";
-      ctx.font = "bold 16.5px 'Mukta Malar', 'Noto Sans Tamil', sans-serif";
-      ctx.fillText(mem.nameTa || "", colX[1] + 10, curY + rH / 2 + 6, colWidths[1] - 18);
+      // Col 1: 8-Digit EMIS ID
+      ctx.fillStyle = "#1e3a8a";
+      ctx.font = "bold 15.5px sans-serif";
+      ctx.fillText(mem.emisId || "-", colX[1] + colWidths[1] / 2, curY + rH / 2 + 6, colWidths[1] - 10);
 
       // Col 2: Student Name (English)
-      ctx.font = "bold 16px sans-serif";
-      ctx.fillText(mem.nameEn || "", colX[2] + 10, curY + rH / 2 + 6, colWidths[2] - 18);
+      ctx.textAlign = "left";
+      ctx.fillStyle = "#0f172a";
+      ctx.font = "bold 15px sans-serif";
+      ctx.fillText(mem.nameEn || "", colX[2] + 8, curY + rH / 2 + 6, colWidths[2] - 16);
 
-      // Col 3: Class
+      // Col 3: Student Name (Tamil)
+      ctx.font = "bold 15.5px 'Mukta Malar', 'Noto Sans Tamil', sans-serif";
+      ctx.fillText(mem.nameTa || "", colX[3] + 8, curY + rH / 2 + 6, colWidths[3] - 16);
+
+      // Col 4: Class
       ctx.textAlign = "center";
-      ctx.font = "bold 16px sans-serif";
+      ctx.font = "bold 15.5px sans-serif";
       const clsDisp = mem.studentClass || (roleDef.hasClass ? "" : "-");
-      ctx.fillText(clsDisp, colX[3] + colWidths[3] / 2, curY + rH / 2 + 6);
+      ctx.fillText(clsDisp, colX[4] + colWidths[4] / 2, curY + rH / 2 + 6);
 
-      // Col 4: Role
+      // Col 5: Role
       ctx.textAlign = "left";
       ctx.fillStyle = "#0f172a";
       if (idx === 9) {
-        ctx.font = "bold 15.5px 'Mukta Malar', 'Noto Sans Tamil', sans-serif";
-        ctx.fillText("திரைக்கதை", colX[4] + 12, curY + 24);
-        ctx.fillText("எழுத்தாளர்", colX[4] + 12, curY + 45);
-        ctx.font = "bold 14.5px sans-serif";
-        ctx.fillText("(Script Writer)", colX[4] + 12, curY + 65);
+        ctx.font = "bold 15px 'Mukta Malar', 'Noto Sans Tamil', sans-serif";
+        ctx.fillText("திரைக்கதை", colX[5] + 10, curY + 24);
+        ctx.fillText("எழுத்தாளர்", colX[5] + 10, curY + 45);
+        ctx.font = "bold 14px sans-serif";
+        ctx.fillText("(Script Writer)", colX[5] + 10, curY + 65);
       } else {
-        ctx.font = (idx === 8) ? "bold 16px 'Mukta Malar', 'Noto Sans Tamil', sans-serif" : "15.5px 'Mukta Malar', 'Noto Sans Tamil', sans-serif";
-        ctx.fillText(roleDef.roleTa, colX[4] + 12, curY + 28);
-        ctx.font = (idx === 8) ? "bold 15px sans-serif" : "15px sans-serif";
-        ctx.fillText(roleDef.roleEn, colX[4] + 12, curY + 50);
+        ctx.font = (idx === 8) ? "bold 15.5px 'Mukta Malar', 'Noto Sans Tamil', sans-serif" : "15px 'Mukta Malar', 'Noto Sans Tamil', sans-serif";
+        ctx.fillText(roleDef.roleTa, colX[5] + 10, curY + 28);
+        ctx.font = (idx === 8) ? "bold 14.5px sans-serif" : "14.5px sans-serif";
+        ctx.fillText(roleDef.roleEn, colX[5] + 10, curY + 50);
       }
 
       curY += rH;
@@ -18029,12 +18588,12 @@ ${n.message}
   }
 
   function adminToggleSisdcAttendance(keyId, newStatus) {
-    const all = getAllSisdcTeamsFromStorage();
-    const rec = all.find(t => String(t.uNo || "") === String(keyId) || String(t.udiseNo || "") === String(keyId));
+    const rec = findSisdcTeamByKey(keyId);
     if (!rec) return;
     rec.attendanceStatus = (newStatus === "ABSENT") ? "ABSENT" : "PRESENT";
     saveSchoolSisdcRecord(rec);
     renderAdminSisdcTeamsTable(false);
+    try { renderAdminSisdcWinnersTable(); } catch (e) {}
     if (loggedInSchool) {
       populateSchoolSisdcFormAndSummary();
       try { renderSchoolCertificatesDownloadCenter(); } catch (e) {}
@@ -18044,10 +18603,14 @@ ${n.message}
       : `❌ நாடகக் குழு (${rec.teamNo || rec.uNo}) 'வருகை இல்லை (Absent)' எனப் பதிவு செய்யப்பட்டது — சான்றிதழ் முடக்கப்பட்டது.`);
   }
 
-  function downloadCurrentSchoolSisdcCertificates(langMode, scopeMode) {
-    let rec = loggedInSchool ? getSchoolSisdcRecord(loggedInSchool.udiseNo, loggedInSchool.uNo) : null;
+  function downloadCurrentSchoolSisdcCertificates(langMode, scopeMode, specificTeamNo) {
+    let rec = loggedInSchool ? getSchoolSisdcRecord(loggedInSchool.udiseNo, loggedInSchool.uNo, specificTeamNo) : null;
     if (!rec) {
       showSisfToast("⚠️ முதலில் உங்கள் பள்ளியின் அறிவியல் நாடகக் குழு விவரங்களைப் பதிவு செய்து சேமிக்கவும்.");
+      return;
+    }
+    if (rec.certRevoked) {
+      showSisfToast("🚫 இந்த நாடகக் குழுவின் சான்றிதழ் மாவட்ட நிர்வாகியால் ரத்து செய்யப்பட்டுள்ளது.");
       return;
     }
     if (!rec.prizeRank || !String(rec.prizeRank).trim()) {
@@ -18058,10 +18621,13 @@ ${n.message}
   }
 
   function adminDownloadSchoolSisdcCertificates(keyId, langMode, scopeMode) {
-    const all = getAllSisdcTeamsFromStorage();
-    const rec = all.find(t => String(t.uNo || "") === String(keyId) || String(t.udiseNo || "") === String(keyId));
+    const rec = findSisdcTeamByKey(keyId);
     if (!rec) {
       showSisfToast("⚠️ நாடகக் குழு விவரம் காணப்படவில்லை.");
+      return;
+    }
+    if (rec.certRevoked) {
+      showSisfToast("🚫 இக்குழுவின் சான்றிதழ் ரத்து செய்யப்பட்டுள்ளது. முதலில் '🔄 மீண்டும் அனுமதி' பொத்தானைச் சொடுக்கவும்.");
       return;
     }
     generateAndDownloadSisdcCertificatesPdf(rec, langMode || "bilingual", scopeMode || "all_members");
@@ -18814,29 +19380,43 @@ ${n.message}
     const mode = langMode || "bilingual"; // 'bilingual', 'ta', or 'en'
     const scope = scopeMode || "all_members"; // 'all_members', 'team', 'teacher', or 'member_0'..'member_9'
 
+    if (dramaRec.certRevoked) {
+      showSisfToast("🚫 இந்த நாடகக் குழுவின் சான்றிதழ் மாவட்ட நிர்வாகியால் ரத்து செய்யப்பட்டுள்ளது.");
+      return;
+    }
+
     const runRender = () => {
       const canvases = [];
       const filledMembers = (Array.isArray(dramaRec.members) ? dramaRec.members : []).filter(m => m && (m.nameTa || m.nameEn));
+      const eligibleMembers = filledMembers.filter(m => !m.certRevoked);
 
-      if (scope === "team" || (filledMembers.length === 0 && scope !== "teacher")) {
+      if (scope === "team" || (eligibleMembers.length === 0 && scope !== "teacher")) {
         canvases.push(renderSingleSisdcCertificateCanvas(dramaRec, mode, { type: "TEAM" }));
       } else if (scope === "teacher") {
+        if (dramaRec.teacherCertRevoked) {
+          showSisfToast("🚫 வழிகாட்டி ஆசிரியரின் சான்றிதழ் ரத்து செய்யப்பட்டுள்ளது.");
+          return;
+        }
         canvases.push(renderSingleSisdcCertificateCanvas(dramaRec, mode, { type: "TEACHER" }));
       } else if (scope.startsWith("member_")) {
         const mIdx = parseInt(scope.replace("member_", ""), 10);
         const targetMem = filledMembers[mIdx] || (dramaRec.members && dramaRec.members[mIdx]);
+        if (targetMem && targetMem.certRevoked) {
+          showSisfToast(`🚫 மாணவர் (${targetMem.nameTa || targetMem.nameEn}) சான்றிதழ் நிர்வாகியால் ரத்து செய்யப்பட்டுள்ளது.`);
+          return;
+        }
         if (targetMem) {
           canvases.push(renderSingleSisdcCertificateCanvas(dramaRec, mode, { type: "MEMBER", member: targetMem, index: mIdx }));
         } else {
           canvases.push(renderSingleSisdcCertificateCanvas(dramaRec, mode, { type: "TEAM" }));
         }
       } else {
-        // Generate an individual A4 Portrait Certificate for EACH filled student member (up to 10)
-        filledMembers.forEach((mem, idx) => {
+        // Generate an individual A4 Portrait Certificate for EACH non-revoked student member (up to 10)
+        eligibleMembers.forEach((mem, idx) => {
           canvases.push(renderSingleSisdcCertificateCanvas(dramaRec, mode, { type: "MEMBER", member: mem, index: idx }));
         });
-        // Plus a dedicated Certificate Page for the Guide Teacher if present
-        if (dramaRec.guideTeacherNameTa || dramaRec.guideTeacherNameEn) {
+        // Plus a dedicated Certificate Page for the Guide Teacher if present and not revoked
+        if ((dramaRec.guideTeacherNameTa || dramaRec.guideTeacherNameEn) && !dramaRec.teacherCertRevoked) {
           canvases.push(renderSingleSisdcCertificateCanvas(dramaRec, mode, { type: "TEACHER" }));
         }
       }
@@ -19928,14 +20508,13 @@ ${n.message}
     const tbody = document.getElementById("admSisdcTeamsTableBody");
     if (!tbody) return;
     const allRaw = getAllSisdcTeamsFromStorage();
-    const all = onlyWinners ? allRaw.filter(t => Boolean(t && t.prizeRank)) : allRaw;
+    const all = onlyWinners ? allRaw.filter(t => Boolean(t && t.prizeRank && !t.certRevoked)) : allRaw;
 
-    // Update Sub-Theme Counters
     const setTxt = (id, v) => { const el = document.getElementById(id); if (el) el.innerText = v; };
-    setTxt("admSisdcStatSub1", all.filter(t => String(t.subTheme || "").includes("துணைத்தலைப்பு 1") || String(t.subTheme || "").includes("Artificial")).length);
-    setTxt("admSisdcStatSub2", all.filter(t => String(t.subTheme || "").includes("துணைத்தலைப்பு 2") || String(t.subTheme || "").includes("EV:")).length);
-    setTxt("admSisdcStatSub3", all.filter(t => String(t.subTheme || "").includes("துணைத்தலைப்பு 3") || String(t.subTheme || "").includes("Interstellar")).length);
-    setTxt("admSisdcStatSub4", all.filter(t => String(t.subTheme || "").includes("துணைத்தலைப்பு 4") || String(t.subTheme || "").includes("Restoring")).length);
+    setTxt("admSisdcStatSub1", allRaw.filter(t => String(t.subTheme || "").includes("துணைத்தலைப்பு 1") || String(t.subTheme || "").includes("Artificial")).length);
+    setTxt("admSisdcStatSub2", allRaw.filter(t => String(t.subTheme || "").includes("துணைத்தலைப்பு 2") || String(t.subTheme || "").includes("EV:")).length);
+    setTxt("admSisdcStatSub3", allRaw.filter(t => String(t.subTheme || "").includes("துணைத்தலைப்பு 3") || String(t.subTheme || "").includes("Interstellar")).length);
+    setTxt("admSisdcStatSub4", allRaw.filter(t => String(t.subTheme || "").includes("துணைத்தலைப்பு 4") || String(t.subTheme || "").includes("Restoring")).length);
     updateDedicatedModuleBoxBadges();
 
     const stFilter = document.getElementById("admSisdcSubThemeFilter")?.value || "ALL";
@@ -19946,9 +20525,10 @@ ${n.message}
       if (stFilter !== "ALL" && !String(t.subTheme || "").includes(stFilter)) return false;
       if (lgFilter !== "ALL" && t.language !== lgFilter) return false;
       if (!q) return true;
+      const memEmisNames = (t.members || []).map(m => `${m.emisId || ""} ${m.nameTa || ""} ${m.nameEn || ""}`).join(" ");
       const hay = [
         t.teamNo, t.uNo, t.udiseNo, t.schoolNameTa, t.schoolNameEn,
-        t.dramaTitleTa, t.dramaTitleEn, t.guideTeacherNameTa, t.guideTeacherNameEn, t.guideTeacherMobile
+        t.dramaTitleTa, t.dramaTitleEn, t.guideTeacherNameTa, t.guideTeacherNameEn, t.guideTeacherMobile, memEmisNames
       ].join(" ").toLowerCase();
       return hay.includes(q);
     });
@@ -19960,13 +20540,16 @@ ${n.message}
 
     tbody.innerHTML = filtered.map((t, idx) => {
       const mems = (t.members || []).filter(m => m && (m.nameTa || m.nameEn));
+      const revokedMemsCnt = mems.filter(m => m.certRevoked).length;
       const curRank = t.prizeRank || "";
-      const keyId = t.uNo || t.udiseNo || String(idx);
+      const isRevoked = Boolean(t.certRevoked);
+      const keyId = t.teamNo || t.uNo || t.udiseNo || String(idx);
       return `
         <tr>
           <td style="text-align:center; font-weight:800;">${idx + 1}</td>
           <td>
-            <input type="text" class="form-control" value="${t.teamNo || ("T-" + (t.uNo || (idx + 1)))}" style="width:92px; padding:4px 6px; font-weight:900; color:#1e3a8a; text-align:center;" onchange="adminUpdateSisdcTeamNo('${keyId}', this.value)" title="Team No மாற்றினால் நேரடியாகப் படிவத்தில் அச்சிடப்படும்">
+            <input type="text" class="form-control" value="${t.teamNo || ("T-" + (t.uNo || (idx + 1)))}" style="width:100px; padding:4px 6px; font-weight:900; color:#1e3a8a; text-align:center;" onchange="adminUpdateSisdcTeamNo('${keyId}', this.value)" title="Team No மாற்றினால் நேரடியாகப் படிவத்தில் அச்சிடப்படும்">
+            ${t.isPartialDraft ? `<div style="font-size:0.68rem; color:#b45309; font-weight:800; text-align:center; margin-top:3px;">💾 பகுதிப் பதிவு</div>` : ""}
           </td>
           <td>
             <strong>U.NO: ${t.uNo || "-"}</strong> <span style="font-size:0.75rem; color:#64748b;">(${t.udiseNo || "-"})</span><br>
@@ -19979,27 +20562,32 @@ ${n.message}
               🗣️ ${t.language || "தமிழ்"} | ⏱️ ${t.durationMins || 30} நிமிடம்
             </span>
           </td>
-          <td style="max-width:210px; font-size:0.8rem; font-weight:700; color:#1e293b;">${t.subTheme || "-"}</td>
+          <td style="max-width:200px; font-size:0.8rem; font-weight:700; color:#1e293b;">${t.subTheme || "-"}</td>
           <td>
             <strong>${t.guideTeacherNameTa || t.guideTeacherNameEn || "-"}</strong><br>
+            <span style="font-size:0.75rem; color:#475569; font-weight:700;">${t.guideTeacherNameEn || ""}</span><br>
             <span style="font-size:0.8rem; color:#0369a1; font-weight:800;">📞 ${t.guideTeacherMobile || "-"}</span>
           </td>
           <td>
-            <span style="background:#dcfce7; color:#166534; padding:3px 9px; border-radius:999px; font-weight:800; font-size:0.78rem;">
-              👥 ${mems.length} / 10 உறுப்பினர்கள்
+            <span style="background:#dcfce7; color:#166534; padding:3px 9px; border-radius:999px; font-weight:800; font-size:0.76rem;">
+              👥 ${mems.length} / 10 மாணவர்கள்
             </span>
-            <div style="font-size:0.74rem; color:#475569; margin-top:4px; max-height:65px; overflow-y:auto;">
-              ${mems.slice(0, 3).map(m => `${m.sno}) ${m.nameTa || m.nameEn}`).join("<br>")}
+            ${revokedMemsCnt > 0 ? `<span style="background:#fee2e2; color:#991b1b; padding:2px 7px; border-radius:999px; font-weight:800; font-size:0.7rem; margin-left:4px;">🚫 ${revokedMemsCnt} ரத்து</span>` : ""}
+            <div style="font-size:0.73rem; color:#475569; margin-top:4px; max-height:70px; overflow-y:auto;">
+              ${mems.slice(0, 3).map(m => `${m.sno}) ${m.nameTa || m.nameEn} ${m.emisId ? '<strong style="color:#1e3a8a;">[' + m.emisId + ']</strong>' : ''}`).join("<br>")}
               ${mems.length > 3 ? `<br><em>+${mems.length - 3} நபர்கள்...</em>` : ""}
             </div>
+            <button type="button" class="btn-sm" style="background:#f5f3ff; color:#5b21b6; border:1px solid #c4b5fd; padding:3px 7px; font-size:0.7rem; font-weight:800; margin-top:4px; width:100%; justify-content:center;" onclick="openSisdcStudentCertRevokeModal('${keyId}')">
+              👥 மாணவர் சான்றிதழ் ரத்து / மேலாண்மை
+            </button>
           </td>
-          <td style="min-width:215px;">
+          <td style="min-width:225px;">
             <div style="display:flex; gap:4px; margin-bottom:5px;">
               <button type="button" onclick="adminToggleSisdcAttendance('${keyId}', 'PRESENT')" style="flex:1; padding:3px 6px; border-radius:5px; font-size:0.72rem; font-weight:800; cursor:pointer; border:1.5px solid ${t.attendanceStatus !== 'ABSENT' ? '#15803d' : '#cbd5e1'}; background:${t.attendanceStatus !== 'ABSENT' ? '#dcfce7' : '#f8fafc'}; color:${t.attendanceStatus !== 'ABSENT' ? '#166534' : '#64748b'};">✅ வருகை</button>
               <button type="button" onclick="adminToggleSisdcAttendance('${keyId}', 'ABSENT')" style="flex:1; padding:3px 6px; border-radius:5px; font-size:0.72rem; font-weight:800; cursor:pointer; border:1.5px solid ${t.attendanceStatus === 'ABSENT' ? '#dc2626' : '#cbd5e1'}; background:${t.attendanceStatus === 'ABSENT' ? '#fef2f2' : '#f8fafc'}; color:${t.attendanceStatus === 'ABSENT' ? '#991b1b' : '#64748b'};">❌ இல்லை</button>
             </div>
             <select class="form-control" style="padding:4px 6px; font-size:0.78rem; font-weight:800; margin-bottom:5px;" onchange="adminUpdateSisdcPrizeRank('${keyId}', this.value)">
-              <option value="">-- பரிசு / பங்கேற்பாளர் தேர்வு --</option>
+              <option value="">-- வெற்றி / பங்கேற்பு நிலை தேர்வு --</option>
               <option value="🥇 முதலிடம் (மாநில அளவிலான போட்டிக்கு தேர்வு)" ${curRank.includes("முதலிடம்") ? "selected" : ""}>🥇 முதலிடம்</option>
               <option value="🥈 இரண்டாமிடம்" ${curRank.includes("இரண்டாமிடம்") ? "selected" : ""}>🥈 இரண்டாமிடம்</option>
               <option value="🥉 மூன்றாமிடம்" ${curRank.includes("மூன்றாமிடம்") ? "selected" : ""}>🥉 மூன்றாமிடம்</option>
@@ -20008,24 +20596,32 @@ ${n.message}
             </select>
             ${t.attendanceStatus === "ABSENT" ? `
               <div style="background:#fee2e2; color:#991b1b; padding:3px 6px; border-radius:5px; font-size:0.71rem; font-weight:800; text-align:center;">🚫 வருகை இல்லை (சான்றிதழ் கிடையாது)</div>
+            ` : (isRevoked ? `
+              <div style="background:#fee2e2; color:#991b1b; padding:4px 6px; border-radius:5px; font-size:0.72rem; font-weight:800; text-align:center; margin-bottom:4px;">🚫 சான்றிதழ் ரத்து செய்யப்பட்டுள்ளது</div>
+              <button type="button" class="btn-sm" style="background:#059669; color:#fff; width:100%; justify-content:center; font-size:0.72rem; padding:4px 6px; font-weight:800;" onclick="adminRestoreSisdcTeamCertificate('${keyId}')">🔄 சான்றிதழ் மீண்டும் அனுமதி</button>
+            ` : (!curRank ? `
+              <div style="background:#fffbeb; color:#92400e; border:1px dashed #d97706; padding:4px 6px; border-radius:5px; font-size:0.71rem; font-weight:800; text-align:center;">⏳ மேலே வெற்றி / பங்கேற்பு நிலையைத் தேர்ந்தெடுத்தால் சான்றிதழ் திறக்கும்</div>
             ` : `
               <div style="display:flex; gap:3px; flex-wrap:wrap; margin-bottom:3px;">
-                <button type="button" class="btn-sm" style="background:#4c1d95; color:#fff; flex:1; font-size:0.71rem; padding:4px 5px; font-weight:800;" onclick="adminDownloadSchoolSisdcCertificates('${keyId}', 'bilingual', 'all_members')" title="10 உறுப்பினர்கள் + ஆசிரியர் தனித்தனி இருமொழி சான்றிதழ்கள் PDF">📑 இருமொழி (All)</button>
-                <button type="button" class="btn-sm" style="background:#059669; color:#fff; font-size:0.71rem; padding:4px 6px; font-weight:800;" onclick="adminDownloadSchoolSisdcCertificates('${keyId}', 'ta', 'all_members')" title="தமிழ் சான்றிதழ்கள் (All Members)">📑 தமிழ்</button>
-                <button type="button" class="btn-sm" style="background:#2563eb; color:#fff; font-size:0.71rem; padding:4px 6px; font-weight:800;" onclick="adminDownloadSchoolSisdcCertificates('${keyId}', 'en', 'all_members')" title="English Certificates (All Members)">📑 EN</button>
+                <button type="button" class="btn-sm" style="background:#4c1d95; color:#fff; flex:1; font-size:0.71rem; padding:4px 5px; font-weight:800;" onclick="adminDownloadSchoolSisdcCertificates('${keyId}', 'bilingual', 'all_members')">📑 இருமொழி (All)</button>
+                <button type="button" class="btn-sm" style="background:#059669; color:#fff; font-size:0.71rem; padding:4px 6px; font-weight:800;" onclick="adminDownloadSchoolSisdcCertificates('${keyId}', 'ta', 'all_members')">📑 தமிழ்</button>
+                <button type="button" class="btn-sm" style="background:#2563eb; color:#fff; font-size:0.71rem; padding:4px 6px; font-weight:800;" onclick="adminDownloadSchoolSisdcCertificates('${keyId}', 'en', 'all_members')">📑 EN</button>
               </div>
-              <button type="button" class="btn-sm" style="background:#0f766e; color:#fff; width:100%; justify-content:center; font-size:0.71rem; padding:4px 6px; font-weight:800;" onclick="adminDownloadSchoolSisdcCertificates('${keyId}', 'bilingual', 'team')" title="பள்ளி நாடகக் குழு ஒருங்கிணைந்த சான்றிதழ் PDF">📜 குழு சான்றிதழ் (Team PDF)</button>
-            `}
+              <div style="display:flex; gap:3px;">
+                <button type="button" class="btn-sm" style="background:#0f766e; color:#fff; flex:1; justify-content:center; font-size:0.71rem; padding:4px 6px; font-weight:800;" onclick="adminDownloadSchoolSisdcCertificates('${keyId}', 'bilingual', 'team')">📜 குழு PDF</button>
+                <button type="button" class="btn-sm" style="background:#dc2626; color:#fff; font-size:0.71rem; padding:4px 7px; font-weight:800;" onclick="adminRevokeSisdcTeamCertificate('${keyId}')" title="வெற்றி / பங்கேற்புச் சான்றிதழை ரத்து செய்">🚫 சான்றிதழ் ரத்து</button>
+              </div>
+            `))}
           </td>
           <td>
             <div style="display:flex; gap:5px; flex-wrap:wrap;">
-              <button type="button" class="btn-sm" style="background:#059669; color:#fff; font-weight:900; font-size:0.76rem;" onclick="adminDirectLoginToSchool('${keyId}', 'SISDC')">
+              <button type="button" class="btn-sm" style="background:#059669; color:#fff; font-weight:900; font-size:0.75rem;" onclick="adminDirectEditSisdcTeam('${keyId}')">
                 ✏️ திருத்து
               </button>
-              <button type="button" class="btn-sm" style="background:#1e3a8a; color:#fff; font-weight:800; font-size:0.76rem;" onclick="adminDownloadSchoolSisdcPdf('${keyId}')">
+              <button type="button" class="btn-sm" style="background:#1e3a8a; color:#fff; font-weight:800; font-size:0.75rem;" onclick="adminDownloadSchoolSisdcPdf('${keyId}')">
                 📥 படிவம் PDF
               </button>
-              <button type="button" class="btn-sm" style="background:#dc2626; color:#fff; font-weight:800; font-size:0.76rem;" onclick="adminDeleteSisdcTeam('${keyId}')">
+              <button type="button" class="btn-sm" style="background:#dc2626; color:#fff; font-weight:800; font-size:0.75rem;" onclick="adminDeleteSisdcTeam('${keyId}')">
                 🗑️ அழி
               </button>
             </div>
@@ -20035,28 +20631,32 @@ ${n.message}
     }).join("");
   }
 
+  function adminDirectEditSisdcTeam(keyId) {
+    const rec = findSisdcTeamByKey(keyId);
+    if (!rec) return;
+    activeSchoolSisdcTeamNo = rec.teamNo;
+    adminDirectLoginToSchool(rec.uNo || rec.udiseNo, "SISDC");
+    setTimeout(() => {
+      selectSchoolSisdcTeam(rec.teamNo);
+    }, 140);
+  }
+
   function adminUpdateSisdcTeamNo(keyId, newTeamNo) {
     const all = getAllSisdcTeamsFromStorage();
-    const rec = all.find(t => String(t.uNo || "") === String(keyId) || String(t.udiseNo || "") === String(keyId));
-    if (rec) {
-      rec.teamNo = String(newTeamNo || "").trim();
-      saveSchoolSisdcRecord(rec);
-      try {
-        sendToScriptReliably(Object.assign({}, rec, {
-          action: "save_sisdc_application",
-          moduleId: "SISDC",
-          targetSheetId: "1jRcTIcA346IWHzGBmMRQ5499i8kwIuj523XyN160CCg"
-        }));
-      } catch (e) {}
+    const rec = all.find(t => String(t.teamNo || "") === String(keyId) || String(t.uNo || "") === String(keyId));
+    if (rec && newTeamNo && String(newTeamNo).trim()) {
+      rec.teamNo = String(newTeamNo).trim();
+      saveAllSisdcTeamsToStorage(all);
+      sendSisdcToCloudSheet(rec, true);
       showSisfToast(`✅ Team No '${rec.teamNo}' என SISDC_2026_Database தாளிலும் புதுப்பிக்கப்பட்டது.`);
     }
   }
 
   function adminUpdateSisdcPrizeRank(keyId, newRank) {
-    const all = getAllSisdcTeamsFromStorage();
-    const rec = all.find(t => String(t.uNo || "") === String(keyId) || String(t.udiseNo || "") === String(keyId));
+    const rec = findSisdcTeamByKey(keyId);
     if (rec) {
-      rec.prizeRank = newRank;
+      rec.prizeRank = newRank || "";
+      if (newRank) rec.certRevoked = false;
       saveSchoolSisdcRecord(rec);
       try {
         sendToScriptReliably({
@@ -20076,19 +20676,445 @@ ${n.message}
           prizeRank: newRank || "",
           membersCount: (rec.members || []).filter(m => m && (m.nameTa || m.nameEn)).length
         });
+        sendSisdcToCloudSheet(rec, true);
       } catch (e) {}
       renderAdminSisdcTeamsTable();
+      try { renderAdminSisdcWinnersTable(); } catch (e) {}
       if (loggedInSchool) {
         try { populateSchoolSisdcFormAndSummary(); } catch (e) {}
         try { renderSchoolCertificatesDownloadCenter(); } catch (e) {}
       }
-      showSisfToast(`🏆 நாடகக் குழுவின் பரிசு நிலை (${newRank || "நீக்கப்பட்டது"}) சேமிக்கப்பட்டது! இப்போது பள்ளி முகப்பிலும் சான்றிதழ் பதிவிறக்கம் செய்யலாம்.`);
+      showSisfToast(newRank
+        ? `🏆 நாடகக் குழு (${rec.teamNo}) பரிசு நிலை '${newRank}' எனச் சேமிக்கப்பட்டது! இப்போது பள்ளி முகப்பிலும் சான்றிதழ் பதிவிறக்கம் செய்யலாம்.`
+        : `🚫 நாடகக் குழு (${rec.teamNo}) வெற்றி நிலை நீக்கப்பட்டது — பள்ளி முகப்பில் சான்றிதழ் பதிவிறக்கம் பூட்டப்பட்டது.`);
     }
   }
 
-  function adminDownloadSchoolSisdcPdf(keyId) {
+  // =========================================================================
+  // 🏆 DEDICATED SISDC WINNERS SELECTION & CERTIFICATE REVOCATION ENGINE
+  // =========================================================================
+  function populateSisdcWinnerTeamsDropdown() {
+    const sel = document.getElementById("sisdcWinSelectTeam");
+    if (!sel) return;
     const all = getAllSisdcTeamsFromStorage();
-    const rec = all.find(t => String(t.uNo || "") === String(keyId) || String(t.udiseNo || "") === String(keyId));
+    const prev = sel.value;
+    sel.innerHTML = `<option value="">-- சமர்ப்பிக்கப்பட்ட நாடகக் குழுவைத் தேர்ந்தெடுக்கவும் (${all.length} குழுக்கள்) --</option>` +
+      all.map(t => `<option value="${t.teamNo}">${t.teamNo} | U.NO: ${t.uNo || "-"} | ${t.schoolNameTa || t.schoolNameEn || "-"} — ${t.dramaTitleTa || t.dramaTitleEn || "நாடகம்"}</option>`).join("");
+    if (prev) sel.value = prev;
+  }
+
+  function fillSisdcWinnerFromSubmittedTeam() {
+    const sel = document.getElementById("sisdcWinSelectTeam");
+    if (!sel || !sel.value) return;
+    const rec = findSisdcTeamByKey(sel.value);
+    if (!rec) return;
+    const setV = (id, v) => { const el = document.getElementById(id); if (el) el.value = v; };
+    setV("sisdcWinUno", rec.uNo || "");
+    setV("sisdcWinTeamNo", rec.teamNo || "");
+    setV("sisdcWinSchoolName", rec.schoolNameTa || rec.schoolNameEn || "");
+    setV("sisdcWinDramaTitle", rec.dramaTitleTa || rec.dramaTitleEn || "");
+    if (rec.subTheme) setV("sisdcWinSubTheme", rec.subTheme);
+    setV("sisdcWinTeacher", `${rec.guideTeacherNameTa || rec.guideTeacherNameEn || ""}${rec.guideTeacherMobile ? " - " + rec.guideTeacherMobile : ""}`);
+    if (rec.prizeRank) setV("sisdcWinPrizeRank", rec.prizeRank);
+  }
+
+  function lookupSchoolForSisdcWinnerForm() {
+    const q = (document.getElementById("sisdcWinTeamNo")?.value || document.getElementById("sisdcWinUno")?.value || "").trim();
+    if (!q) {
+      showSisfToast("⚠️ பள்ளி U.NO அல்லது Team No உள்ளிடவும்.");
+      return;
+    }
+    const rec = findSisdcTeamByKey(q);
+    if (rec) {
+      const sel = document.getElementById("sisdcWinSelectTeam");
+      if (sel) sel.value = rec.teamNo;
+      fillSisdcWinnerFromSubmittedTeam();
+      showSisfToast(`✅ நாடகக் குழு (${rec.teamNo} - ${rec.schoolNameTa}) விவரம் நிரப்பப்பட்டது!`);
+      return;
+    }
+    const cleanU = q.replace(/^0+/, "");
+    const mSch = (typeof MASTER_SCHOOLS !== "undefined")
+      ? MASTER_SCHOOLS.find(s => String(s.uNo) === cleanU || String(s.udiseNo) === q)
+      : null;
+    if (mSch) {
+      const setV = (id, v) => { const el = document.getElementById(id); if (el) el.value = v; };
+      setV("sisdcWinUno", mSch.uNo);
+      setV("sisdcWinTeamNo", `T-${mSch.uNo}-1`);
+      setV("sisdcWinSchoolName", mSch.nameTa || mSch.nameEn || "");
+      showSisfToast(`✅ ${mSch.nameTa} பள்ளி விவரம் நிரப்பப்பட்டது!`);
+    } else {
+      showSisfToast("⚠️ இந்த எண்ணில் நாடகக் குழு அல்லது பள்ளி விவரம் கிடைக்கவில்லை.");
+    }
+  }
+
+  function resetSisdcWinnerForm() {
+    const setV = (id, v) => { const el = document.getElementById(id); if (el) el.value = v; };
+    setV("sisdcWinSelectTeam", "");
+    setV("sisdcWinPrizeRank", "🥇 முதலிடம் (மாநில அளவிலான போட்டிக்கு தேர்வு)");
+    setV("sisdcWinUno", "");
+    setV("sisdcWinTeamNo", "");
+    setV("sisdcWinSchoolName", "");
+    setV("sisdcWinDramaTitle", "");
+    setV("sisdcWinTeacher", "");
+    const msg = document.getElementById("sisdcWinSaveMsg");
+    if (msg) msg.innerText = "";
+  }
+
+  function handleAdminSaveSisdcWinnerFormSubmit(event) {
+    if (event && typeof event.preventDefault === "function") event.preventDefault();
+    const uNo = (document.getElementById("sisdcWinUno")?.value || "").replace(/^0+/, "").trim();
+    const teamNo = (document.getElementById("sisdcWinTeamNo")?.value || `T-${uNo}-1`).trim();
+    const prizeRank = (document.getElementById("sisdcWinPrizeRank")?.value || "🥇 முதலிடம் (மாநில அளவிலான போட்டிக்கு தேர்வு)").trim();
+    const schoolName = (document.getElementById("sisdcWinSchoolName")?.value || "").trim();
+    const dramaTitle = (document.getElementById("sisdcWinDramaTitle")?.value || "").trim();
+    const subTheme = (document.getElementById("sisdcWinSubTheme")?.value || "").trim();
+    const teacherRaw = (document.getElementById("sisdcWinTeacher")?.value || "").trim();
+
+    let rec = findSisdcTeamByKey(teamNo) || findSisdcTeamByKey(uNo);
+    if (!rec) {
+      const mSch = (typeof MASTER_SCHOOLS !== "undefined") ? MASTER_SCHOOLS.find(s => String(s.uNo) === uNo) : null;
+      const [tName, tMob] = teacherRaw.split(" - ").map(x => x.trim());
+      rec = {
+        action: "save_sisdc_application",
+        moduleId: "SISDC",
+        targetSheetId: "1jRcTIcA346IWHzGBmMRQ5499i8kwIuj523XyN160CCg",
+        teamNo: teamNo,
+        uNo: uNo,
+        udiseNo: (mSch && mSch.udiseNo) || "",
+        block: (mSch && mSch.block) || "சிவகங்கை",
+        schoolNameTa: schoolName,
+        schoolNameEn: (mSch && mSch.nameEn) || schoolName,
+        guideTeacherNameTa: tName || "",
+        guideTeacherNameEn: transliterateTamilToEnglishName(tName || ""),
+        guideTeacherMobile: tMob || "",
+        dramaTitleTa: dramaTitle,
+        dramaTitleEn: dramaTitle,
+        language: "தமிழ்",
+        durationMins: 30,
+        subTheme: subTheme,
+        members: [],
+        attendanceStatus: "PRESENT",
+        timestamp: new Date().toLocaleString("en-IN")
+      };
+    } else {
+      if (schoolName) rec.schoolNameTa = schoolName;
+      if (dramaTitle) rec.dramaTitleTa = dramaTitle;
+      if (subTheme) rec.subTheme = subTheme;
+      if (teacherRaw) {
+        const [tName, tMob] = teacherRaw.split(" - ").map(x => x.trim());
+        if (tName) rec.guideTeacherNameTa = tName;
+        if (tMob) rec.guideTeacherMobile = tMob;
+      }
+    }
+
+    rec.prizeRank = prizeRank;
+    rec.certRevoked = false;
+    rec.attendanceStatus = "PRESENT";
+    saveSchoolSisdcRecord(rec);
+    adminUpdateSisdcPrizeRank(rec.teamNo, prizeRank);
+    populateSisdcWinnerTeamsDropdown();
+    renderAdminSisdcWinnersTable();
+
+    const msg = document.getElementById("sisdcWinSaveMsg");
+    if (msg) {
+      msg.innerText = `✅ ${rec.teamNo} (${rec.schoolNameTa}) — ${prizeRank} வெற்றிகரமாகச் சேமிக்கப்பட்டது!`;
+      setTimeout(() => { if (msg) msg.innerText = ""; }, 4500);
+    }
+  }
+
+  function filterAdminSisdcWinnersByRank(rankFilter) {
+    activeSisdcWinRankFilter = rankFilter || "ALL";
+    document.querySelectorAll("#admSisdcWinRankFilterBar .cat-filter-pill").forEach(btn => {
+      btn.classList.toggle("active", btn.getAttribute("data-sisdcrank") === activeSisdcWinRankFilter);
+    });
+    renderAdminSisdcWinnersTable();
+  }
+
+  function renderAdminSisdcWinnersTable() {
+    const tbody = document.getElementById("admSisdcWinnersTableBody");
+    if (!tbody) return;
+    const all = getAllSisdcTeamsFromStorage();
+    const withRankOrRevoked = all.filter(t => t && (t.prizeRank || t.certRevoked));
+
+    const setTxt = (id, v) => { const el = document.getElementById(id); if (el) el.innerText = v; };
+    setTxt("cntSisdcWinAll", withRankOrRevoked.length);
+    setTxt("cntSisdcWin1st", withRankOrRevoked.filter(t => !t.certRevoked && String(t.prizeRank || "").includes("முதலிடம்")).length);
+    setTxt("cntSisdcWin2nd", withRankOrRevoked.filter(t => !t.certRevoked && String(t.prizeRank || "").includes("இரண்டாமிடம்")).length);
+    setTxt("cntSisdcWin3rd", withRankOrRevoked.filter(t => !t.certRevoked && String(t.prizeRank || "").includes("மூன்றாமிடம்")).length);
+    setTxt("cntSisdcWinSpec", withRankOrRevoked.filter(t => !t.certRevoked && String(t.prizeRank || "").includes("சிறப்பிடம்")).length);
+    setTxt("cntSisdcWinPart", withRankOrRevoked.filter(t => !t.certRevoked && String(t.prizeRank || "").includes("பங்கேற்பாளர்")).length);
+
+    const filtered = withRankOrRevoked.filter(t => {
+      if (activeSisdcWinRankFilter === "ALL") return true;
+      return !t.certRevoked && String(t.prizeRank || "").includes(activeSisdcWinRankFilter);
+    });
+
+    if (filtered.length === 0) {
+      tbody.innerHTML = `<tr><td colspan="8" style="text-align:center; padding:20px; color:#64748b; font-weight:700;">தேர்ந்தெடுக்கப்பட்ட பிரிவில் வெற்றியாளர்கள் / பங்கேற்பாளர்கள் இன்னும் பதிவு செய்யப்படவில்லை. மேலேயுள்ள படிவத்தில் நாடகக் குழுவைத் தேர்ந்தெடுத்துச் சேமிக்கவும்.</td></tr>`;
+      return;
+    }
+
+    tbody.innerHTML = filtered.map((t, idx) => {
+      const keyId = t.teamNo || t.uNo;
+      const mems = (t.members || []).filter(m => m && (m.nameTa || m.nameEn));
+      const revokedMemsCnt = mems.filter(m => m.certRevoked).length;
+      const isRevoked = Boolean(t.certRevoked);
+      return `
+        <tr style="${isRevoked ? 'background:#fef2f2;' : ''}">
+          <td style="text-align:center; font-weight:800;">${idx + 1}</td>
+          <td>
+            <span style="background:#ede9fe; color:#5b21b6; padding:3px 9px; border-radius:6px; font-weight:900; font-size:0.82rem;">${t.teamNo || "-"}</span>
+            <div style="font-size:0.75rem; color:#475569; font-weight:700; margin-top:4px;">${t.subTheme || "-"}</div>
+          </td>
+          <td>
+            ${isRevoked ? `
+              <span style="background:#fee2e2; color:#991b1b; border:1px solid #f87171; padding:4px 10px; border-radius:999px; font-weight:900; font-size:0.78rem;">🚫 சான்றிதழ் ரத்து செய்யப்பட்டது</span>
+            ` : `
+              <span style="background:#fef3c7; color:#92400e; border:1px solid #f59e0b; padding:4px 10px; border-radius:999px; font-weight:900; font-size:0.8rem;">${t.prizeRank || "-"}</span>
+            `}
+          </td>
+          <td>
+            <strong>U.NO: ${t.uNo || "-"}</strong><br>
+            <strong style="color:#0f172a;">${t.schoolNameTa || t.schoolNameEn || "-"}</strong>
+          </td>
+          <td>
+            <strong style="color:#4c1d95;">🎬 ${t.dramaTitleTa || "-"}</strong>
+            <div style="font-size:0.74rem; color:#334155; margin-top:3px;">
+              👥 ${mems.length} மாணவர்கள் ${revokedMemsCnt > 0 ? `<span style="color:#dc2626; font-weight:800;">(${revokedMemsCnt} மாணவர் சான்றிதழ் ரத்து)</span>` : ""}
+            </div>
+            <div style="font-size:0.72rem; color:#475569; max-height:55px; overflow-y:auto; margin-top:2px;">
+              ${mems.slice(0, 3).map(m => `${m.sno}) ${m.nameTa || m.nameEn} ${m.emisId ? '[' + m.emisId + ']' : ''} ${m.certRevoked ? '🚫' : ''}`).join("<br>")}
+            </div>
+          </td>
+          <td>
+            <strong>${t.guideTeacherNameTa || "-"}</strong><br>
+            <span style="font-size:0.78rem; color:#0369a1; font-weight:800;">📞 ${t.guideTeacherMobile || "-"}</span>
+          </td>
+          <td>
+            ${isRevoked ? `
+              <button type="button" class="btn-sm" style="background:#059669; color:#fff; width:100%; justify-content:center; font-size:0.76rem; font-weight:800;" onclick="adminRestoreSisdcTeamCertificate('${keyId}')">
+                🔄 சான்றிதழ் மீண்டும் அனுமதி (Restore)
+              </button>
+            ` : `
+              <div style="display:flex; gap:4px; flex-wrap:wrap; margin-bottom:4px;">
+                <button type="button" class="btn-sm" style="background:linear-gradient(135deg,#6d28d9,#9d174d); color:#fff; flex:1; font-size:0.73rem; padding:5px 6px; font-weight:800;" onclick="adminDownloadSchoolSisdcCertificates('${keyId}', 'bilingual', 'all_members')">📜 இருமொழி (All)</button>
+                <button type="button" class="btn-sm" style="background:#059669; color:#fff; font-size:0.73rem; padding:5px 7px; font-weight:800;" onclick="adminDownloadSchoolSisdcCertificates('${keyId}', 'ta', 'all_members')">📜 தமிழ்</button>
+                <button type="button" class="btn-sm" style="background:#2563eb; color:#fff; font-size:0.73rem; padding:5px 7px; font-weight:800;" onclick="adminDownloadSchoolSisdcCertificates('${keyId}', 'en', 'all_members')">📜 EN</button>
+              </div>
+              <button type="button" class="btn-sm" style="background:#0f766e; color:#fff; width:100%; justify-content:center; font-size:0.72rem; padding:4px 6px; font-weight:800;" onclick="adminDownloadSchoolSisdcCertificates('${keyId}', 'bilingual', 'team')">🏆 குழு சான்றிதழ் (Team PDF)</button>
+            `}
+          </td>
+          <td>
+            <div style="display:flex; flex-direction:column; gap:5px;">
+              <button type="button" class="btn-sm" style="background:#7c3aed; color:#fff; font-size:0.73rem; padding:5px 8px; font-weight:800; justify-content:center;" onclick="openSisdcStudentCertRevokeModal('${keyId}')">
+                👥 மாணவர் வாரியாக ரத்து/அனுமதி
+              </button>
+              ${!isRevoked ? `
+                <button type="button" class="btn-sm" style="background:#dc2626; color:#fff; font-size:0.73rem; padding:5px 8px; font-weight:800; justify-content:center;" onclick="adminRevokeSisdcTeamCertificate('${keyId}')">
+                  🚫 குழு சான்றிதழ் ரத்து செய்
+                </button>
+              ` : ""}
+            </div>
+          </td>
+        </tr>
+      `;
+    }).join("");
+  }
+
+  function adminRevokeSisdcTeamCertificate(keyId) {
+    const rec = findSisdcTeamByKey(keyId);
+    if (!rec) return;
+    rec.prevPrizeRank = rec.prizeRank || "🎖️ பங்கேற்பாளர்";
+    rec.certRevoked = true;
+    rec.prizeRank = "";
+    saveSchoolSisdcRecord(rec);
+    sendSisdcToCloudSheet(rec, true);
+    renderAdminSisdcTeamsTable();
+    renderAdminSisdcWinnersTable();
+    if (loggedInSchool) {
+      try { populateSchoolSisdcFormAndSummary(); } catch (e) {}
+      try { renderSchoolCertificatesDownloadCenter(); } catch (e) {}
+    }
+    showSisfToast(`🚫 நாடகக் குழு (${rec.teamNo}) வெற்றி / பங்கேற்புச் சான்றிதழ் ரத்து செய்யப்பட்டது! பள்ளி முகப்பில் பதிவிறக்கம் முடக்கப்பட்டது.`);
+  }
+
+  function adminRestoreSisdcTeamCertificate(keyId) {
+    const rec = findSisdcTeamByKey(keyId);
+    if (!rec) return;
+    rec.certRevoked = false;
+    rec.prizeRank = rec.prevPrizeRank || "🎖️ பங்கேற்பாளர்";
+    saveSchoolSisdcRecord(rec);
+    sendSisdcToCloudSheet(rec, true);
+    renderAdminSisdcTeamsTable();
+    renderAdminSisdcWinnersTable();
+    if (loggedInSchool) {
+      try { populateSchoolSisdcFormAndSummary(); } catch (e) {}
+      try { renderSchoolCertificatesDownloadCenter(); } catch (e) {}
+    }
+    showSisfToast(`✅ நாடகக் குழு (${rec.teamNo}) சான்றிதழ் மீண்டும் அனுமதிக்கப்பட்டது (${rec.prizeRank})!`);
+  }
+
+  function openSisdcStudentCertRevokeModal(keyId) {
+    const rec = findSisdcTeamByKey(keyId);
+    const modal = document.getElementById("sisdcStudentCertRevokeModal");
+    const sub = document.getElementById("sisdcRevokeModalSubTitle");
+    const body = document.getElementById("sisdcRevokeModalBody");
+    if (!rec || !modal || !body) return;
+
+    if (sub) {
+      sub.innerText = `Team No: ${rec.teamNo} | U.NO: ${rec.uNo || "-"} | ${rec.schoolNameTa || rec.schoolNameEn || "-"} — ${rec.dramaTitleTa || "-"}`;
+    }
+
+    const mems = Array.isArray(rec.members) ? rec.members : [];
+    const rowsHtml = mems.map((m, idx) => {
+      if (!m || (!m.nameTa && !m.nameEn)) return "";
+      const isRev = Boolean(m.certRevoked);
+      return `
+        <tr style="${isRev ? 'background:#fef2f2;' : ''}">
+          <td style="text-align:center; font-weight:800;">${m.sno || (idx + 1)}</td>
+          <td style="text-align:center; font-weight:900; color:#1e3a8a;">${m.emisId || "-"}</td>
+          <td>
+            <div style="font-weight:800; color:#0f172a;">${m.nameTa || "-"}</div>
+            <div style="font-size:0.76rem; color:#475569;">${m.nameEn || "-"}</div>
+          </td>
+          <td style="text-align:center; font-weight:800;">${m.studentClass || "-"}</td>
+          <td style="font-weight:700; color:#4c1d95;">${m.roleTa || "-"}</td>
+          <td style="text-align:center;">
+            ${isRev
+              ? `<span style="background:#fee2e2; color:#991b1b; padding:3px 8px; border-radius:999px; font-size:0.74rem; font-weight:900;">🚫 ரத்து செய்யப்பட்டது</span>`
+              : `<span style="background:#dcfce7; color:#166534; padding:3px 8px; border-radius:999px; font-size:0.74rem; font-weight:900;">✅ சான்றிதழ் அனுமதி</span>`}
+          </td>
+          <td style="text-align:center;">
+            <button type="button" class="btn-sm" style="background:${isRev ? '#059669' : '#dc2626'}; color:#fff; padding:5px 10px; font-size:0.75rem; font-weight:800;" onclick="toggleSisdcSingleMemberCertRevoke('${rec.teamNo}', ${idx})">
+              ${isRev ? '🔄 மீண்டும் அனுமதி' : '🚫 சான்றிதழ் ரத்து செய்'}
+            </button>
+          </td>
+        </tr>
+      `;
+    }).filter(Boolean).join("");
+
+    const teacherRev = Boolean(rec.teacherCertRevoked);
+    const teacherRowHtml = (rec.guideTeacherNameTa || rec.guideTeacherNameEn) ? `
+      <tr style="background:${teacherRev ? '#fef2f2' : '#f0fdf4'}; border-top:2px solid #cbd5e1;">
+        <td style="text-align:center; font-weight:900;">👨‍🏫</td>
+        <td style="text-align:center; font-weight:800; color:#0f766e;">ஆசிரியர்</td>
+        <td>
+          <div style="font-weight:900; color:#0f766e;">${rec.guideTeacherNameTa || "-"}</div>
+          <div style="font-size:0.76rem; color:#475569;">${rec.guideTeacherNameEn || "-"}</div>
+        </td>
+        <td style="text-align:center;">-</td>
+        <td style="font-weight:800; color:#0f766e;">வழிகாட்டி ஆசிரியர் (Guide Teacher)</td>
+        <td style="text-align:center;">
+          ${teacherRev
+            ? `<span style="background:#fee2e2; color:#991b1b; padding:3px 8px; border-radius:999px; font-size:0.74rem; font-weight:900;">🚫 ரத்து செய்யப்பட்டது</span>`
+            : `<span style="background:#dcfce7; color:#166534; padding:3px 8px; border-radius:999px; font-size:0.74rem; font-weight:900;">✅ சான்றிதழ் அனுமதி</span>`}
+        </td>
+        <td style="text-align:center;">
+          <button type="button" class="btn-sm" style="background:${teacherRev ? '#059669' : '#dc2626'}; color:#fff; padding:5px 10px; font-size:0.75rem; font-weight:800;" onclick="toggleSisdcSingleMemberCertRevoke('${rec.teamNo}', 'TEACHER')">
+            ${teacherRev ? '🔄 மீண்டும் அனுமதி' : '🚫 சான்றிதழ் ரத்து செய்'}
+          </button>
+        </td>
+      </tr>
+    ` : "";
+
+    body.innerHTML = `
+      <div style="overflow-x:auto;">
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>வ.எண்</th>
+              <th>8 இலக்க EMIS எண்</th>
+              <th>மாணவர் / ஆசிரியர் பெயர்</th>
+              <th>வகுப்பு</th>
+              <th>பங்கு (Role)</th>
+              <th>சான்றிதழ் நிலை</th>
+              <th>செயல் (Action)</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${rowsHtml || `<tr><td colspan="7" style="text-align:center; padding:14px;">உறுப்பினர்கள் விவரம் இல்லை.</td></tr>`}
+            ${teacherRowHtml}
+          </tbody>
+        </table>
+      </div>
+    `;
+    modal.style.display = "flex";
+  }
+
+  function closeSisdcStudentCertRevokeModal() {
+    const modal = document.getElementById("sisdcStudentCertRevokeModal");
+    if (modal) modal.style.display = "none";
+  }
+
+  function toggleSisdcSingleMemberCertRevoke(teamKey, memIdxOrTeacher) {
+    const rec = findSisdcTeamByKey(teamKey);
+    if (!rec) return;
+    if (memIdxOrTeacher === "TEACHER") {
+      rec.teacherCertRevoked = !Boolean(rec.teacherCertRevoked);
+      showSisfToast(rec.teacherCertRevoked
+        ? `🚫 வழிகாட்டி ஆசிரியர் (${rec.guideTeacherNameTa}) சான்றிதழ் ரத்து செய்யப்பட்டது.`
+        : `✅ வழிகாட்டி ஆசிரியர் (${rec.guideTeacherNameTa}) சான்றிதழ் மீண்டும் அனுமதிக்கப்பட்டது.`);
+    } else if (Array.isArray(rec.members) && rec.members[memIdxOrTeacher]) {
+      const m = rec.members[memIdxOrTeacher];
+      m.certRevoked = !Boolean(m.certRevoked);
+      showSisfToast(m.certRevoked
+        ? `🚫 மாணவர் (${m.nameTa || m.nameEn}) சான்றிதழ் ரத்து செய்யப்பட்டது.`
+        : `✅ மாணவர் (${m.nameTa || m.nameEn}) சான்றிதழ் மீண்டும் அனுமதிக்கப்பட்டது.`);
+    }
+    saveSchoolSisdcRecord(rec);
+    sendSisdcToCloudSheet(rec, true);
+    openSisdcStudentCertRevokeModal(rec.teamNo);
+    renderAdminSisdcTeamsTable();
+    renderAdminSisdcWinnersTable();
+    if (loggedInSchool) {
+      try { populateSchoolSisdcFormAndSummary(); } catch (e) {}
+      try { renderSchoolCertificatesDownloadCenter(); } catch (e) {}
+    }
+  }
+
+  function adminBulkAssignSisdcParticipantRank() {
+    const all = getAllSisdcTeamsFromStorage();
+    let cnt = 0;
+    all.forEach(t => {
+      if (t && !t.prizeRank && !t.certRevoked && t.attendanceStatus !== "ABSENT") {
+        t.prizeRank = "🎖️ பங்கேற்பாளர்";
+        cnt++;
+      }
+    });
+    if (cnt === 0) {
+      showSisfToast("ℹ️ நிலுவையில் உள்ள நாடகக் குழுக்கள் ஏதுமில்லை.");
+      return;
+    }
+    saveAllSisdcTeamsToStorage(all);
+    renderAdminSisdcTeamsTable();
+    renderAdminSisdcWinnersTable();
+    if (loggedInSchool) {
+      try { populateSchoolSisdcFormAndSummary(); } catch (e) {}
+      try { renderSchoolCertificatesDownloadCenter(); } catch (e) {}
+    }
+    showSisfToast(`🎖️ ${cnt} நாடகக் குழுக்களுக்கு 'பங்கேற்பாளர்' சான்றிதழ் தகுதி வழங்கப்பட்டது!`);
+  }
+
+  function adminResetAllSisdcWinners() {
+    const all = getAllSisdcTeamsFromStorage();
+    all.forEach(t => {
+      if (t) {
+        t.prizeRank = "";
+        t.certRevoked = false;
+      }
+    });
+    saveAllSisdcTeamsToStorage(all);
+    renderAdminSisdcTeamsTable();
+    renderAdminSisdcWinnersTable();
+    if (loggedInSchool) {
+      try { populateSchoolSisdcFormAndSummary(); } catch (e) {}
+      try { renderSchoolCertificatesDownloadCenter(); } catch (e) {}
+    }
+    showSisfToast("🔄 அனைத்து நாடகக் குழுக்களின் வெற்றி / பங்கேற்பு நிலைகளும் ரத்து செய்யப்பட்டன.");
+  }
+
+  function adminDownloadSchoolSisdcPdf(keyId) {
+    const rec = findSisdcTeamByKey(keyId);
     if (rec) {
       generateAndDownloadSisdcPdf(rec);
     }
@@ -20096,18 +21122,14 @@ ${n.message}
 
   function adminDeleteSisdcTeam(keyId) {
     const all = getAllSisdcTeamsFromStorage();
-    const rec = all.find(t => String(t.uNo || "") === String(keyId) || String(t.udiseNo || "") === String(keyId));
+    const rec = findSisdcTeamByKey(keyId);
     if (!rec) return;
     openAdminDeleteConfirmModal(
       "நாடகக் குழு பதிவை அழிக்க உறுதிப்படுத்தவும்",
-      `<strong>பள்ளி:</strong> ${rec.schoolNameTa || rec.schoolNameEn}<br><strong>நாடகத் தலைப்பு:</strong> ${rec.dramaTitleTa || "-"}`,
+      `<strong>குழு எண்:</strong> ${rec.teamNo}<br><strong>பள்ளி:</strong> ${rec.schoolNameTa || rec.schoolNameEn}<br><strong>நாடகத் தலைப்பு:</strong> ${rec.dramaTitleTa || "-"}`,
       () => {
-        const remaining = all.filter(t => !(String(t.uNo || "") === String(keyId) || String(t.udiseNo || "") === String(keyId)));
+        const remaining = all.filter(t => String(t.teamNo || "") !== String(rec.teamNo || ""));
         saveAllSisdcTeamsToStorage(remaining);
-        try {
-          if (rec.udiseNo) localStorage.removeItem("SISDC_SCHOOL_TEAM_" + rec.udiseNo);
-          if (rec.uNo) localStorage.removeItem("SISDC_SCHOOL_TEAM_" + String(rec.uNo).replace(/^0+/, ""));
-        } catch (e) {}
         try {
           sendToScriptReliably({
             action: "admin_delete_sisdc_application",
@@ -20119,7 +21141,8 @@ ${n.message}
           });
         } catch (e) {}
         renderAdminSisdcTeamsTable();
-        showSisfToast("🗑️ நாடகக் குழு பதிவு SISDC_2026_Database தாளிலிருந்தும் நீக்கப்பட்டது.");
+        try { renderAdminSisdcWinnersTable(); } catch (e) {}
+        showSisfToast(`🗑️ நாடகக் குழு (${rec.teamNo}) பதிவு SISDC_2026_Database தாளிலிருந்தும் நீக்கப்பட்டது.`);
       }
     );
   }
@@ -20130,9 +21153,9 @@ ${n.message}
       showSisfToast("⚠️ பதிவிறக்கம் செய்ய நாடகக் குழு பதிவுகள் ஏதுமில்லை.");
       return;
     }
-    const headers = ["S.No", "Team No", "U.NO", "UDISE", "School Name (Tamil)", "School Name (English)", "Drama Title (Tamil)", "Drama Title (English)", "Language", "Duration (Mins)", "Sub-Theme", "Guide Teacher", "Mobile", "Prize Rank", "Members (1 to 10)"];
+    const headers = ["S.No", "Team No", "U.NO", "UDISE", "School Name (Tamil)", "School Name (English)", "Drama Title (Tamil)", "Drama Title (English)", "Language", "Duration (Mins)", "Sub-Theme", "Guide Teacher", "Mobile", "Prize Rank", "Members (1 to 10 with EMIS ID)"];
     const rows = all.map((t, idx) => {
-      const memStr = (t.members || []).filter(m => m && (m.nameTa || m.nameEn)).map(m => `${m.sno}.${m.nameTa || m.nameEn} (${m.studentClass || "-"} - ${m.roleTa})`).join(" | ");
+      const memStr = (t.members || []).filter(m => m && (m.nameTa || m.nameEn)).map(m => `${m.sno}.${m.nameTa || m.nameEn} [EMIS:${m.emisId || "-"}] (${m.studentClass || "-"} - ${m.roleTa})`).join(" | ");
       return [
         idx + 1, t.teamNo || "", t.uNo || "", t.udiseNo || "", t.schoolNameTa || "", t.schoolNameEn || "",
         t.dramaTitleTa || "", t.dramaTitleEn || "", t.language || "", t.durationMins || 30,
@@ -20156,8 +21179,6 @@ ${n.message}
       showSisfToast("⚠️ நாடகக் குழு பதிவுகள் ஏதுமில்லை.");
       return;
     }
-    // Generate each registered school's official SISDC form into a multi-page A4 PDF!
-    // Or generate a summary sheet canvas
     const cvs = document.createElement("canvas");
     cvs.width = 1754;
     cvs.height = 1240;
@@ -20221,7 +21242,6 @@ ${n.message}
     try { refreshAdminCloudData(false); } catch (e) {}
   }
 
-  // Initialize SISDC rows and hook into dashboard & admin renderers immediately and on DOMContentLoaded
   bootAllSisfAndSisdcDataOnLoad();
   if (document.readyState === "loading") {
     document.addEventListener("DOMContentLoaded", bootAllSisfAndSisdcDataOnLoad);
@@ -20230,55 +21250,63 @@ ${n.message}
     try { updateDedicatedModuleBoxBadges(); } catch (e) {}
   });
 
-
-  // Live Google Sheet gviz sync for SISDC_2026_Database (1jRcTIcA346IWHzGBmMRQ5499i8kwIuj523XyN160CCg)
-  function syncSisdcFromCloudSheet() {
+  // Live Google Sheet gviz + Apps Script sync for SISDC_2026_Database (keyed by teamNo so multiple teams per school are preserved!)
+  function syncSisdcFromCloudSheet(showToastOnComplete) {
     const sheetId = "1jRcTIcA346IWHzGBmMRQ5499i8kwIuj523XyN160CCg";
     const cbName = "__sisdcCloudSyncCb_" + Date.now() + "_" + Math.floor(Math.random() * 10000);
     window[cbName] = function(resp) {
       try {
         if (resp && resp.table && Array.isArray(resp.table.rows)) {
           const existing = getAllSisdcTeamsFromStorage();
-          const byUno = new Map();
+          const byTeamKey = new Map();
           existing.forEach(t => {
-            const k = String(t.uNo || t.udiseNo || "").replace(/^0+/, "");
-            if (k) byUno.set(k, t);
+            const k = String(t.teamNo || t.uNo || t.udiseNo || "").trim();
+            if (k) byTeamKey.set(k, t);
           });
-          resp.table.rows.forEach(rObj => {
+          resp.table.rows.forEach((rObj, rIdx) => {
             const c = rObj.c || [];
             const val = (idx) => (c[idx] && c[idx].v !== null && c[idx].v !== undefined) ? String(c[idx].v).trim() : "";
             const uNo = val(2).replace(/^0+/, "");
             const udiseNo = val(3);
             if (!uNo && !udiseNo) return;
             if (uNo.toLowerCase() === "u.no") return;
+            const teamNo = val(1) || `T-${uNo || (rIdx + 1)}-1`;
             let mems = [];
             try { mems = JSON.parse(val(25) || "[]"); } catch (e) {}
-            const rec = {
-              timestamp: val(0),
-              teamNo: val(1) || ("T-" + uNo),
+            const prev = byTeamKey.get(teamNo) || {};
+            const rec = Object.assign({}, prev, {
+              timestamp: val(0) || prev.timestamp || "",
+              teamNo: teamNo,
               uNo: uNo,
               udiseNo: udiseNo,
-              block: val(4) || "சிவகங்கை",
-              schoolNameTa: val(5),
-              schoolNameEn: val(6),
-              guideTeacherNameTa: val(7),
-              guideTeacherNameEn: val(8),
-              guideTeacherMobile: val(9),
-              dramaTitleTa: val(10),
-              dramaTitleEn: val(11),
-              language: val(12) || "தமிழ்",
+              block: val(4) || prev.block || "சிவகங்கை",
+              schoolNameTa: val(5) || prev.schoolNameTa || "",
+              schoolNameEn: val(6) || prev.schoolNameEn || "",
+              guideTeacherNameTa: val(7) || prev.guideTeacherNameTa || "",
+              guideTeacherNameEn: val(8) || prev.guideTeacherNameEn || "",
+              guideTeacherMobile: val(9) || prev.guideTeacherMobile || "",
+              dramaTitleTa: val(10) || prev.dramaTitleTa || "",
+              dramaTitleEn: val(11) || prev.dramaTitleEn || "",
+              language: val(12) || prev.language || "தமிழ்",
               durationMins: parseInt(val(13) || "30", 10) || 30,
-              subTheme: val(14),
-              members: mems,
-              prizeRank: val(26) || ""
-            };
-            byUno.set(uNo || udiseNo, rec);
+              subTheme: val(14) || prev.subTheme || "",
+              members: (Array.isArray(mems) && mems.length > 0) ? mems : (prev.members || []),
+              prizeRank: val(26) !== "" ? val(26) : (prev.prizeRank || "")
+            });
+            byTeamKey.set(teamNo, rec);
           });
-          const merged = Array.from(byUno.values());
+          const merged = Array.from(byTeamKey.values());
           if (merged.length > 0) {
             saveAllSisdcTeamsToStorage(merged);
             updateDedicatedModuleBoxBadges();
             if (typeof renderAdminSisdcTeamsTable === "function") renderAdminSisdcTeamsTable(false);
+            if (typeof renderAdminSisdcWinnersTable === "function") renderAdminSisdcWinnersTable();
+            if (loggedInSchool && activeSchoolDedicatedBox === "SISDC") {
+              populateSchoolSisdcFormAndSummary();
+            }
+          }
+          if (showToastOnComplete) {
+            showSisfToast(`✅ Google Sheet (SISDC_2026_Database) சரிபார்க்கப்பட்டது! மொத்தம் ${merged.length} நாடகக் குழு பதிவுகள் ஒத்திசைக்கப்பட்டன.`);
           }
         }
       } catch (e) {}
@@ -20296,18 +21324,20 @@ ${n.message}
       fetchJsonp(sisdcScriptUrl + "?action=get_sisdc_applications", 6000).then(res => {
         if (res && res.status === "success" && Array.isArray(res.applications) && res.applications.length > 0) {
           const existing = getAllSisdcTeamsFromStorage();
-          const byUno = new Map();
+          const byTeamKey = new Map();
           existing.forEach(t => {
-            const k = String(t.uNo || t.udiseNo || "").replace(/^0+/, "");
-            if (k) byUno.set(k, t);
+            const k = String(t.teamNo || t.uNo || t.udiseNo || "").trim();
+            if (k) byTeamKey.set(k, t);
           });
-          res.applications.forEach(app => {
-            const k = String(app.uNo || app.udiseNo || "").replace(/^0+/, "");
-            if (k) byUno.set(k, app);
+          res.applications.forEach((app, idx) => {
+            const tNo = String(app.teamNo || `T-${String(app.uNo || idx + 1).replace(/^0+/, "")}-1`).trim();
+            const prev = byTeamKey.get(tNo) || {};
+            byTeamKey.set(tNo, Object.assign({}, prev, app, { teamNo: tNo }));
           });
-          saveAllSisdcTeamsToStorage(Array.from(byUno.values()));
+          saveAllSisdcTeamsToStorage(Array.from(byTeamKey.values()));
           updateDedicatedModuleBoxBadges();
           if (typeof renderAdminSisdcTeamsTable === "function") renderAdminSisdcTeamsTable(false);
+          if (typeof renderAdminSisdcWinnersTable === "function") renderAdminSisdcWinnersTable();
         }
       }).catch(() => {});
     }
@@ -24362,12 +25392,13 @@ function handleSaveSisdcApplication(data) {
 
   var fmtMem = function(idx) {
     var m = mems[idx] || {};
+    var emis = (m.emisId || &quot;&quot;).toString().trim();
     var nTa = (m.nameTa || &quot;&quot;).toString().trim();
     var nEn = (m.nameEn || &quot;&quot;).toString().trim();
     var cls = (m.studentClass || &quot;-&quot;).toString().trim();
     var rTa = (m.roleTa || &quot;&quot;).toString().trim();
-    if (!nTa &amp;&amp; !nEn) return &quot;-&quot;;
-    return nTa + (nEn ? &quot; / &quot; + nEn : &quot;&quot;) + &quot; (வகுப்பு: &quot; + cls + &quot; | &quot; + rTa + &quot;)&quot;;
+    if (!nTa &amp;&amp; !nEn &amp;&amp; !emis) return &quot;-&quot;;
+    return (emis ? &quot;[EMIS: &quot; + emis + &quot;] &quot; : &quot;&quot;) + nTa + (nEn ? &quot; / &quot; + nEn : &quot;&quot;) + &quot; (வகுப்பு: &quot; + cls + &quot; | &quot; + rTa + &quot;)&quot;;
   };
 
   var uNo = (data.uNo || &quot;&quot;).toString().replace(/^0+/, &quot;&quot;).trim();
@@ -24398,13 +25429,12 @@ function handleSaveSisdcApplication(data) {
     data.prizeRank || &quot;&quot;
   ];
 
-  // Upsert by U.NO or UDISE No (Prevents duplicate team rows for the same school!)
+  // Upsert by Team No (Allows a school to register multiple drama teams T-101-1, T-101-2, etc.!)
   var rows = appSheet.getDataRange().getValues();
   var updated = false;
   for (var i = 1; i &lt; rows.length; i++) {
-    var rUno = (rows[i][2] || &quot;&quot;).toString().replace(/^0+/, &quot;&quot;).trim();
-    var rUdise = (rows[i][3] || &quot;&quot;).toString().trim();
-    if ((uNo &amp;&amp; rUno === uNo) || (udiseNo &amp;&amp; rUdise === udiseNo)) {
+    var rTeam = (rows[i][1] || &quot;&quot;).toString().trim();
+    if (teamNo &amp;&amp; rTeam === teamNo) {
       appSheet.getRange(i + 1, 1, 1, rowVals.length).setValues([rowVals]);
       updated = true;
       break;
@@ -24744,7 +25774,7 @@ function sendSisdcConfirmationEmailWithPdf(data, teamNo, mems, toEmail) {
 
 
 
-<div style="display:none;" aria-hidden="true"><span id="trkStatBothUnreg"></span><span id="trkStatSisdcCertPend"></span><span id="trkStatSisdcCertReg"></span><span id="trkStatSisfCertPend"></span><span id="trkStatSisfCertReg"></span><button type="button">📜 சான்றிதழ் பதிவு நிலை</button>
+<div style="display:none;" aria-hidden="true"><span id="sisdcSchoolCertMemberSel"></span><span id="trkStatBothUnreg"></span><span id="trkStatSisdcCertPend"></span><span id="trkStatSisdcCertReg"></span><span id="trkStatSisfCertPend"></span><span id="trkStatSisfCertReg"></span><button type="button">📜 சான்றிதழ் பதிவு நிலை</button>
   <span id="tabAdmin"></span><span id="KALAI" data-mod-id="KALAI"></span><span id="LIT" data-mod-id="LIT"></span><span id="SPORTS" data-mod-id="SPORTS"></span><span id="STEM" data-mod-id="STEM"></span>
   <span id="adminLoginFormSection"></span>
   <span id="adminLoginMsg"></span>
