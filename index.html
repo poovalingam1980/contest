@@ -2013,7 +2013,7 @@
           <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px; margin-bottom:10px;">
             <h3 class="section-title" style="margin:0; color:#0f2942;"><span class="section-num" style="background:#047857;">3</span> குழு உறுப்பினர்கள் விவரம் (TEAM MEMBERS LIST – MAXIMUM 10 MEMBERS)</h3>
             <span style="font-size:0.78rem; font-weight:800; color:#047857; background:#ecfdf5; border:1px solid #6ee7b7; padding:3px 10px; border-radius:999px;">
-              ⌨️ தமிழில் தட்டச்சு செய்தால் தானாக ஆங்கிலத்திலும், ஆங்கிலத்தில் தட்டச்சு செய்தால் தமிழிலும் நிரப்பப்படும்
+              ⌨️ 2-வது நெடுவரிசையில் ஆங்கிலத்தில் தட்டச்சு செய்தால் 3-வது நெடுவரிசையில் தமிழில் தானாகப் பதிவாகும் (தங்லீஷ் முறையில் திருத்தலாம்)
             </span>
           </div>
 
@@ -2022,8 +2022,8 @@
               <thead>
                 <tr>
                   <th style="width:55px;">வ.எண்</th>
-                  <th>மாணவர் பெயர் (தமிழில்) <span style="font-size:0.72rem; color:#fde047;">(தங்லீஷ்)</span></th>
-                  <th>Student Name (in English)</th>
+                  <th>Student Name (in English) <span style="font-size:0.72rem; color:#fde047;">(ஆங்கிலத்தில்)</span></th>
+                  <th>மாணவர் பெயர் (தமிழில்) <span style="font-size:0.72rem; color:#fde047;">(தானியங்கி + தங்லீஷ்)</span></th>
                   <th style="width:120px;">வகுப்பு (Class)</th>
                   <th style="width:210px;">குழுவில் பங்கு (Role)</th>
                 </tr>
@@ -16506,8 +16506,8 @@ ${n.message}
     { sno: 6, roleTa: "மேடை நடிகர் 6", roleEn: "(Artist)", fullRole: "மேடை நடிகர் 6 (Artist)", hasClass: true },
     { sno: 7, roleTa: "மேடை நடிகர் 7", roleEn: "(Artist)", fullRole: "மேடை நடிகர் 7 (Artist)", hasClass: true },
     { sno: 8, roleTa: "மேடை நடிகர் 8", roleEn: "(Artist)", fullRole: "மேடை நடிகர் 8 (Artist)", hasClass: true },
-    { sno: 9, roleTa: "இயக்குனர்", roleEn: "(Director)", fullRole: "இயக்குனர் (Director)", hasClass: false },
-    { sno: 10, roleTa: "திரைக்கதை எழுத்தாளர்", roleEn: "(Script Writer)", fullRole: "திரைக்கதை எழுத்தாளர் (Script Writer)", hasClass: false }
+    { sno: 9, roleTa: "இயக்குனர்", roleEn: "(Director)", fullRole: "இயக்குனர் (Director)", hasClass: true },
+    { sno: 10, roleTa: "திரைக்கதை எழுத்தாளர்", roleEn: "(Script Writer)", fullRole: "திரைக்கதை எழுத்தாளர் (Script Writer)", hasClass: true }
   ];
 
   // activeSchoolDedicatedBox and activeAdminDedicatedBox initialized at script top
@@ -16718,25 +16718,23 @@ ${n.message}
     if (!tbody) return;
     tbody.innerHTML = SISDC_ROLES.map((r, idx) => {
       const i = idx + 1;
-      const classCellHtml = r.hasClass
-        ? `<select id="sisdcMemClass_${i}" class="form-control" style="padding:5px 6px; font-weight:700; font-size:0.84rem; text-align:center;">
+      const classCellHtml = `<select id="sisdcMemClass_${i}" class="form-control" style="padding:5px 6px; font-weight:700; font-size:0.84rem; text-align:center;">
              <option value="">- வகுப்பு -</option>
              <option value="VI">VI (6)</option>
              <option value="VII">VII (7)</option>
              <option value="VIII">VIII (8)</option>
              <option value="IX">IX (9)</option>
              <option value="X">X (10)</option>
-           </select>`
-        : `<input type="text" id="sisdcMemClass_${i}" class="form-control" value="-" style="padding:5px 6px; font-weight:800; font-size:0.84rem; text-align:center; color:#475569;" title="வகுப்பு (மாணவர் எனில் வகுப்பு குறிப்பிடலாம், அல்லது '-' என விடலாம்)">`;
+           </select>`;
 
       return `
         <tr>
           <td style="text-align:center; font-weight:900; color:#1e3a8a;">${i}</td>
           <td>
-            <input type="text" id="sisdcMemNameTa_${i}" class="form-control tanglish-enabled" data-sync-fn="syncSisdcMemberTa_${i}" oninput="handleSisdcMemberTaInput(${i})" placeholder="பெயர் தமிழில் (வ.எண் ${i})" ${i === 1 ? "required" : ""} style="padding:6px 8px; font-size:0.86rem;">
+            <input type="text" id="sisdcMemNameEn_${i}" class="form-control" oninput="handleSisdcMemberEnInput(${i})" onblur="handleNameBlur('sisdcMemNameEn_${i}', 'sisdcMemNameTa_${i}')" placeholder="Student / Member Name in English (வ.எண் ${i})" ${i === 1 ? "required" : ""} style="padding:6px 8px; font-size:0.86rem;">
           </td>
           <td>
-            <input type="text" id="sisdcMemNameEn_${i}" class="form-control" oninput="handleSisdcMemberEnInput(${i})" placeholder="Student / Member Name in English" ${i === 1 ? "required" : ""} style="padding:6px 8px; font-size:0.86rem;">
+            <input type="text" id="sisdcMemNameTa_${i}" class="form-control tanglish-enabled" data-is-name="true" oninput="handleSisdcMemberTaInput(${i})" onblur="handleTamilNameBlur('sisdcMemNameTa_${i}')" placeholder="பெயர் தமிழில் (தானியங்கி / தங்லீஷ் திருத்தம்)" ${i === 1 ? "required" : ""} style="padding:6px 8px; font-size:0.86rem;">
           </td>
           <td style="text-align:center;">${classCellHtml}</td>
           <td style="font-weight:800; color:#0f2942; background:#f1f5f9;">
@@ -16747,10 +16745,6 @@ ${n.message}
       `;
     }).join("");
 
-    // Register dynamic sync callbacks for Tanglish engine
-    for (let i = 1; i <= 10; i++) {
-      window["syncSisdcMemberTa_" + i] = function() { handleSisdcMemberTaInput(i); };
-    }
     try { attachTanglishHandlers(); } catch (e) {}
   }
 
@@ -16804,28 +16798,25 @@ ${n.message}
     }, 600);
   }
   function handleSisdcMemberTaInput(idx) {
-    const taEl = document.getElementById("sisdcMemNameTa_" + idx);
-    const enEl = document.getElementById("sisdcMemNameEn_" + idx);
-    if (!taEl || !enEl) return;
+    // Manual or Tanglish edits in Column 3 (Tamil) must NOT modify Column 2 (English)
+    clearTimeout(nameTranslitTimers["sisdcMemNameEn_" + idx]);
+    clearTimeout(sisdcTranslateTimers["mEn_" + idx]);
     clearTimeout(sisdcTranslateTimers["mTa_" + idx]);
-    sisdcTranslateTimers["mTa_" + idx] = setTimeout(async () => {
-      const v = taEl.value.trim();
-      if (!v) return;
-      const tr = await translateTextSmart(v, "ta", "en");
-      if (tr) enEl.value = formatNameInitialLast(tr, false);
-    }, 650);
   }
   function handleSisdcMemberEnInput(idx) {
-    const taEl = document.getElementById("sisdcMemNameTa_" + idx);
-    const enEl = document.getElementById("sisdcMemNameEn_" + idx);
-    if (!taEl || !enEl) return;
-    clearTimeout(sisdcTranslateTimers["mEn_" + idx]);
-    sisdcTranslateTimers["mEn_" + idx] = setTimeout(async () => {
-      const v = enEl.value.trim();
-      if (!v) return;
-      const tr = await translateTextSmart(v, "en", "ta");
-      if (tr) taEl.value = formatNameInitialLast(tr, true);
-    }, 650);
+    const enId = "sisdcMemNameEn_" + idx;
+    const taId = "sisdcMemNameTa_" + idx;
+    const enEl = document.getElementById(enId);
+    const taEl = document.getElementById(taId);
+    if (!enEl || !taEl) return;
+    if (!enEl.value.trim()) {
+      clearTimeout(nameTranslitTimers[enId]);
+      clearTimeout(sisdcTranslateTimers["mEn_" + idx]);
+      taEl.value = "";
+      return;
+    }
+    // Automatically populate Tamil name in Column 3 from English input in Column 2
+    handleEnglishNameInput(enId, taId);
   }
 
   function getAllSisdcTeamsFromStorage() {
@@ -17097,7 +17088,7 @@ ${n.message}
           const mCl = document.getElementById("sisdcMemClass_" + i);
           if (mTa) mTa.value = m.nameTa || "";
           if (mEn) mEn.value = m.nameEn || "";
-          if (mCl && m.studentClass) mCl.value = m.studentClass;
+          if (mCl) mCl.value = (m.studentClass && m.studentClass !== "-") ? m.studentClass : "";
         });
       }
 
