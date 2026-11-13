@@ -6682,10 +6682,11 @@ document.getElementById("regStep1").style.display = "none";
       const appData = apps[c.key];
       const isPresent = isApplicationMarkedPresent(appData, null);
       const winRec = isPresent ? findWinnerRecordForSchoolCategory(c.key, appData) : null;
-      if (isPresent && winRec) eligibleCount++;
+      const hasAdminWinnerRank = Boolean(winRec && winRec.prizeRank && String(winRec.prizeRank).trim());
+      if (isPresent && hasAdminWinnerRank) eligibleCount++;
 
-      const rankDisp = winRec ? normalizePrizeRankLabel(winRec.prizeRank) : "🎖️ பங்கேற்பாளர்";
-      const isPrizeWinner = winRec && !String(winRec.prizeRank || "").includes("பங்கேற்பாளர்");
+      const rankDisp = hasAdminWinnerRank ? normalizePrizeRankLabel(winRec.prizeRank) : "";
+      const isPrizeWinner = hasAdminWinnerRank && !String(winRec.prizeRank || "").includes("பங்கேற்பாளர்");
 
       let participantNames = "";
       if (c.key === "Individual") {
@@ -6717,6 +6718,11 @@ document.getElementById("regStep1").style.display = "none";
               🚫 வருகைப்பதிவு: வருகை இல்லை (Absent)<br>
               <span style="font-size: 0.72rem; font-weight: 700;">வருகை தந்த மாணவர்களுக்கு மட்டுமே சான்றிதழ் வழங்கப்படும்.</span>
             </div>
+          ` : (!hasAdminWinnerRank ? `
+            <div style="background: #fffbeb; border: 1.5px dashed #d97706; border-radius: 8px; padding: 10px 12px; color: #92400e; font-weight: 800; font-size: 0.78rem; text-align: center;">
+              ⏳ சான்றிதழ் நிலுவையில் (Pending Admin Selection)<br>
+              <span style="font-size: 0.73rem; font-weight: 700; color: #78350f;">மாவட்ட நிர்வாகி வெற்றி / தகுதி நிலையைத் தேர்ந்தெடுத்தப் பின்னரே சான்றிதழ் பதிவிறக்கம் செய்ய இயலும்.</span>
+            </div>
           ` : `
             <div>
               <div style="background: ${isPrizeWinner ? '#fef3c7' : '#dcfce7'}; border: 1px solid ${isPrizeWinner ? '#f59e0b' : '#86efac'}; border-radius: 8px; padding: 6px 10px; margin-bottom: 8px; text-align: center; font-weight: 900; font-size: 0.8rem; color: ${isPrizeWinner ? '#92400e' : '#166534'};">
@@ -6736,7 +6742,7 @@ document.getElementById("regStep1").style.display = "none";
                 </div>
               </div>
             </div>
-          `}
+          `)}
         </div>
       `;
     }).join("");
@@ -6746,11 +6752,12 @@ document.getElementById("regStep1").style.display = "none";
       const sisdcRec = getSchoolSisdcRecord(loggedInSchool.udiseNo, loggedInSchool.uNo);
       if (sisdcRec && (sisdcRec.dramaTitleTa || sisdcRec.dramaTitleEn)) {
         const isSisdcPresent = (sisdcRec.attendanceStatus !== "ABSENT");
+        const hasSisdcAdminRank = Boolean(sisdcRec.prizeRank && String(sisdcRec.prizeRank).trim());
         const memCnt = (sisdcRec.members || []).filter(m => m && (m.nameTa || m.nameEn)).length;
-        const sisdcRank = sisdcRec.prizeRank || "🎖️ பங்கேற்பாளர்";
-        if (isSisdcPresent) eligibleCount++;
+        const sisdcRank = hasSisdcAdminRank ? sisdcRec.prizeRank : "";
+        if (isSisdcPresent && hasSisdcAdminRank) eligibleCount++;
         const sisdcCardHtml = `
-          <div style="background: #faf5ff; border: 2px solid ${isSisdcPresent ? '#7c3aed' : '#ef4444'}; border-radius: 12px; padding: 14px; display: flex; flex-direction: column; justify-content: space-between; box-shadow: 0 4px 12px rgba(124,58,237,0.1);">
+          <div style="background: #faf5ff; border: 2px solid ${isSisdcPresent ? (hasSisdcAdminRank ? '#7c3aed' : '#d97706') : '#ef4444'}; border-radius: 12px; padding: 14px; display: flex; flex-direction: column; justify-content: space-between; box-shadow: 0 4px 12px rgba(124,58,237,0.1);">
             <div>
               <div style="display: flex; justify-content: space-between; align-items: center; gap: 6px; margin-bottom: 6px;">
                 <span style="font-size: 0.84rem; font-weight: 900; color: #5b21b6;">🎭 அறிவியல் நாடக விழா (SISDC 2026)</span>
@@ -6767,6 +6774,11 @@ document.getElementById("regStep1").style.display = "none";
             ${!isSisdcPresent ? `
               <div style="background: #fef2f2; border: 1.5px solid #ef4444; border-radius: 8px; padding: 8px 10px; color: #991b1b; font-weight: 800; font-size: 0.78rem; text-align: center;">
                 🚫 வருகைப்பதிவு: வருகை இல்லை (Absent)
+              </div>
+            ` : (!hasSisdcAdminRank ? `
+              <div style="background: #fffbeb; border: 1.5px dashed #d97706; border-radius: 8px; padding: 10px 12px; color: #92400e; font-weight: 800; font-size: 0.78rem; text-align: center;">
+                ⏳ சான்றிதழ் நிலுவையில் (Pending Admin Selection)<br>
+                <span style="font-size: 0.73rem; font-weight: 700; color: #78350f;">மாவட்ட நிர்வாகி வெற்றி / தகுதி நிலையைத் தேர்ந்தெடுத்தப் பின்னரே சான்றிதழ் பதிவிறக்கம் செய்ய இயலும்.</span>
               </div>
             ` : `
               <div>
@@ -6790,7 +6802,7 @@ document.getElementById("regStep1").style.display = "none";
                   </div>
                 </div>
               </div>
-            `}
+            `)}
           </div>
         `;
         grid.innerHTML += sisdcCardHtml;
@@ -12656,8 +12668,8 @@ ${n.message}
   function downloadSchoolWinnerCertificate(catKey, langMode) {
     const app = schoolApplications ? schoolApplications[catKey] : null;
     const winRec = findWinnerRecordForSchoolCategory(catKey, app);
-    if (!winRec && !app) {
-      alert("சான்றிதழ் விவரங்கள் கிடைக்கவில்லை.");
+    if (!winRec || !winRec.prizeRank || !String(winRec.prizeRank).trim()) {
+      showSisfToast("⏳ மாவட்ட நிர்வாகி வெற்றி / பங்கேற்பு நிலையைத் தேர்ந்தெடுத்தப் பின்னரே பள்ளி முகப்பில் சான்றிதழ் பதிவிறக்கம் செய்ய இயலும்.");
       return;
     }
     generateAndDownloadWinnerCertificatePdf(winRec, app, langMode || "bilingual");
@@ -17522,6 +17534,11 @@ ${n.message}
             <div style="margin-top:10px; background:#fef2f2; border:1.5px solid #ef4444; border-radius:8px; padding:8px 12px; color:#991b1b; font-weight:800;">
               🚫 வருகைப்பதிவு: வருகை இல்லை (Absent) — போட்டியில் நேரில் வருகை தந்த நாடகக் குழுவிற்கு மட்டுமே சான்றிதழ் வழங்கப்படும்.
             </div>
+          ` : (!rec.prizeRank || !String(rec.prizeRank).trim() ? `
+            <div style="margin-top:12px; background:#faf5ff; border:1.5px dashed #9333ea; border-radius:10px; padding:12px 14px; color:#581c87; font-weight:800; font-size:0.86rem;">
+              ⏳ <strong>சான்றிதழ் பதிவிறக்கம் நிலுவையில் (Awaiting Admin Result Selection):</strong><br>
+              <span style="font-size:0.8rem; font-weight:700; color:#475569;">மாவட்ட நிர்வாகி தங்கள் பள்ளியின் நாடகக் குழுவிற்கான வெற்றி / பங்கேற்பு நிலையைத் (🥇 முதலிடம் / 🥈 இரண்டாமிடம் / 🥉 மூன்றாமிடம் / 🌟 சிறப்பிடம் / 🎖️ பங்கேற்பாளர்) தேர்ந்தெடுத்தப் பின்னரே இங்கே சான்றிதழ் பதிவிறக்கம் செய்யும் வசதி தோன்றும்.</span>
+            </div>
           ` : `
             <div style="margin-top:12px; background:linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%); border:1.5px solid #d97706; border-radius:10px; padding:12px 14px;">
               <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px; margin-bottom:8px;">
@@ -17562,7 +17579,7 @@ ${n.message}
                 </div>
               </div>
             </div>
-          `}
+          `)}
         `;
       }
     } else {
@@ -18029,12 +18046,12 @@ ${n.message}
 
   function downloadCurrentSchoolSisdcCertificates(langMode, scopeMode) {
     let rec = loggedInSchool ? getSchoolSisdcRecord(loggedInSchool.udiseNo, loggedInSchool.uNo) : null;
-    const formTitle = document.getElementById("sisdcDramaTitleTa")?.value?.trim();
-    if (!rec && formTitle) {
-      rec = collectCurrentSisdcFormObject();
-    }
     if (!rec) {
       showSisfToast("⚠️ முதலில் உங்கள் பள்ளியின் அறிவியல் நாடகக் குழு விவரங்களைப் பதிவு செய்து சேமிக்கவும்.");
+      return;
+    }
+    if (!rec.prizeRank || !String(rec.prizeRank).trim()) {
+      showSisfToast("⏳ மாவட்ட நிர்வாகி வெற்றி / பங்கேற்பு நிலையைத் தேர்ந்தெடுத்தப் பின்னரே பள்ளி முகப்பில் சான்றிதழ் பதிவிறக்கம் செய்ய இயலும்.");
       return;
     }
     generateAndDownloadSisdcCertificatesPdf(rec, langMode || "bilingual", scopeMode || "all_members");
@@ -18195,56 +18212,570 @@ ${n.message}
     const bgCvs = document.createElement("canvas");
     bgCvs.width = W;
     bgCvs.height = H;
-    const bctx = bgCvs.getContext("2d");
+    const ctx = bgCvs.getContext("2d");
 
-    if (typeof sisfCertBgImg !== "undefined" && sisfCertBgImg && sisfCertBgImg.complete && sisfCertBgImg.naturalWidth > 0) {
-      bctx.drawImage(sisfCertBgImg, 0, 0, W, H);
-      try {
-        const imgData = bctx.getImageData(0, 0, W, H);
-        const d = imgData.data;
-        for (let y = 0; y < H; y++) {
-          const dyLeft = y - 274;
-          const inInnerY = (y >= 195 && y <= 1855);
-          const inHeroY = (y >= 350 && y <= 474);
-          const inVenueY = (y >= 475 && y <= 532);
-          for (let x = 0; x < W; x++) {
-            const dxLeft = x - 281;
-            // Protect official Tamil Nadu Govt Emblem at top-left (281, 274, r=72)
-            if (dxLeft * dxLeft + dyLeft * dyLeft <= 5184) continue;
-            const idx = (y * W + x) * 4;
-            const r = d[idx], g = d[idx + 1], b = d[idx + 2];
-            const inInnerCard = inInnerY && (x >= 185 && x <= 1263);
-            const inHeroBanner = inHeroY && (x >= 190 && x <= 1258);
-            const inVenuePill = inVenueY && (x >= 220 && x <= 1228);
+    // -----------------------------------------------------------------------
+    // 1. OUTER SCIENCE DRAMA STAGE BACKGROUND (0..1448 x 0..2048)
+    //    Deep Royal Crimson-Velvet, Imperial Purple & Burnished Gold Theme
+    // -----------------------------------------------------------------------
+    const outerGrad = ctx.createLinearGradient(0, 0, W, H);
+    outerGrad.addColorStop(0, "#1e0528");
+    outerGrad.addColorStop(0.3, "#3b0764");
+    outerGrad.addColorStop(0.5, "#500724");
+    outerGrad.addColorStop(0.7, "#3b0764");
+    outerGrad.addColorStop(1, "#1e0528");
+    ctx.fillStyle = outerGrad;
+    ctx.fillRect(0, 0, W, H);
 
-            if ((!inInnerCard || inHeroBanner) && (b > r + 10 || g > r + 12)) {
-              d[idx]     = Math.min(255, Math.round(b * 0.78 + g * 0.18 + 14));
-              d[idx + 1] = Math.min(255, Math.round(r * 0.45 + g * 0.12));
-              d[idx + 2] = Math.min(255, Math.round(b * 0.65 + r * 0.22));
-            } else if (inVenuePill && b > r + 4) {
-              d[idx]     = Math.min(255, Math.round(r * 0.98 + 8));
-              d[idx + 1] = Math.min(255, Math.round(g * 0.95));
-              d[idx + 2] = Math.min(255, b);
-            }
-          }
-        }
-        bctx.putImageData(imgData, 0, 0);
-      } catch (e) {}
-    } else {
-      bctx.fillStyle = "#ffffff";
-      bctx.fillRect(0, 0, W, H);
+    // Subtle theatrical stage spotlight beams from top-left and top-right corners
+    ctx.save();
+    const beamLeft = ctx.createLinearGradient(90, 60, 650, 520);
+    beamLeft.addColorStop(0, "rgba(253, 224, 71, 0.24)");
+    beamLeft.addColorStop(1, "rgba(253, 224, 71, 0)");
+    ctx.fillStyle = beamLeft;
+    ctx.beginPath();
+    ctx.moveTo(75, 55);
+    ctx.lineTo(740, 380);
+    ctx.lineTo(460, 620);
+    ctx.closePath();
+    ctx.fill();
+
+    const beamRight = ctx.createLinearGradient(W - 90, 60, W - 650, 520);
+    beamRight.addColorStop(0, "rgba(253, 224, 71, 0.24)");
+    beamRight.addColorStop(1, "rgba(253, 224, 71, 0)");
+    ctx.fillStyle = beamRight;
+    ctx.beginPath();
+    ctx.moveTo(W - 75, 55);
+    ctx.lineTo(W - 740, 380);
+    ctx.lineTo(W - 460, 620);
+    ctx.closePath();
+    ctx.fill();
+    ctx.restore();
+
+    // Subtle starry/science constellation dots along the outer border margin
+    ctx.save();
+    for (let i = 0; i < 90; i++) {
+      const sx = (i * 197 + 43) % W;
+      const sy = (i * 311 + 79) % H;
+      if (sx > 165 && sx < W - 165 && sy > 170 && sy < H - 170) continue;
+      const r = (i % 3 === 0) ? 2.4 : 1.4;
+      ctx.fillStyle = (i % 4 === 0) ? "rgba(253, 224, 71, 0.55)" : "rgba(244, 114, 182, 0.35)";
+      ctx.beginPath();
+      ctx.arc(sx, sy, r, 0, Math.PI * 2);
+      ctx.fill();
+    }
+    ctx.restore();
+
+    // -----------------------------------------------------------------------
+    // 2. DRAPED ROYAL VELVET THEATRICAL STAGE CURTAINS (LEFT, RIGHT & TOP VALANCE)
+    // -----------------------------------------------------------------------
+    const drawVelvetCurtainSide = (isLeft) => {
+      ctx.save();
+      const baseX = isLeft ? 28 : W - 28;
+      const dir = isLeft ? 1 : -1;
+
+      // Vertical pleated velvet curtain folds from y=50 to y=1860
+      for (let fold = 0; fold < 4; fold++) {
+        const fx = baseX + dir * (fold * 32);
+        const fw = 36;
+        const cGrad = ctx.createLinearGradient(fx, 0, fx + dir * fw, 0);
+        cGrad.addColorStop(0, "#4a044e");
+        cGrad.addColorStop(0.45, "#831843");
+        cGrad.addColorStop(0.75, "#9d174d");
+        cGrad.addColorStop(1, "#3b0764");
+        ctx.fillStyle = cGrad;
+
+        ctx.beginPath();
+        ctx.moveTo(fx, 45);
+        // Curve inward slightly toward the tieback at y=980, then flare out to y=1850
+        const waistOffset = (fold * 8);
+        ctx.bezierCurveTo(
+          fx + dir * (fw + 14), 380,
+          fx + dir * (fw - waistOffset), 760,
+          fx + dir * (fw - waistOffset - 6), 980
+        );
+        ctx.bezierCurveTo(
+          fx + dir * (fw + 10), 1250,
+          fx + dir * (fw + 18), 1600,
+          fx + dir * (fw - 4), 1865
+        );
+        ctx.lineTo(fx, 1865);
+        ctx.closePath();
+        ctx.fill();
+
+        // Gold highlight thread along curtain pleat
+        ctx.strokeStyle = "rgba(251, 191, 36, 0.38)";
+        ctx.lineWidth = 1.4;
+        ctx.stroke();
+      }
+
+      // Golden Braided Curtain Tieback & Hanging Tassel at y=980
+      const tieX = baseX + dir * 72;
+      const tieY = 980;
+      ctx.strokeStyle = "#f59e0b";
+      ctx.lineWidth = 10;
+      ctx.lineCap = "round";
+      ctx.beginPath();
+      ctx.moveTo(baseX + dir * 6, tieY - 22);
+      ctx.quadraticCurveTo(tieX, tieY + 12, baseX + dir * 118, tieY - 8);
+      ctx.stroke();
+
+      ctx.strokeStyle = "#fde047";
+      ctx.lineWidth = 4;
+      ctx.beginPath();
+      ctx.moveTo(baseX + dir * 6, tieY - 22);
+      ctx.quadraticCurveTo(tieX, tieY + 12, baseX + dir * 118, tieY - 8);
+      ctx.stroke();
+
+      // Hanging Gold Tassel
+      const tasX = tieX + dir * 10;
+      const tasY = tieY + 8;
+      ctx.fillStyle = "#d97706";
+      ctx.beginPath();
+      ctx.arc(tasX, tasY, 10, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.fillStyle = "#fde047";
+      ctx.beginPath();
+      ctx.moveTo(tasX - 8, tasY + 6);
+      ctx.lineTo(tasX + 8, tasY + 6);
+      ctx.lineTo(tasX + 14, tasY + 52);
+      ctx.lineTo(tasX - 14, tasY + 52);
+      ctx.closePath();
+      ctx.fill();
+      ctx.strokeStyle = "#b45309";
+      ctx.lineWidth = 1.5;
+      ctx.stroke();
+      ctx.restore();
+    };
+
+    drawVelvetCurtainSide(true);
+    drawVelvetCurtainSide(false);
+
+    // Top Draped Proscenium Stage Curtain Valance (Swags across y=28..185)
+    ctx.save();
+    const numSwags = 7;
+    const swagW = (W - 60) / numSwags;
+    for (let i = 0; i < numSwags; i++) {
+      const sx = 30 + i * swagW;
+      const sy = 28;
+      const swagH = (i === 0 || i === numSwags - 1) ? 145 : ((i === 3) ? 128 : 135);
+      const vGrad = ctx.createLinearGradient(sx, sy, sx, sy + swagH);
+      vGrad.addColorStop(0, "#4a044e");
+      vGrad.addColorStop(0.55, "#9d174d");
+      vGrad.addColorStop(1, "#500724");
+
+      ctx.fillStyle = vGrad;
+      ctx.beginPath();
+      ctx.moveTo(sx, sy);
+      ctx.lineTo(sx + swagW, sy);
+      ctx.quadraticCurveTo(sx + swagW / 2, sy + swagH + 28, sx, sy);
+      ctx.closePath();
+      ctx.fill();
+
+      // Gold fringe trim along bottom of each curtain swag
+      ctx.strokeStyle = "#fbbf24";
+      ctx.lineWidth = 4;
+      ctx.beginPath();
+      ctx.moveTo(sx, sy + 10);
+      ctx.quadraticCurveTo(sx + swagW / 2, sy + swagH + 26, sx + swagW, sy + 10);
+      ctx.stroke();
+
+      // Hanging gold fringe droplets
+      for (let f = 1; f <= 9; f++) {
+        const t = f / 10;
+        const fx = sx + t * swagW;
+        const fy = sy + 10 + 4 * t * (1 - t) * (swagH - 2);
+        ctx.strokeStyle = "#fde047";
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(fx, fy);
+        ctx.lineTo(fx, fy + 11);
+        ctx.stroke();
+      }
+    }
+    ctx.restore();
+
+    // -----------------------------------------------------------------------
+    // 3. ORNATE METALLIC GOLD ARCHITECTURAL PROSCENIUM FRAME LINES
+    // -----------------------------------------------------------------------
+    const goldFrameGrad = ctx.createLinearGradient(0, 0, W, H);
+    goldFrameGrad.addColorStop(0, "#f59e0b");
+    goldFrameGrad.addColorStop(0.25, "#fde047");
+    goldFrameGrad.addColorStop(0.5, "#b45309");
+    goldFrameGrad.addColorStop(0.75, "#fde047");
+    goldFrameGrad.addColorStop(1, "#d97706");
+
+    // Outer triple border
+    ctx.strokeStyle = goldFrameGrad;
+    ctx.lineWidth = 6;
+    ctx.strokeRect(18, 18, W - 36, H - 36);
+    ctx.lineWidth = 2.5;
+    ctx.strokeRect(30, 30, W - 60, H - 60);
+    ctx.lineWidth = 1.5;
+    ctx.strokeRect(42, 42, W - 84, H - 84);
+
+    // Greek-key / Dramatic Stage Fretwork pattern between x=18..30 & y=18..30
+    ctx.save();
+    ctx.strokeStyle = "rgba(253, 224, 71, 0.55)";
+    ctx.lineWidth = 1.5;
+    for (let x = 40; x < W - 40; x += 28) {
+      ctx.strokeRect(x, 21, 14, 6);
+      ctx.strokeRect(x, H - 27, 14, 6);
+    }
+    for (let y = 40; y < H - 40; y += 28) {
+      ctx.strokeRect(21, y, 6, 14);
+      ctx.strokeRect(W - 27, y, 6, 14);
+    }
+    ctx.restore();
+
+    // -----------------------------------------------------------------------
+    // 4. SCIENCE DRAMA SUB-THEME MEDALLIONS & STAGE SPOTLIGHTS ON THE BORDER
+    // -----------------------------------------------------------------------
+    // Helper: Draw a Stage Spotlight in Upper Corners
+    const drawCornerSpotlight = (sx, sy, isLeft) => {
+      ctx.save();
+      ctx.translate(sx, sy);
+      ctx.rotate(isLeft ? 0.55 : -0.55);
+      // Spotlight housing
+      ctx.fillStyle = "#3b0764";
+      ctx.strokeStyle = "#fde047";
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      ctx.roundRect(-26, -18, 52, 36, 8);
+      ctx.fill();
+      ctx.stroke();
+      // Lens glow
+      ctx.fillStyle = "#fef08a";
+      ctx.beginPath();
+      ctx.ellipse(isLeft ? 26 : -26, 0, 8, 16, 0, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.restore();
+    };
+    drawCornerSpotlight(88, 86, true);
+    drawCornerSpotlight(W - 88, 86, false);
+
+    // Top-Center Proscenium Crown Medallion (x=724, y=92)
+    drawTheatricalDramaEmblemOnCtx(ctx, 724, 92, 54, "#3b0764", "#f59e0b", "#fde047", false);
+
+    // Helper: Draw Side Border Sub-Theme Medallion
+    const drawSideSubThemeBadge = (cx, cy, titleEn, drawIconFn) => {
+      ctx.save();
+      // Outer diamond/octagonal gold frame
+      ctx.beginPath();
+      ctx.arc(cx, cy, 48, 0, Math.PI * 2);
+      ctx.fillStyle = "#2e0836";
+      ctx.fill();
+      ctx.lineWidth = 3.5;
+      ctx.strokeStyle = "#fbbf24";
+      ctx.stroke();
+
+      ctx.beginPath();
+      ctx.arc(cx, cy, 41, 0, Math.PI * 2);
+      ctx.lineWidth = 1.5;
+      ctx.strokeStyle = "#fde047";
+      ctx.stroke();
+
+      drawIconFn(ctx, cx, cy - 4);
+
+      // Tiny pill label below icon
+      ctx.fillStyle = "#fde047";
+      ctx.font = "900 10.5px sans-serif";
+      ctx.textAlign = "center";
+      ctx.fillText(titleEn, cx, cy + 31);
+      ctx.restore();
+    };
+
+    // Sub-Theme 1 (Left Upper, y=470): AI Neural Network & Circuit Nodes
+    drawSideSubThemeBadge(102, 470, "AI • DRAMA", (c, x, y) => {
+      c.strokeStyle = "#fde047";
+      c.lineWidth = 2;
+      const pts = [[-18, -10], [18, -10], [-20, 10], [20, 10], [0, -20], [0, 14]];
+      pts.forEach(([dx, dy]) => {
+        c.beginPath();
+        c.moveTo(x, y);
+        c.lineTo(x + dx, y + dy);
+        c.stroke();
+        c.fillStyle = "#38bdf8";
+        c.beginPath();
+        c.arc(x + dx, y + dy, 4, 0, Math.PI * 2);
+        c.fill();
+        c.stroke();
+      });
+      c.fillStyle = "#fde047";
+      c.beginPath();
+      c.arc(x, y, 7, 0, Math.PI * 2);
+      c.fill();
+    });
+
+    // Sub-Theme 3 (Right Upper, y=470): Interstellar Habitats (Ringed Planet & Stars)
+    drawSideSubThemeBadge(W - 102, 470, "SPACE", (c, x, y) => {
+      c.fillStyle = "#fbbf24";
+      c.beginPath();
+      c.arc(x, y, 13, 0, Math.PI * 2);
+      c.fill();
+      c.save();
+      c.translate(x, y);
+      c.rotate(-0.35);
+      c.strokeStyle = "#fde047";
+      c.lineWidth = 3;
+      c.beginPath();
+      c.ellipse(0, 0, 28, 8, 0, 0, Math.PI * 2);
+      c.stroke();
+      c.restore();
+    });
+
+    // Mid-Left & Mid-Right Drama Mask Medallions (y=740)
+    drawTheatricalDramaEmblemOnCtx(ctx, 102, 740, 44, "#4a044e", "#f59e0b", "#fde047", false);
+    drawTheatricalDramaEmblemOnCtx(ctx, W - 102, 740, 44, "#4a044e", "#f59e0b", "#fde047", false);
+
+    // Sub-Theme 2 (Left Lower, y=1320): EV: Way Forward (Eco Leaf & Lightning Bolt)
+    drawSideSubThemeBadge(102, 1320, "EV • TECH", (c, x, y) => {
+      c.strokeStyle = "#4ade80";
+      c.fillStyle = "rgba(74, 222, 128, 0.25)";
+      c.lineWidth = 2.2;
+      c.beginPath();
+      c.arc(x, y, 18, 0, Math.PI * 2);
+      c.fill();
+      c.stroke();
+      // Lightning bolt
+      c.fillStyle = "#fde047";
+      c.beginPath();
+      c.moveTo(x + 3, y - 14);
+      c.lineTo(x - 9, y + 2);
+      c.lineTo(x - 1, y + 2);
+      c.lineTo(x - 4, y + 15);
+      c.lineTo(x + 9, y - 2);
+      c.lineTo(x + 1, y - 2);
+      c.closePath();
+      c.fill();
+    });
+
+    // Sub-Theme 4 (Right Lower, y=1320): Restoring Oceans (Waves & Globe)
+    drawSideSubThemeBadge(W - 102, 1320, "OCEANS", (c, x, y) => {
+      c.strokeStyle = "#38bdf8";
+      c.lineWidth = 2.5;
+      c.beginPath();
+      c.arc(x, y, 17, 0, Math.PI * 2);
+      c.stroke();
+      for (let wy = -6; wy <= 8; wy += 7) {
+        c.beginPath();
+        c.moveTo(x - 13, y + wy);
+        c.quadraticCurveTo(x - 6, y + wy - 5, x, y + wy);
+        c.quadraticCurveTo(x + 6, y + wy + 5, x + 13, y + wy);
+        c.strokeStyle = "#fde047";
+        c.stroke();
+      }
+    });
+
+    // Lower-Side Drama Script & Stage Music/Spotlight Medallions (y=1590)
+    drawSideSubThemeBadge(102, 1590, "SCRIPT", (c, x, y) => {
+      // Feather Quill & Scroll
+      c.fillStyle = "#fde047";
+      c.strokeStyle = "#b45309";
+      c.lineWidth = 1.8;
+      c.fillRect(x - 13, y - 12, 26, 22);
+      c.strokeRect(x - 13, y - 12, 26, 22);
+      c.strokeStyle = "#3b0764";
+      c.beginPath();
+      c.moveTo(x - 8, y - 5); c.lineTo(x + 8, y - 5);
+      c.moveTo(x - 8, y + 1); c.lineTo(x + 8, y + 1);
+      c.moveTo(x - 8, y + 7); c.lineTo(x + 4, y + 7);
+      c.stroke();
+    });
+
+    drawSideSubThemeBadge(W - 102, 1590, "STAGE", (c, x, y) => {
+      // Classic Stage Microphone
+      c.fillStyle = "#fde047";
+      c.beginPath();
+      c.roundRect(x - 7, y - 16, 14, 20, 7);
+      c.fill();
+      c.strokeStyle = "#fde047";
+      c.lineWidth = 2.5;
+      c.beginPath();
+      c.arc(x, y - 4, 12, 0.1 * Math.PI, 0.9 * Math.PI);
+      c.moveTo(x, y + 8);
+      c.lineTo(x, y + 16);
+      c.moveTo(x - 10, y + 16);
+      c.lineTo(x + 10, y + 16);
+      c.stroke();
+    });
+
+    // -----------------------------------------------------------------------
+    // 5. BOTTOM THEATRICAL STAGE FLOOR, FOOTLIGHTS & DRAMA EMBLEM BANNER
+    // -----------------------------------------------------------------------
+    ctx.save();
+    // Stage floor perspective apron (y=1868..2012)
+    const stageGrad = ctx.createLinearGradient(0, 1868, 0, 2018);
+    stageGrad.addColorStop(0, "#4a044e");
+    stageGrad.addColorStop(0.5, "#2e0532");
+    stageGrad.addColorStop(1, "#1a021d");
+    ctx.fillStyle = stageGrad;
+    ctx.fillRect(44, 1868, W - 88, 142);
+
+    // Stage Footlights along y=1884
+    for (let lx = 120; lx <= W - 120; lx += 96) {
+      const flGrad = ctx.createRadialGradient(lx, 1885, 2, lx, 1885, 28);
+      flGrad.addColorStop(0, "rgba(254, 240, 138, 0.95)");
+      flGrad.addColorStop(0.4, "rgba(245, 158, 11, 0.45)");
+      flGrad.addColorStop(1, "rgba(245, 158, 11, 0)");
+      ctx.fillStyle = flGrad;
+      ctx.beginPath();
+      ctx.arc(lx, 1885, 28, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.fillStyle = "#fde047";
+      ctx.beginPath();
+      ctx.arc(lx, 1885, 4.5, 0, Math.PI * 2);
+      ctx.fill();
     }
 
-    // Clear old atom watermark inside the white citation card and draw Science Drama Watermark
-    bctx.fillStyle = "#ffffff";
-    bctx.fillRect(350, 650, 748, 780);
-    drawTheatricalDramaEmblemOnCtx(bctx, 724, 1035, 265, "rgba(255,255,255,0)", "rgba(180, 83, 9, 0.13)", "rgba(109, 40, 217, 0.11)", true);
+    // Bottom Center Golden Theatrical Plaque
+    ctx.fillStyle = "#3b0764";
+    ctx.strokeStyle = "#fbbf24";
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+    ctx.roundRect(350, 1912, W - 700, 64, 32);
+    ctx.fill();
+    ctx.stroke();
 
-    // Replace Top-Right Medallion (1170, 277, r=58) with Royal Science Drama Emblem
-    drawTheatricalDramaEmblemOnCtx(bctx, 1170, 277, 58, "#3b0764", "#d97706", "#fde047", false);
+    ctx.fillStyle = "#fde047";
+    ctx.font = "900 18px 'Mukta Malar', 'Noto Sans Tamil', sans-serif";
+    ctx.textAlign = "center";
+    ctx.fillText("🎭 தென்னிந்திய அறிவியல் நாடக விழா – 2026  •  SCIENCE DRAMA CONTEST 🎭", W / 2, 1951);
 
-    // Replace Bottom Seal Medallion (724, 1695, r=41) with Science Drama Seal
-    drawTheatricalDramaEmblemOnCtx(bctx, 724, 1695, 41, "#4a044e", "#d97706", "#fde047", false);
+    // Bottom-Left & Bottom-Right Corner Drama Masks + Clapperboard/Scroll Accents
+    drawTheatricalDramaEmblemOnCtx(ctx, 210, 1944, 46, "#3b0764", "#f59e0b", "#fde047", false);
+    drawTheatricalDramaEmblemOnCtx(ctx, W - 210, 1944, 46, "#3b0764", "#f59e0b", "#fde047", false);
+    ctx.restore();
+
+    // -----------------------------------------------------------------------
+    // 6. INNER WHITE PARCHMENT CERTIFICATE CARD (x=175..1273, y=180..1868)
+    // -----------------------------------------------------------------------
+    ctx.save();
+    ctx.fillStyle = "#ffffff";
+    ctx.strokeStyle = "#d97706";
+    ctx.lineWidth = 6;
+    ctx.beginPath();
+    ctx.roundRect(175, 180, 1098, 1688, 22);
+    ctx.fill();
+    ctx.stroke();
+
+    ctx.strokeStyle = "#fbbf24";
+    ctx.lineWidth = 2.2;
+    ctx.beginPath();
+    ctx.roundRect(185, 190, 1078, 1668, 16);
+    ctx.stroke();
+
+    // Subtle golden stage curtain valance along top inside the white card (x=365..1083, y=190..215)
+    ctx.strokeStyle = "rgba(217, 119, 6, 0.45)";
+    ctx.lineWidth = 2.2;
+    for (let sx = 365; sx < 1060; sx += 118) {
+      ctx.beginPath();
+      ctx.arc(sx + 59, 184, 60, 0.12 * Math.PI, 0.88 * Math.PI);
+      ctx.stroke();
+    }
+    ctx.restore();
+
+    // -----------------------------------------------------------------------
+    // 7. OFFICIAL TAMIL NADU GOVT EMBLEM (TOP-LEFT: 281, 274, r=66)
+    //    Extracted cleanly from sisfCertBgImg so the state seal is 100% authentic!
+    // -----------------------------------------------------------------------
+    ctx.save();
+    ctx.beginPath();
+    ctx.arc(281, 274, 66, 0, Math.PI * 2);
+    ctx.fillStyle = "#ffffff";
+    ctx.fill();
+    ctx.lineWidth = 4.5;
+    ctx.strokeStyle = "#d97706";
+    ctx.stroke();
+    ctx.clip();
+    if (typeof sisfCertBgImg !== "undefined" && sisfCertBgImg && sisfCertBgImg.complete && sisfCertBgImg.naturalWidth > 0) {
+      ctx.drawImage(sisfCertBgImg, 213, 206, 136, 136, 213, 206, 136, 136);
+    }
+    ctx.restore();
+    ctx.beginPath();
+    ctx.arc(281, 274, 66, 0, Math.PI * 2);
+    ctx.lineWidth = 4;
+    ctx.strokeStyle = "#b45309";
+    ctx.stroke();
+
+    // -----------------------------------------------------------------------
+    // 8. TOP-RIGHT SCIENCE DRAMA MEDALLION (1170, 277, r=62)
+    // -----------------------------------------------------------------------
+    drawTheatricalDramaEmblemOnCtx(ctx, 1170, 277, 62, "#3b0764", "#d97706", "#fde047", false);
+
+    // -----------------------------------------------------------------------
+    // 9. HERO BANNER BAR (y=356..470), VENUE PILL (y=480..526) & GOLD SUBHEADER (y=538..600)
+    // -----------------------------------------------------------------------
+    ctx.save();
+    const heroGrad = ctx.createLinearGradient(195, 356, 1253, 470);
+    heroGrad.addColorStop(0, "#3b0764");
+    heroGrad.addColorStop(0.5, "#831843");
+    heroGrad.addColorStop(1, "#3b0764");
+    ctx.fillStyle = heroGrad;
+    ctx.strokeStyle = "#f59e0b";
+    ctx.lineWidth = 4;
+    ctx.beginPath();
+    ctx.roundRect(195, 356, 1058, 114, 57);
+    ctx.fill();
+    ctx.stroke();
+
+    // Venue Pill (y=480..526)
+    ctx.fillStyle = "#faf5ff";
+    ctx.strokeStyle = "#a855f7";
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.roundRect(225, 480, 998, 46, 23);
+    ctx.fill();
+    ctx.stroke();
+
+    // Gold Subheader Ribbon Pill (y=538..600)
+    const subGrad = ctx.createLinearGradient(265, 538, 1183, 600);
+    subGrad.addColorStop(0, "#fef3c7");
+    subGrad.addColorStop(0.5, "#fef9c3");
+    subGrad.addColorStop(1, "#fef3c7");
+    ctx.fillStyle = subGrad;
+    ctx.strokeStyle = "#d97706";
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+    ctx.roundRect(265, 538, 918, 62, 31);
+    ctx.fill();
+    ctx.stroke();
+
+    // Inner Citation Box Frame (x=198..1250, y=616..1555) with Gold Side Bars
+    ctx.strokeStyle = "#e2e8f0";
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.roundRect(198, 616, 1052, 938, 12);
+    ctx.stroke();
+
+    ctx.fillStyle = "#d97706";
+    ctx.fillRect(196, 650, 5, 870);
+    ctx.fillRect(1247, 650, 5, 870);
+    ctx.restore();
+
+    // -----------------------------------------------------------------------
+    // 10. CENTER SCIENCE DRAMA WATERMARK (724, 1035) & BOTTOM GOLD SEAL (724, 1695)
+    // -----------------------------------------------------------------------
+    drawTheatricalDramaEmblemOnCtx(ctx, 724, 1035, 260, "rgba(255,255,255,0)", "rgba(180, 83, 9, 0.13)", "rgba(109, 40, 217, 0.11)", true);
+
+    // Bottom 24-Point Gold Starburst Seal at (724, 1695)
+    ctx.save();
+    const bsX = 724, bsY = 1695, outerR = 54, innerR = 45, pts = 24;
+    ctx.beginPath();
+    for (let i = 0; i < pts * 2; i++) {
+      const r = (i % 2 === 0) ? outerR : innerR;
+      const ang = (i * Math.PI) / pts;
+      const px = bsX + r * Math.cos(ang);
+      const py = bsY + r * Math.sin(ang);
+      if (i === 0) ctx.moveTo(px, py);
+      else ctx.lineTo(px, py);
+    }
+    ctx.closePath();
+    ctx.fillStyle = "#f59e0b";
+    ctx.fill();
+    ctx.restore();
+    drawTheatricalDramaEmblemOnCtx(ctx, 724, 1695, 42, "#4a044e", "#d97706", "#fde047", false);
 
     window.__sisdcCertBgCanvas = bgCvs;
     return bgCvs;
@@ -19547,7 +20078,11 @@ ${n.message}
         });
       } catch (e) {}
       renderAdminSisdcTeamsTable();
-      showSisfToast(`🏆 நாடகக் குழுவின் பரிசு நிலை (${newRank || "நீக்கப்பட்டது"}) SISDC_2026_Database தாளில் சேமிக்கப்பட்டது!`);
+      if (loggedInSchool) {
+        try { populateSchoolSisdcFormAndSummary(); } catch (e) {}
+        try { renderSchoolCertificatesDownloadCenter(); } catch (e) {}
+      }
+      showSisfToast(`🏆 நாடகக் குழுவின் பரிசு நிலை (${newRank || "நீக்கப்பட்டது"}) சேமிக்கப்பட்டது! இப்போது பள்ளி முகப்பிலும் சான்றிதழ் பதிவிறக்கம் செய்யலாம்.`);
     }
   }
 
