@@ -2038,7 +2038,7 @@
           <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px; margin-bottom:10px;">
             <h3 class="section-title" style="margin:0; color:#0f2942;"><span class="section-num" style="background:#047857;">3</span> குழு உறுப்பினர்கள் விவரம் (TEAM MEMBERS LIST – MAXIMUM 10 MEMBERS)</h3>
             <span style="font-size:0.78rem; font-weight:800; color:#047857; background:#ecfdf5; border:1px solid #6ee7b7; padding:3px 10px; border-radius:999px;">
-              🆔 2-வது நெடுவரிசையில் 8 இலக்க EMIS எண் | 🔤 3-வது நெடுவரிசையில் ஆங்கிலப் பெயர் ➔ 4-வது நெடுவரிசையில் தமிழ் (தங்லீஷ் திருத்தம்)
+              🆔 2-வது நெடுவரிசையில் 10 இலக்க EMIS எண் | 🔤 3-வது நெடுவரிசையில் ஆங்கிலப் பெயர் ➔ 4-வது நெடுவரிசையில் தமிழ் (தங்லீஷ் திருத்தம்)
             </span>
           </div>
 
@@ -2047,7 +2047,7 @@
               <thead>
                 <tr>
                   <th style="width:50px;">வ.எண்</th>
-                  <th style="width:150px;">மாணவர் 8 இலக்க EMIS எண் <span style="font-size:0.72rem; color:#fde047;">(8-Digit EMIS ID)</span></th>
+                  <th style="width:150px;">மாணவர் 10 இலக்க EMIS எண் <span style="font-size:0.72rem; color:#fde047;">(10-Digit EMIS ID)</span></th>
                   <th>Student Name (in English) <span style="font-size:0.72rem; color:#fde047;">(ஆங்கிலத்தில்)</span></th>
                   <th>மாணவர் பெயர் (தமிழில்) <span style="font-size:0.72rem; color:#fde047;">(தானியங்கி + தங்லீஷ்)</span></th>
                   <th style="width:115px;">வகுப்பு (Class)</th>
@@ -17323,10 +17323,10 @@ ${n.message}
   function handleSisdcMemberEmisInput(idx) {
     const el = document.getElementById("sisdcMemEmis_" + idx);
     if (!el) return;
-    const digits = String(el.value || "").replace(/[^0-9]/g, "").slice(0, 8);
+    const digits = String(el.value || "").replace(/[^0-9]/g, "").slice(0, 10);
     if (el.value !== digits) el.value = digits;
-    el.style.borderColor = (digits.length === 8) ? "#16a34a" : (digits.length > 0 ? "#d97706" : "#cbd5e1");
-    el.style.background = (digits.length === 8) ? "#f0fdf4" : "#ffffff";
+    el.style.borderColor = (digits.length === 10) ? "#16a34a" : (digits.length > 0 ? "#d97706" : "#cbd5e1");
+    el.style.background = (digits.length === 10) ? "#f0fdf4" : "#ffffff";
     triggerSisdcAutoSave();
   }
 
@@ -17348,7 +17348,7 @@ ${n.message}
         <tr>
           <td style="text-align:center; font-weight:900; color:#1e3a8a;">${i}</td>
           <td>
-            <input type="text" id="sisdcMemEmis_${i}" class="form-control" maxlength="8" pattern="[0-9]{8}" inputmode="numeric" oninput="handleSisdcMemberEmisInput(${i})" placeholder="8 இலக்க EMIS எண்" title="மாணவரின் 8 இலக்க EMIS எண் (8-Digit EMIS ID)" style="padding:6px 8px; font-size:0.86rem; font-weight:800; text-align:center; letter-spacing:0.6px; color:#1e3a8a;">
+            <input type="text" id="sisdcMemEmis_${i}" class="form-control" maxlength="10" pattern="[0-9]{10}" inputmode="numeric" oninput="handleSisdcMemberEmisInput(${i})" placeholder="10 இலக்க EMIS எண்" title="மாணவரின் 10 இலக்க EMIS எண் (10-Digit EMIS ID)" style="padding:6px 8px; font-size:0.86rem; font-weight:800; text-align:center; letter-spacing:0.6px; color:#1e3a8a;">
           </td>
           <td>
             <input type="text" id="sisdcMemNameEn_${i}" class="form-control" oninput="handleSisdcMemberEnInput(${i})" onblur="handleNameBlur('sisdcMemNameEn_${i}', 'sisdcMemNameTa_${i}'); triggerSisdcAutoSave();" placeholder="Student Name in English (வ.எண் ${i})" ${i === 1 ? "required" : ""} style="padding:6px 8px; font-size:0.86rem;">
@@ -18007,8 +18007,8 @@ ${n.message}
         const mCl = document.getElementById("sisdcMemClass_" + i);
         if (mEm) {
           mEm.value = m.emisId || "";
-          mEm.style.borderColor = (mEm.value.length === 8) ? "#16a34a" : "#cbd5e1";
-          mEm.style.background = (mEm.value.length === 8) ? "#f0fdf4" : "#ffffff";
+          mEm.style.borderColor = (mEm.value.length === 10) ? "#16a34a" : "#cbd5e1";
+          mEm.style.background = (mEm.value.length === 10) ? "#f0fdf4" : "#ffffff";
         }
         if (mTa) mTa.value = m.nameTa || "";
         if (mEn) mEn.value = m.nameEn || "";
@@ -18143,7 +18143,7 @@ ${n.message}
     const prevMembers = (existing && Array.isArray(existing.members)) ? existing.members : [];
     const members = SISDC_ROLES.map((r, idx) => {
       const i = idx + 1;
-      const emisId = String(document.getElementById("sisdcMemEmis_" + i)?.value || "").replace(/[^0-9]/g, "").slice(0, 8);
+      const emisId = String(document.getElementById("sisdcMemEmis_" + i)?.value || "").replace(/[^0-9]/g, "").slice(0, 10);
       const nTa = formatNameInitialLast((document.getElementById("sisdcMemNameTa_" + i)?.value || "").trim(), true);
       const nEn = formatNameInitialLast((document.getElementById("sisdcMemNameEn_" + i)?.value || "").trim(), false);
       const cl = (document.getElementById("sisdcMemClass_" + i)?.value || (r.hasClass ? "" : "-")).trim();
@@ -18204,10 +18204,10 @@ ${n.message}
       showSisfToast("⚠️ குழு உறுப்பினர்கள் பட்டியலில் குறைந்தது ஒரு மாணவர் பெயரையாவது உள்ளிடவும்.");
       return;
     }
-    // Check 8-digit EMIS ID for filled student rows if entered partially
-    const invalidEmisRow = filledMems.find(m => m.emisId && m.emisId.length !== 8);
+    // Check 10-digit EMIS ID for filled student rows if entered partially
+    const invalidEmisRow = filledMems.find(m => m.emisId && m.emisId.length !== 10);
     if (invalidEmisRow) {
-      showSisfToast(`⚠️ வ.எண் ${invalidEmisRow.sno} (${invalidEmisRow.nameTa || invalidEmisRow.nameEn}) மாணவரின் EMIS எண் சரியாக 8 இலக்கங்கள் இருக்க வேண்டும்.`);
+      showSisfToast(`⚠️ வ.எண் ${invalidEmisRow.sno} (${invalidEmisRow.nameTa || invalidEmisRow.nameEn}) மாணவரின் EMIS எண் சரியாக 10 இலக்கங்கள் இருக்க வேண்டும்.`);
       return;
     }
 
@@ -18466,7 +18466,7 @@ ${n.message}
     // =========================================================================
     curY = drawSisdcSectionBanner(curY, "3. குழு உறுப்பினர்கள் விவரம் (TEAM MEMBERS LIST – MAXIMUM 10 MEMBERS)");
 
-    // 7 Columns: வ.எண் (52) | 8 இலக்க EMIS எண் (142) | Student Name (En) (235) | மாணவர் பெயர் (தமிழில்) (235) | வகுப்பு (76) | குழுவில் பங்கு (Role) (206) | கையொப்பம் (150) = 1096
+    // 7 Columns: வ.எண் (52) | 10 இலக்க EMIS எண் (142) | Student Name (En) (235) | மாணவர் பெயர் (தமிழில்) (235) | வகுப்பு (76) | குழுவில் பங்கு (Role) (206) | கையொப்பம் (150) = 1096
     const colWidths = [52, 142, 235, 235, 76, 206, 150];
     const colX = [leftX];
     for (let i = 0; i < colWidths.length; i++) {
@@ -18486,7 +18486,7 @@ ${n.message}
     ctx.textAlign = "center";
     ctx.font = "bold 15px 'Mukta Malar', 'Noto Sans Tamil', sans-serif";
     ctx.fillText("வ.எண்", colX[0] + colWidths[0] / 2, curY + 33);
-    ctx.fillText("8 இலக்க", colX[1] + colWidths[1] / 2, curY + 23);
+    ctx.fillText("10 இலக்க", colX[1] + colWidths[1] / 2, curY + 23);
     ctx.fillText("EMIS எண்", colX[1] + colWidths[1] / 2, curY + 44);
     ctx.fillText("Student Name", colX[2] + colWidths[2] / 2, curY + 23);
     ctx.fillText("(in English)", colX[2] + colWidths[2] / 2, curY + 44);
@@ -21013,7 +21013,7 @@ ${n.message}
           <thead>
             <tr>
               <th>வ.எண்</th>
-              <th>8 இலக்க EMIS எண்</th>
+              <th>10 இலக்க EMIS எண்</th>
               <th>மாணவர் / ஆசிரியர் பெயர்</th>
               <th>வகுப்பு</th>
               <th>பங்கு (Role)</th>
